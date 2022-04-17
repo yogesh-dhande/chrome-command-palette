@@ -1,0 +1,27 @@
+{
+  "name": "Chrome Extension",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "action": {
+    "default_title": "Chrome Extension"
+  },
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-scripts/main.js"]
+    }
+  ],
+  "commands": {
+    "activate_extension": {
+      "suggested_key": {
+        "default": "Ctrl+K",
+        "mac": "Command+K"
+      },
+      "description": "Activate Chrome Extension"
+    }
+  },
+  "permissions": ["tabs"]
+}
