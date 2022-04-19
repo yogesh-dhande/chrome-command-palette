@@ -75,7 +75,7 @@
           </div>
 
           <ComboboxOptions
-            v-if="query === '' || filteredProjects.length > 0"
+            v-if="query === '' || filteredCommands.length > 0"
             static
             class="
               max-h-80
@@ -93,9 +93,11 @@
               </h2>
               <ul class="text-sm text-gray-400">
                 <ComboboxOption
-                  v-for="project in query === '' ? recent : filteredProjects"
-                  :key="project.id"
-                  :value="project"
+                  v-for="(command, i) in query === ''
+                    ? recent
+                    : filteredCommands"
+                  :key="i"
+                  :value="command"
                   as="template"
                   v-slot="{ active }"
                 >
@@ -105,7 +107,8 @@
                       active && 'bg-gray-800 text-white',
                     ]"
                   >
-                    <FolderIcon
+                    <component
+                      :is=""
                       :class="[
                         'h-6 w-6 flex-none',
                         active ? 'text-white' : 'text-gray-500',
@@ -113,10 +116,10 @@
                       aria-hidden="true"
                     />
                     <span class="ml-3 flex-auto truncate">{{
-                      project.name
+                      command.label
                     }}</span>
                     <span v-if="active" class="ml-3 flex-none text-gray-400"
-                      >Jump to...</span
+                      >{{ command.triggerType }}...</span
                     >
                   </li>
                 </ComboboxOption>
@@ -162,7 +165,7 @@
           </ComboboxOptions>
 
           <div
-            v-if="query !== '' && filteredProjects.length === 0"
+            v-if="query !== '' && filteredCommands.length === 0"
             class="py-14 px-6 text-center sm:px-14"
           >
             <FolderIcon
@@ -170,7 +173,7 @@
               aria-hidden="true"
             />
             <p class="mt-4 text-sm text-gray-200">
-              We couldn't find any projects with that term. Please try again.
+              We couldn't find any commands with that term. Please try again.
             </p>
           </div>
         </Combobox>
@@ -184,7 +187,9 @@ import { computed, ref, onMounted, reactive, toRefs } from "vue";
 import { SearchIcon } from "@heroicons/vue/solid";
 import {
   DocumentAddIcon,
-  FolderIcon,
+  ExternalLinkIcon,
+  AnnotationIcon,
+  CursorClickIcon,
   FolderAddIcon,
   HashtagIcon,
   TagIcon,
@@ -200,11 +205,6 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 
-const projects = [
-  { id: 1, name: "Workflow Inc. / Website Redesign", url: "#" },
-  // More projects...
-];
-const recent = [projects[0]];
 const quickActions = [
   { name: "Add new file...", icon: DocumentAddIcon, shortcut: "N", url: "#" },
   { name: "Add new folder...", icon: FolderAddIcon, shortcut: "F", url: "#" },
@@ -213,6 +213,9 @@ const quickActions = [
 ];
 
 export default {
+  props: {
+    store: Array,
+  },
   components: {
     Combobox,
     ComboboxInput,
@@ -220,12 +223,15 @@ export default {
     ComboboxOption,
     Dialog,
     DialogOverlay,
-    FolderIcon,
+    AnnotationIcon,
+    CursorClickIcon,
+    ExternalLinkIcon,
     SearchIcon,
     TransitionChild,
     TransitionRoot,
   },
-  setup() {
+  setup(props) {
+    const recent = props.store.commands[0];
     const open = ref(false);
     const state = reactive({
       currentTab: null,
@@ -235,11 +241,11 @@ export default {
     });
 
     const query = ref("");
-    const filteredProjects = computed(() =>
+    const filteredCommands = computed(() =>
       query.value === ""
         ? []
-        : projects.filter((project) => {
-            return project.name
+        : props.store.commands.filter((command) => {
+            return command.label
               .toLowerCase()
               .includes(query.value.toLowerCase());
           })
@@ -251,10 +257,33 @@ export default {
       query,
       recent,
       quickActions,
-      projects,
-      filteredProjects,
-      onSelect(item) {
-        window.location = item.url;
+      filteredCommands,
+      onSelect(command) {
+        console.log(command);
+        const triggerElement = command.triggerElementSelector
+          ? command.scope.querySelector(command.triggerElementSelector)
+          : command.scope;
+
+        console.log(triggerElement);
+        if (command.triggerType === "click") {
+          triggerElement.click();
+        } else if (command.triggerType === "open") {
+          window.open(
+            triggerElement.href,
+            triggerElement.target ? triggerElement.target : "_self"
+          );
+        } else if (command.triggerType === "focus") {
+          triggerElement.focus();
+        }
+      },
+      getIconNameForTriggerType(triggerType) {
+        if (command.triggerType === "click") {
+          return "CursorClickIcon";
+        } else if (command.triggerType === "open") {
+          return "ExternalLinkIcon";
+        } else if (command.triggerType === "focus") {
+          return "AnnotationIcon";
+        }
       },
     };
   },

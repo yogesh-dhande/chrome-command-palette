@@ -24,6 +24,7 @@ chrome.commands.onCommand.addListener(function(command) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.type) {
     case "POPUP_INIT":
+      // TODO remove if unused
       getCurrentTab().then(sendResponse);
       return true;
     default:

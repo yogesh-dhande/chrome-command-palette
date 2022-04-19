@@ -12,17 +12,76 @@ mountEl = document.createElement("div");
 mountEl.setAttribute("id", MOUNT_EL_ID);
 document.body.appendChild(mountEl);
 
-const vm = createApp(Popup).mount(mountEl);
+const store = {
+  commands: [],
+};
+
+const vm = createApp(Popup, {
+  store,
+}).mount(mountEl);
+
+function interpretStringTemplate(template, el) {
+  return template;
+}
+
+const commandGenerators = [
+  {
+    scopeSelector: "a",
+    labelElementSelector: null,
+    labelTemplate: null,
+    labelTemplateFunction: (el) => el.innerText,
+    triggerElementSelector: null,
+    triggerType: "open",
+  },
+  {
+    scopeSelector: "button",
+    labelElementSelector: null,
+    labelTemplate: null,
+    labelTemplateFunction: (el) => el.innerText,
+    triggerElementSelector: null,
+    triggerType: "click",
+  },
+  {
+    scopeSelector: "input",
+    labelElementSelector: null,
+    labelTemplate: null,
+    labelTemplateFunction: (el) => el.ariaLabel,
+    triggerElementSelector: null,
+    triggerType: "focus",
+  },
+];
+
+function parseDom() {
+  const commands = [];
+
+  commandGenerators.forEach((generator) => {
+    document.querySelectorAll(generator.scopeSelector).forEach((scope) => {
+      const labelElement = generator.labelElementSelector
+        ? scope.querySelector(generator.labelElementSelector)
+        : scope;
+
+      commands.push({
+        scope,
+        label: generator.labelTemplateFunction
+          ? generator.labelTemplateFunction(labelElement)
+          : generator.labelTemplate
+          ? interpretStringTemplate(generator.labelTemplate, labelElement)
+          : null,
+        triggerElementSelector: null,
+        triggerType: generator.triggerType,
+      });
+    });
+  });
+
+  return commands;
+}
+
+store.commands = parseDom();
+
+console.log(store.commands);
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
-    vm.projects = [
-      {
-        id: 2,
-        name: "Maybe Inc. / Website Redesign",
-        url: "#",
-      },
-    ];
     vm.open = !vm.open;
   }
 });
