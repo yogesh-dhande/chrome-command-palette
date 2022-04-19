@@ -71,6 +71,7 @@
               "
               placeholder="Search..."
               @change="query = $event.target.value"
+              autocomplete="off"
             />
           </div>
 
@@ -108,7 +109,7 @@
                     ]"
                   >
                     <component
-                      :is=""
+                      :is="getIconNameForTriggerType(command.triggerType)"
                       :class="[
                         'h-6 w-6 flex-none',
                         active ? 'text-white' : 'text-gray-500',
@@ -277,11 +278,11 @@ export default {
         }
       },
       getIconNameForTriggerType(triggerType) {
-        if (command.triggerType === "click") {
+        if (triggerType === "click") {
           return "CursorClickIcon";
-        } else if (command.triggerType === "open") {
+        } else if (triggerType === "open") {
           return "ExternalLinkIcon";
-        } else if (command.triggerType === "focus") {
+        } else if (triggerType === "focus") {
           return "AnnotationIcon";
         }
       },
