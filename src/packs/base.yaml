@@ -1,0 +1,19 @@
+"*":
+  - name: links
+    scopeSelector: a
+    labelElementSelector: null
+    labelTemplate: "{innerText}"
+    triggerElementSelector: null
+    triggerType: open
+  - name: buttons
+    scopeSelector: button
+    labelElementSelector: null
+    labelTemplate: "{innerText}"
+    triggerElementSelector: null
+    triggerType: click
+  - name: inputs
+    scopeSelector: input
+    labelElementSelector: null
+    labelTemplate: "{ariaLabel}"
+    triggerElementSelector: null
+    triggerType: focus

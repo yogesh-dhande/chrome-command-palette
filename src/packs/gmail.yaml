@@ -1,0 +1,7 @@
+mail.google.com:
+  - name: links
+    scopeSelector: a
+    labelElementSelector: null
+    labelTemplate: "{innerText}"
+    triggerElementSelector: null
+    triggerType: open

@@ -234,8 +234,6 @@ export default {
         } else if (command.triggerType === "focus") {
           triggerElement.focus();
         }
-
-        this.visible = false;
       },
       getIconNameForTriggerType(triggerType) {
         if (triggerType === "click") {

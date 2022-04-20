@@ -1,6 +1,8 @@
 import { createApp } from "vue";
 import Popup from "./Popup.vue";
 import "@/styles/main.css";
+import packs from "./packs.json";
+import { renderTemplateString } from "./labels";
 
 const MOUNT_EL_ID = "as-awesome-extension";
 
@@ -20,51 +22,26 @@ const vm = createApp(Popup, {
   store,
 }).mount(mountEl);
 
-function interpretStringTemplate(template, el) {
-  return template;
-}
+const commandTemplates = [];
 
-const commandGenerators = [
-  {
-    scopeSelector: "a",
-    labelElementSelector: null,
-    labelTemplate: null,
-    labelTemplateFunction: (el) => el.innerText,
-    triggerElementSelector: null,
-    triggerType: "open",
-  },
-  {
-    scopeSelector: "button",
-    labelElementSelector: null,
-    labelTemplate: null,
-    labelTemplateFunction: (el) => el.innerText,
-    triggerElementSelector: null,
-    triggerType: "click",
-  },
-  {
-    scopeSelector: "input",
-    labelElementSelector: null,
-    labelTemplate: null,
-    labelTemplateFunction: (el) => el.ariaLabel,
-    triggerElementSelector: null,
-    triggerType: "focus",
-  },
-];
+Object.keys(packs).forEach((urlpattern) => {
+  if ((urlpattern === "*") | window.location.href.includes(urlpattern)) {
+    commandTemplates.push(...packs[urlpattern]);
+  }
+});
+
+console.log(commandTemplates);
 
 function parseDom() {
   const commands = [];
 
-  commandGenerators.forEach((generator) => {
+  commandTemplates.forEach((generator) => {
     document.querySelectorAll(generator.scopeSelector).forEach((scope) => {
       const labelElement = generator.labelElementSelector
         ? scope.querySelector(generator.labelElementSelector)
         : scope;
 
-      const label = generator.labelTemplateFunction
-        ? generator.labelTemplateFunction(labelElement)
-        : generator.labelTemplate
-        ? interpretStringTemplate(generator.labelTemplate, labelElement)
-        : null;
+      const label = renderTemplateString(generator.labelTemplate, labelElement);
 
       if (label && label !== "#") {
         commands.push({

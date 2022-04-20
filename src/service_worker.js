@@ -14,6 +14,7 @@ chrome.action.onClicked.addListener(activateExtension);
 chrome.commands.onCommand.addListener(function(command) {
   switch (command) {
     case "activate_extension":
+      chrome.commands.getAll((commands) => console.log(commands));
       getCurrentTab().then(activateExtension);
       return true;
     default:
