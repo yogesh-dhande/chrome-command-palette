@@ -60,16 +60,20 @@ function parseDom() {
         ? scope.querySelector(generator.labelElementSelector)
         : scope;
 
-      commands.push({
-        scope,
-        label: generator.labelTemplateFunction
-          ? generator.labelTemplateFunction(labelElement)
-          : generator.labelTemplate
-          ? interpretStringTemplate(generator.labelTemplate, labelElement)
-          : null,
-        triggerElementSelector: null,
-        triggerType: generator.triggerType,
-      });
+      const label = generator.labelTemplateFunction
+        ? generator.labelTemplateFunction(labelElement)
+        : generator.labelTemplate
+        ? interpretStringTemplate(generator.labelTemplate, labelElement)
+        : null;
+
+      if (label && label !== "#") {
+        commands.push({
+          scope,
+          label,
+          triggerElementSelector: null,
+          triggerType: generator.triggerType,
+        });
+      }
     });
   });
 
@@ -82,6 +86,6 @@ console.log(store.commands);
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
-    vm.open = !vm.open;
+    vm.visible = !vm.visible;
   }
 });

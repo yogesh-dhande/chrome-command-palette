@@ -1,9 +1,9 @@
 <template>
-  <TransitionRoot :show="open" as="template" @after-leave="query = ''">
+  <TransitionRoot :show="visible" as="template" @after-leave="query = ''">
     <Dialog
       as="div"
       class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
-      @close="open = false"
+      @close="visible = false"
     >
       <TransitionChild
         as="template"
@@ -233,7 +233,7 @@ export default {
   },
   setup(props) {
     const recent = props.store.commands[0];
-    const open = ref(false);
+    const visible = ref(false);
     const state = reactive({
       currentTab: null,
     });
@@ -253,7 +253,7 @@ export default {
     );
 
     return {
-      open,
+      visible,
       ...toRefs(state),
       query,
       recent,
