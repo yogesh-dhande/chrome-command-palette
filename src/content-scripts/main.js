@@ -80,12 +80,12 @@ function parseDom() {
   return commands;
 }
 
-store.commands = parseDom();
-
-console.log(store.commands);
-
 chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
+    if (vm.visible) {
+      store.commands = parseDom();
+      console.log(store.commands);
+    }
   }
 });

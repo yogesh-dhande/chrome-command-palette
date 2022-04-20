@@ -126,43 +126,6 @@
                 </ComboboxOption>
               </ul>
             </li>
-            <li v-if="query === ''" class="p-2">
-              <h2 class="sr-only">Quick actions</h2>
-              <ul class="text-sm text-gray-400">
-                <ComboboxOption
-                  v-for="action in quickActions"
-                  :key="action.shortcut"
-                  :value="action"
-                  as="template"
-                  v-slot="{ active }"
-                >
-                  <li
-                    :class="[
-                      'flex cursor-default select-none items-center rounded-md px-3 py-2',
-                      active && 'bg-gray-800 text-white',
-                    ]"
-                  >
-                    <component
-                      :is="action.icon"
-                      :class="[
-                        'h-6 w-6 flex-none',
-                        active ? 'text-white' : 'text-gray-500',
-                      ]"
-                      aria-hidden="true"
-                    />
-                    <span class="ml-3 flex-auto truncate">{{
-                      action.name
-                    }}</span>
-                    <span
-                      class="ml-3 flex-none text-xs font-semibold text-gray-400"
-                    >
-                      <kbd class="font-sans">⌘</kbd>
-                      <kbd class="font-sans">{{ action.shortcut }}</kbd>
-                    </span>
-                  </li>
-                </ComboboxOption>
-              </ul>
-            </li>
           </ComboboxOptions>
 
           <div
@@ -187,13 +150,9 @@
 import { computed, ref, onMounted, reactive, toRefs } from "vue";
 import { SearchIcon } from "@heroicons/vue/solid";
 import {
-  DocumentAddIcon,
-  ExternalLinkIcon,
+  LinkIcon,
   AnnotationIcon,
   CursorClickIcon,
-  FolderAddIcon,
-  HashtagIcon,
-  TagIcon,
 } from "@heroicons/vue/outline";
 import {
   Combobox,
@@ -206,12 +165,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 
-const quickActions = [
-  { name: "Add new file...", icon: DocumentAddIcon, shortcut: "N", url: "#" },
-  { name: "Add new folder...", icon: FolderAddIcon, shortcut: "F", url: "#" },
-  { name: "Add hashtag...", icon: HashtagIcon, shortcut: "H", url: "#" },
-  { name: "Add label...", icon: TagIcon, shortcut: "L", url: "#" },
-];
+import { isValidHttpUrl } from "./validation";
 
 export default {
   props: {
@@ -226,7 +180,7 @@ export default {
     DialogOverlay,
     AnnotationIcon,
     CursorClickIcon,
-    ExternalLinkIcon,
+    LinkIcon,
     SearchIcon,
     TransitionChild,
     TransitionRoot,
@@ -257,7 +211,6 @@ export default {
       ...toRefs(state),
       query,
       recent,
-      quickActions,
       filteredCommands,
       onSelect(command) {
         console.log(command);
@@ -269,19 +222,26 @@ export default {
         if (command.triggerType === "click") {
           triggerElement.click();
         } else if (command.triggerType === "open") {
-          window.open(
-            triggerElement.href,
-            triggerElement.target ? triggerElement.target : "_self"
-          );
+          const url = triggerElement.href;
+          if (isValidHttpUrl(url)) {
+            window.open(
+              url,
+              triggerElement.target ? triggerElement.target : "_self"
+            );
+          } else {
+            triggerElement.click();
+          }
         } else if (command.triggerType === "focus") {
           triggerElement.focus();
         }
+
+        this.visible = false;
       },
       getIconNameForTriggerType(triggerType) {
         if (triggerType === "click") {
           return "CursorClickIcon";
         } else if (triggerType === "open") {
-          return "ExternalLinkIcon";
+          return "LinkIcon";
         } else if (triggerType === "focus") {
           return "AnnotationIcon";
         }
