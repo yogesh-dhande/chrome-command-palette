@@ -1,19 +1,55 @@
 "*":
   - name: links
-    scopeSelector: a
-    labelElementSelector: null
-    labelTemplate: "{innerText}"
-    triggerElementSelector: null
-    triggerType: open
+    scope:
+      selector: a
+    label:
+      selector: null
+      template: "{innerText}"
+    trigger:
+      selector: null
+      type: open
   - name: buttons
-    scopeSelector: button
-    labelElementSelector: null
-    labelTemplate: "{innerText}"
-    triggerElementSelector: null
-    triggerType: click
+    scope:
+      selector: button
+    label:
+      selector: null
+      template: button
+    trigger:
+      selector: null
+      type: click
   - name: inputs
-    scopeSelector: input
-    labelElementSelector: null
-    labelTemplate: "{ariaLabel}"
-    triggerElementSelector: null
-    triggerType: focus
+    scope:
+      selector: input
+    label:
+      selector: null
+      template: input
+    trigger:
+      selector: null
+      type: focus
+  - name: textareas
+    scope:
+      selector: textarea
+    label:
+      selector: null
+      template: input
+    trigger:
+      selector: null
+      type: focus
+  - name: role-links
+    scope:
+      selector: '[role="link"]'
+    label:
+      selector: null
+      template: "{innerText}"
+    trigger:
+      selector: null
+      type: open
+  - name: role-buttons
+    scope:
+      selector: '[role="button"]'
+    label:
+      selector: null
+      template: button
+    trigger:
+      selector: null
+      type: click

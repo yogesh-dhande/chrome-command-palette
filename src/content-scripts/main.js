@@ -4,23 +4,13 @@ import "@/styles/main.css";
 import packs from "./packs.json";
 import { renderTemplateString } from "./labels";
 
-const MOUNT_EL_ID = "as-awesome-extension";
-
-let mountEl = document.getElementById(MOUNT_EL_ID);
-if (mountEl) {
-  mountEl.innerHTML = "";
-}
-mountEl = document.createElement("div");
-mountEl.setAttribute("id", MOUNT_EL_ID);
-document.body.appendChild(mountEl);
-
 const store = {
   commands: [],
 };
 
 const vm = createApp(Popup, {
   store,
-}).mount(mountEl);
+}).mount(document.body.lastElementChild);
 
 const commandTemplates = [];
 
@@ -35,34 +25,39 @@ console.log(commandTemplates);
 function parseDom() {
   const commands = [];
 
-  commandTemplates.forEach((generator) => {
-    document.querySelectorAll(generator.scopeSelector).forEach((scope) => {
-      const labelElement = generator.labelElementSelector
-        ? scope.querySelector(generator.labelElementSelector)
+  commandTemplates.forEach((template) => {
+    document.querySelectorAll(template.scope.selector).forEach((scope) => {
+      const labelElement = template.label.selector
+        ? scope.querySelector(template.label.selector)
         : scope;
 
-      const label = renderTemplateString(generator.labelTemplate, labelElement);
+      const label = renderTemplateString(template.label.template, labelElement);
 
       if (label && label !== "#") {
         commands.push({
           scope,
           label,
-          triggerElementSelector: null,
-          triggerType: generator.triggerType,
+          trigger: template.trigger,
         });
       }
     });
   });
-
+  console.log(commands);
   return commands;
 }
 
 chrome.runtime.onMessage.addListener((message) => {
+  // document
+  //   .querySelector('[data-tooltip="Older"]')
+  //   .dispatchEvent(new MouseEvent("mousedown"));
+  // document
+  //   .querySelector('[data-tooltip="Older"]')
+  //   .dispatchEvent(new MouseEvent("mouseup"));
+
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
       store.commands = parseDom();
-      console.log(store.commands);
     }
   }
 });

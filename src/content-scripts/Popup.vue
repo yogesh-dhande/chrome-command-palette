@@ -2,12 +2,13 @@
   <TransitionRoot :show="visible" as="template" @after-leave="query = ''">
     <Dialog
       as="div"
-      class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
+      class="fixed inset-0 z-100 overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
+      :class="{ 'z-0': !visible }"
       @close="visible = false"
     >
       <TransitionChild
         as="template"
-        enter="ease-out duration-300"
+        enter="ease-out duration-100"
         enter-from="opacity-0"
         enter-to="opacity-100"
         leave="ease-in duration-200"
@@ -109,7 +110,7 @@
                     ]"
                   >
                     <component
-                      :is="getIconNameForTriggerType(command.triggerType)"
+                      :is="getIconNameForTriggerType(command.trigger.type)"
                       :class="[
                         'h-6 w-6 flex-none',
                         active ? 'text-white' : 'text-gray-500',
@@ -147,7 +148,8 @@
 </template>
 
 <script>
-import { computed, ref, onMounted, reactive, toRefs } from "vue";
+import { computed, ref, onMounted, reactive, toRefs, nextTick } from "vue";
+
 import { SearchIcon } from "@heroicons/vue/solid";
 import {
   LinkIcon,
@@ -165,7 +167,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 
-import { isValidHttpUrl } from "./validation";
+import { trigger, getIconNameForTriggerType } from "./triggers";
 
 export default {
   props: {
@@ -212,39 +214,25 @@ export default {
       query,
       recent,
       filteredCommands,
-      onSelect(command) {
-        console.log(command);
-        const triggerElement = command.triggerElementSelector
-          ? command.scope.querySelector(command.triggerElementSelector)
-          : command.scope;
-
-        console.log(triggerElement);
-        if (command.triggerType === "click") {
-          triggerElement.click();
-        } else if (command.triggerType === "open") {
-          const url = triggerElement.href;
-          if (isValidHttpUrl(url)) {
-            window.open(
-              url,
-              triggerElement.target ? triggerElement.target : "_self"
-            );
-          } else {
-            triggerElement.click();
-          }
-        } else if (command.triggerType === "focus") {
-          triggerElement.focus();
-        }
-      },
-      getIconNameForTriggerType(triggerType) {
-        if (triggerType === "click") {
-          return "CursorClickIcon";
-        } else if (triggerType === "open") {
-          return "LinkIcon";
-        } else if (triggerType === "focus") {
-          return "AnnotationIcon";
-        }
-      },
+      getIconNameForTriggerType,
     };
+  },
+  methods: {
+    async onSelect(command) {
+      this.visible = false;
+      await nextTick();
+
+      const selector = command.trigger.selector;
+      const type = command.trigger.type;
+
+      const triggerElement = selector
+        ? command.scope.querySelector(selector)
+        : command.scope;
+
+      console.log(triggerElement);
+
+      trigger(type, triggerElement);
+    },
   },
 };
 </script>

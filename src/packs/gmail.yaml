@@ -1,7 +1,55 @@
 mail.google.com:
-  - name: links
-    scopeSelector: a
-    labelElementSelector: null
-    labelTemplate: "{innerText}"
-    triggerElementSelector: null
-    triggerType: open
+  - name: email-archive
+    scope:
+      selector: '[role="row"]'
+    label:
+      selector: '[role="link"]'
+      template: Archive - {innerText}
+    trigger:
+      selector: '[data-tooltip="Archive"]'
+      type: click
+  - name: email-delete
+    scope:
+      selector: '[role="row"]'
+    label:
+      selector: '[role="link"]'
+      template: Delete - {innerText}
+    trigger:
+      selector: '[data-tooltip="Delete"]'
+      type: click
+  - name: email-mark-unread
+    scope:
+      selector: '[role="row"]'
+    label:
+      selector: '[role="link"]'
+      template: Mark Unread - {innerText}
+    trigger:
+      selector: '[data-tooltip="Mark as unread"]'
+      type: click
+  - name: email-snooze
+    scope:
+      selector: '[role="row"]'
+    label:
+      selector: '[role="link"]'
+      template: Snooze - {innerText}
+    trigger:
+      selector: '[data-tooltip="Snooze"]'
+      type: click
+  - name: email-star
+    scope:
+      selector: '[role="row"]'
+    label:
+      selector: '[role="link"]'
+      template: Star - {innerText}
+    trigger:
+      selector: '[role="button"]'
+      type: click
+  - name: email-select
+    scope:
+      selector: '[role="row"]'
+    label:
+      selector: '[role="link"]'
+      template: Select - {innerText}
+    trigger:
+      selector: '[role="checkbox"]'
+      type: click
