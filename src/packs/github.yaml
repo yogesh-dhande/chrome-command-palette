@@ -8,3 +8,23 @@ github.com:
     trigger:
       selector: null
       type: click
+  - trigger:
+      url: /pulls/assigned
+    label:
+      template: "Pull Requests: Assigned"
+  - trigger:
+      url: /pulls/mentioned
+    label:
+      template: "Pull Requests: Mentioned"
+  - trigger:
+      url: /pulls/review-requested
+    label:
+      template: "Pull Requests: Review Requests"
+  - trigger:
+      url: /issues/assigned
+    label:
+      template: "Issues: Assigned"
+  - trigger:
+      url: /issues/mentioned
+    label:
+      template: "Issues: Mentioned"

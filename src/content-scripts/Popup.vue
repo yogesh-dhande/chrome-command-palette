@@ -110,7 +110,7 @@
                     ]"
                   >
                     <component
-                      :is="getIconNameForTriggerType(command.trigger.type)"
+                      :is="getIconNameForTrigger(command.trigger)"
                       :class="[
                         'h-6 w-6 flex-none',
                         active ? 'text-white' : 'text-gray-500',
@@ -167,7 +167,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 
-import { trigger, getIconNameForTriggerType } from "./triggers";
+import { openUrl, trigger, getIconNameForTrigger } from "./triggers";
 
 export default {
   props: {
@@ -214,7 +214,7 @@ export default {
       query,
       recent,
       filteredCommands,
-      getIconNameForTriggerType,
+      getIconNameForTrigger,
     };
   },
   methods: {
@@ -222,16 +222,24 @@ export default {
       this.visible = false;
       await nextTick();
 
-      const selector = command.trigger.selector;
-      const type = command.trigger.type;
+      if (command.scope) {
+        const selector = command.trigger.selector;
+        const type = command.trigger.type;
 
-      const triggerElement = selector
-        ? command.scope.querySelector(selector)
-        : command.scope;
+        const triggerElement = selector
+          ? command.scope.querySelector(selector)
+          : command.scope;
 
-      console.log(triggerElement);
+        console.log(triggerElement);
 
-      trigger(type, triggerElement);
+        trigger(type, triggerElement);
+      } else if (command.trigger?.url) {
+        const url = command.trigger.url;
+        // TODO: add the ability to open urls in a new tab
+        if (url.startsWith("/")) {
+          openUrl(`${window.location.origin}${url}`);
+        }
+      }
     },
   },
 };

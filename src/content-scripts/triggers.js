@@ -16,6 +16,10 @@ function simulateMouseClick(targetNode) {
   });
 }
 
+export function openUrl(url, target) {
+  window.open(url, target ? target : "_self");
+}
+
 export function trigger(type, el) {
   if (type === "click") {
     el.click();
@@ -23,7 +27,7 @@ export function trigger(type, el) {
   } else if (type === "open") {
     const url = el.href;
     if (isValidHttpUrl(url)) {
-      window.open(url, el.target ? el.target : "_self");
+      openUrl(url, el.target);
     } else {
       el.click();
     }
@@ -32,10 +36,11 @@ export function trigger(type, el) {
   }
 }
 
-export function getIconNameForTriggerType(type) {
+export function getIconNameForTrigger(trigger) {
+  const type = trigger.type;
   if (type === "click") {
     return "CursorClickIcon";
-  } else if (type === "open") {
+  } else if ((type === "open") | (trigger.url !== null)) {
     return "LinkIcon";
   } else if (type === "focus") {
     return "AnnotationIcon";

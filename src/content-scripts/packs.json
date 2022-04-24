@@ -6,11 +6,9 @@
         "selector": "a"
       },
       "label": {
-        "selector": null,
         "template": "{innerText}"
       },
       "trigger": {
-        "selector": null,
         "type": "open"
       }
     },
@@ -20,11 +18,9 @@
         "selector": "button"
       },
       "label": {
-        "selector": null,
         "template": "button"
       },
       "trigger": {
-        "selector": null,
         "type": "click"
       }
     },
@@ -34,11 +30,9 @@
         "selector": "input"
       },
       "label": {
-        "selector": null,
         "template": "input"
       },
       "trigger": {
-        "selector": null,
         "type": "focus"
       }
     },
@@ -48,11 +42,9 @@
         "selector": "textarea"
       },
       "label": {
-        "selector": null,
         "template": "input"
       },
       "trigger": {
-        "selector": null,
         "type": "focus"
       }
     },
@@ -62,11 +54,9 @@
         "selector": "[role=\"link\"]"
       },
       "label": {
-        "selector": null,
         "template": "{innerText}"
       },
       "trigger": {
-        "selector": null,
         "type": "open"
       }
     },
@@ -76,11 +66,9 @@
         "selector": "[role=\"button\"]"
       },
       "label": {
-        "selector": null,
         "template": "button"
       },
       "trigger": {
-        "selector": null,
         "type": "click"
       }
     }
@@ -98,6 +86,46 @@
       "trigger": {
         "selector": null,
         "type": "click"
+      }
+    },
+    {
+      "trigger": {
+        "url": "/pulls/assigned"
+      },
+      "label": {
+        "template": "Pull Requests: Assigned"
+      }
+    },
+    {
+      "trigger": {
+        "url": "/pulls/mentioned"
+      },
+      "label": {
+        "template": "Pull Requests: Mentioned"
+      }
+    },
+    {
+      "trigger": {
+        "url": "/pulls/review-requested"
+      },
+      "label": {
+        "template": "Pull Requests: Review Requests"
+      }
+    },
+    {
+      "trigger": {
+        "url": "/issues/assigned"
+      },
+      "label": {
+        "template": "Issues: Assigned"
+      }
+    },
+    {
+      "trigger": {
+        "url": "/issues/mentioned"
+      },
+      "label": {
+        "template": "Issues: Mentioned"
       }
     }
   ],

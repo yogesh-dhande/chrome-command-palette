@@ -3,53 +3,41 @@
     scope:
       selector: a
     label:
-      selector: null
       template: "{innerText}"
     trigger:
-      selector: null
       type: open
   - name: buttons
     scope:
       selector: button
     label:
-      selector: null
       template: button
     trigger:
-      selector: null
       type: click
   - name: inputs
     scope:
       selector: input
     label:
-      selector: null
       template: input
     trigger:
-      selector: null
       type: focus
   - name: textareas
     scope:
       selector: textarea
     label:
-      selector: null
       template: input
     trigger:
-      selector: null
       type: focus
   - name: role-links
     scope:
       selector: '[role="link"]'
     label:
-      selector: null
       template: "{innerText}"
     trigger:
-      selector: null
       type: open
   - name: role-buttons
     scope:
       selector: '[role="button"]'
     label:
-      selector: null
       template: button
     trigger:
-      selector: null
       type: click
