@@ -1,0 +1,10 @@
+github.com:
+  - name: hydro-click
+    scope:
+      selector: "[data-hydro-click]"
+    label:
+      selector: null
+      template: button
+    trigger:
+      selector: null
+      type: click

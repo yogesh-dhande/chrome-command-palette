@@ -18,7 +18,8 @@ function simulateMouseClick(targetNode) {
 
 export function trigger(type, el) {
   if (type === "click") {
-    simulateMouseClick(el);
+    el.click();
+    // simulateMouseClick(el);
   } else if (type === "open") {
     const url = el.href;
     if (isValidHttpUrl(url)) {

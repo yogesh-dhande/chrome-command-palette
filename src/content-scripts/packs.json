@@ -57,7 +57,7 @@
       }
     },
     {
-      "name": "div-links",
+      "name": "role-links",
       "scope": {
         "selector": "[role=\"link\"]"
       },
@@ -71,9 +71,25 @@
       }
     },
     {
-      "name": "div-buttons",
+      "name": "role-buttons",
       "scope": {
         "selector": "[role=\"button\"]"
+      },
+      "label": {
+        "selector": null,
+        "template": "button"
+      },
+      "trigger": {
+        "selector": null,
+        "type": "click"
+      }
+    }
+  ],
+  "github.com": [
+    {
+      "name": "hydro-click",
+      "scope": {
+        "selector": "[data-hydro-click]"
       },
       "label": {
         "selector": null,
