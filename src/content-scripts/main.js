@@ -24,7 +24,8 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
-      store.commands = parseDomForCommands(commandTemplates);
+      store.commands = [];
+      parseDomForCommands(commandTemplates, store.commands);
     }
   }
 });

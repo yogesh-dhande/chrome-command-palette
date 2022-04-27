@@ -53,3 +53,10 @@ mail.google.com:
     trigger:
       selector: '[role="checkbox"]'
       type: click
+  - name: toolbar-buttons
+    scope:
+      selector: '.aeH [role="button"]'
+    label:
+      template: button
+    trigger:
+      type: simulatedClick

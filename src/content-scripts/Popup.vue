@@ -8,10 +8,10 @@
     >
       <TransitionChild
         as="template"
-        enter="ease-out duration-100"
+        enter="ease-out duration-75"
         enter-from="opacity-0"
         enter-to="opacity-100"
-        leave="ease-in duration-100"
+        leave="ease-in duration-75"
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
@@ -25,7 +25,7 @@
         enter="ease-out duration-300"
         enter-from="opacity-0 scale-95"
         enter-to="opacity-100 scale-100"
-        leave="ease-in duration-100"
+        leave="ease-in duration-75"
         leave-from="opacity-100 scale-100"
         leave-to="opacity-0 scale-95"
       >
@@ -217,8 +217,7 @@ export default {
   methods: {
     onSelect(command) {
       this.visible = false;
-      // Need the timeout to ensure inputs can be focused
-      setTimeout(() => this.triggerCommand(command), 200);
+      this.triggerCommand(command);
     },
     triggerCommand(command) {
       if (command.scope) {

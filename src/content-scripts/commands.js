@@ -1,9 +1,7 @@
 import { renderTemplateString } from "./labels";
 import { isHidden } from "./utils";
 
-export function parseDomForCommands(commandTemplates) {
-  const commands = [];
-
+export function parseDomForCommands(commandTemplates, commands) {
   commandTemplates.forEach((template) => {
     if (template.scope?.selector) {
       document.querySelectorAll(template.scope.selector).forEach((scope) => {
