@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import Popup from "./Popup.vue";
 import "@/styles/main.css";
 import packs from "./packs.json";
-import { renderTemplateString } from "./labels";
+import { parseDomForCommands } from "./commands";
 
 const store = {
   commands: [],
@@ -20,54 +20,11 @@ Object.keys(packs).forEach((urlpattern) => {
   }
 });
 
-console.log(commandTemplates);
-
-function parseDom() {
-  const commands = [];
-
-  commandTemplates.forEach((template) => {
-    if (template.scope?.selector) {
-      document.querySelectorAll(template.scope.selector).forEach((scope) => {
-        const labelElement = template.label.selector
-          ? scope.querySelector(template.label.selector)
-          : scope;
-
-        const label = renderTemplateString(
-          template.label.template,
-          labelElement
-        );
-
-        if (label && label !== "#") {
-          commands.push({
-            scope,
-            label,
-            trigger: template.trigger,
-          });
-        }
-      });
-    } else if (template.trigger.url) {
-      // this command is to open the specified url
-      commands.push({
-        label: template.label.template,
-        trigger: template.trigger,
-      });
-    }
-  });
-  return commands;
-}
-
 chrome.runtime.onMessage.addListener((message) => {
-  // document
-  //   .querySelector('[data-tooltip="Older"]')
-  //   .dispatchEvent(new MouseEvent("mousedown"));
-  // document
-  //   .querySelector('[data-tooltip="Older"]')
-  //   .dispatchEvent(new MouseEvent("mouseup"));
-
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
-      store.commands = parseDom();
+      store.commands = parseDomForCommands(commandTemplates);
     }
   }
 });

@@ -11,7 +11,7 @@
         enter="ease-out duration-100"
         enter-from="opacity-0"
         enter-to="opacity-100"
-        leave="ease-in duration-200"
+        leave="ease-in duration-100"
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
@@ -25,7 +25,7 @@
         enter="ease-out duration-300"
         enter-from="opacity-0 scale-95"
         enter-to="opacity-100 scale-100"
-        leave="ease-in duration-200"
+        leave="ease-in duration-100"
         leave-from="opacity-100 scale-100"
         leave-to="opacity-0 scale-95"
       >
@@ -148,7 +148,7 @@
 </template>
 
 <script>
-import { computed, ref, onMounted, reactive, toRefs, nextTick } from "vue";
+import { computed, ref, reactive, toRefs } from "vue";
 
 import { SearchIcon } from "@heroicons/vue/solid";
 import {
@@ -193,9 +193,6 @@ export default {
     const state = reactive({
       currentTab: null,
     });
-    onMounted(() => {
-      chrome.runtime.sendMessage({ type: "POPUP_INIT" });
-    });
 
     const query = ref("");
     const filteredCommands = computed(() =>
@@ -218,22 +215,16 @@ export default {
     };
   },
   methods: {
-    async onSelect(command) {
+    onSelect(command) {
       this.visible = false;
-      await nextTick();
-
+      // Need the timeout to ensure inputs can be focused
+      setTimeout(() => this.triggerCommand(command), 200);
+    },
+    triggerCommand(command) {
       if (command.scope) {
-        const selector = command.trigger.selector;
-        const type = command.trigger.type;
-
-        const triggerElement = selector
-          ? command.scope.querySelector(selector)
-          : command.scope;
-
-        console.log(triggerElement);
-
-        trigger(type, triggerElement);
+        trigger(command.trigger.type, command.triggerElement);
       } else if (command.trigger?.url) {
+        // Command is to open a specified link
         const url = command.trigger.url;
         // TODO: add the ability to open urls in a new tab
         if (url.startsWith("/")) {

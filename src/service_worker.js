@@ -12,23 +12,9 @@ async function activateExtension(tab) {
 chrome.action.onClicked.addListener(activateExtension);
 
 chrome.commands.onCommand.addListener(function(command) {
-  switch (command) {
-    case "activate_extension":
-      chrome.commands.getAll((commands) => console.log(commands));
-      getCurrentTab().then(activateExtension);
-      return true;
-    default:
-      console.log(`Command ${command} not found`);
+  if (command === "activate_extension") {
+    chrome.commands.getAll((commands) => console.log(commands));
+    getCurrentTab().then(activateExtension);
   }
-});
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  switch (request.type) {
-    case "POPUP_INIT":
-      // TODO remove if unused
-      getCurrentTab().then(sendResponse);
-      return true;
-    default:
-      break;
-  }
+  return true;
 });

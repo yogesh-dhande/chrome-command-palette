@@ -22,8 +22,8 @@ export function openUrl(url, target) {
 
 export function trigger(type, el) {
   if (type === "click") {
-    el.click();
-    // simulateMouseClick(el);
+    // el.click();
+    simulateMouseClick(el);
   } else if (type === "open") {
     const url = el.href;
     if (isValidHttpUrl(url)) {
@@ -40,7 +40,7 @@ export function getIconNameForTrigger(trigger) {
   const type = trigger.type;
   if (type === "click") {
     return "CursorClickIcon";
-  } else if ((type === "open") | (trigger.url !== null)) {
+  } else if ((type === "open") | (trigger.url !== undefined)) {
     return "LinkIcon";
   } else if (type === "focus") {
     return "AnnotationIcon";
