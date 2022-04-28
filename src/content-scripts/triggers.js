@@ -24,7 +24,7 @@ export function trigger(type, el) {
     el.click();
   }
   if (type === "simulatedClick") {
-    setTimeout(() => simulateMouseClick(el), 100);
+    setTimeout(() => simulateMouseClick(el), 200);
   } else if (type === "open") {
     const url = el.href;
     if (isValidHttpUrl(url)) {
@@ -33,7 +33,7 @@ export function trigger(type, el) {
       el.click();
     }
   } else if (type === "focus") {
-    setTimeout(() => el.focus(), 100);
+    setTimeout(() => el.focus(), 200);
   }
 }
 

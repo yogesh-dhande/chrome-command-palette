@@ -1,37 +1,54 @@
 import { renderTemplateString } from "./labels";
-import { isHidden } from "./utils";
+import packs from "./packs.json";
 
-export function parseDomForCommands(commandTemplates, commands) {
+function isHidden(el) {
+  const style = window.getComputedStyle(el);
+  return style.display === "none";
+}
+
+const commandTemplates = [];
+
+Object.keys(packs).forEach((urlpattern) => {
+  if ((urlpattern === "*") | window.location.href.includes(urlpattern)) {
+    commandTemplates.push(...packs[urlpattern]);
+  }
+});
+
+export function parseDomForCommands(commands) {
   commandTemplates.forEach((template) => {
     if (template.scope?.selector) {
-      document.querySelectorAll(template.scope.selector).forEach((scope) => {
-        const labelElement = template.label.selector
-          ? scope.querySelector(template.label.selector)
-          : scope;
+      document
+        .querySelectorAll(template.scope.selector)
+        .forEach((scopeElement) => {
+          const labelElement = template.label.selector
+            ? scopeElement.querySelector(template.label.selector)
+            : scopeElement;
 
-        const label = renderTemplateString(
-          template.label.template,
-          labelElement
-        );
+          const labelText = renderTemplateString(
+            template.label.template,
+            labelElement
+          );
 
-        const triggerElement = template.trigger.selector
-          ? scope.querySelector(template.trigger.selector)
-          : scope;
+          const triggerElement = template.trigger.selector
+            ? scopeElement.querySelector(template.trigger.selector)
+            : scopeElement;
 
-        if (
-          label &&
-          label !== "#" &&
-          triggerElement &&
-          !isHidden(triggerElement)
-        ) {
-          commands.push({
-            scope,
-            label,
-            triggerElement,
-            trigger: template.trigger,
-          });
-        }
-      });
+          if (
+            labelText &&
+            labelText !== "#" &&
+            triggerElement &&
+            !isHidden(triggerElement)
+          ) {
+            commands.push({
+              scopeElement,
+              labelText,
+              triggerElement,
+              scope: template.scope,
+              label: template.label,
+              trigger: template.trigger,
+            });
+          }
+        });
     } else if (template.trigger.url) {
       // this command is to open the specified url
       commands.push({

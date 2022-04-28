@@ -1,12 +1,19 @@
-export function isHidden(el) {
-  const style = window.getComputedStyle(el);
-  return style.display === "none";
-}
+import { parseDomForCommands } from "./commands";
 
-function download(data, filename) {
+export function downloadCommands(filename) {
+  const commands = parseDomForCommands([]);
   // TODO need to make commands flat so I can use Object.values here
-  let csvContent =
-    "data:text/csv;charset=utf-8," + data.map((e) => e.join(",")).join("\n");
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  csvContent +=
+    "scopeSelector,labelSelector,labelTemplate,labelText,triggerSelector,triggerType,triggerUrl,triggerElement\n";
+
+  csvContent += commands
+    .map(
+      (command) =>
+        `${command.scope.selector},${command.label.selector},${command.label.template},${command.labelText},${command.trigger.selector},${command.trigger.type},${command.trigger.url},${command.triggerElement.outerHTML}`
+    )
+    .join("\n");
 
   var encodedUri = encodeURI(csvContent);
   var link = document.createElement("a");

@@ -73,11 +73,13 @@
               placeholder="Search..."
               @change="query = $event.target.value"
               autocomplete="off"
+              @keyup.enter="selectFirst"
+              @keydown.ctrl="selectNth"
             />
           </div>
 
           <ComboboxOptions
-            v-if="query === '' || filteredCommands.length > 0"
+            v-if="query === '' || filteredCommandResults.length > 0"
             static
             class="
               max-h-80
@@ -95,11 +97,11 @@
               </h2>
               <ul class="text-sm text-gray-400">
                 <ComboboxOption
-                  v-for="(command, i) in query === ''
+                  v-for="(commandResult, i) in query === ''
                     ? recent
-                    : filteredCommands"
+                    : filteredCommandResults"
                   :key="i"
-                  :value="command"
+                  :value="commandResult"
                   as="template"
                   v-slot="{ active }"
                 >
@@ -110,18 +112,19 @@
                     ]"
                   >
                     <component
-                      :is="getIconNameForTrigger(command.trigger)"
+                      :is="getIconNameForTrigger(commandResult.obj.trigger)"
                       :class="[
                         'h-6 w-6 flex-none',
                         active ? 'text-white' : 'text-gray-500',
                       ]"
                       aria-hidden="true"
                     />
-                    <span class="ml-3 flex-auto truncate">{{
-                      command.label
-                    }}</span>
+                    <span
+                      class="ml-3 flex-auto truncate"
+                      v-html="highlight(commandResult)"
+                    ></span>
                     <span v-if="active" class="ml-3 flex-none text-gray-400"
-                      >{{ command.triggerType }}...</span
+                      >{{ commandResult.obj.triggerType }}...</span
                     >
                   </li>
                 </ComboboxOption>
@@ -130,7 +133,7 @@
           </ComboboxOptions>
 
           <div
-            v-if="query !== '' && filteredCommands.length === 0"
+            v-if="query !== '' && filteredCommandResults.length === 0"
             class="py-14 px-6 text-center sm:px-14"
           >
             <FolderIcon
@@ -168,6 +171,7 @@ import {
 } from "@headlessui/vue";
 
 import { openUrl, trigger, getIconNameForTrigger } from "./triggers";
+import { go, highlight } from "fuzzysort";
 
 export default {
   props: {
@@ -195,13 +199,12 @@ export default {
     });
 
     const query = ref("");
-    const filteredCommands = computed(() =>
+    const filteredCommandResults = computed(() =>
       query.value === ""
         ? []
-        : props.store.commands.filter((command) => {
-            return command.label
-              .toLowerCase()
-              .includes(query.value.toLowerCase());
+        : go(query.value.toLowerCase(), props.store.commands, {
+            key: "labelText",
+            limit: 10,
           })
     );
 
@@ -210,17 +213,31 @@ export default {
       ...toRefs(state),
       query,
       recent,
-      filteredCommands,
+      filteredCommandResults,
       getIconNameForTrigger,
+      highlight,
     };
   },
   methods: {
-    onSelect(command) {
+    onSelect(commandResult) {
       this.visible = false;
-      this.triggerCommand(command);
+      this.triggerCommand(commandResult.obj);
+    },
+    selectFirst() {
+      if (this.filteredCommandResults.length > 0) {
+        this.onSelect(this.filteredCommandResults[0]);
+      }
+    },
+    selectNth(evt) {
+      const n = parseInt(evt.key);
+      if (n && n < 10) {
+        if (this.filteredCommandResults.length > n - 1) {
+          this.onSelect(this.filteredCommandResults[n - 1]);
+        }
+      }
     },
     triggerCommand(command) {
-      if (command.scope) {
+      if (command.scopeElement) {
         trigger(command.trigger.type, command.triggerElement);
       } else if (command.trigger?.url) {
         // Command is to open a specified link
@@ -230,6 +247,13 @@ export default {
           openUrl(`${window.location.origin}${url}`);
         }
       }
+    },
+    highlight(commandResult) {
+      return highlight(
+        commandResult,
+        '<span class="font-bold text-red-600">',
+        "</span>"
+      );
     },
   },
 };
