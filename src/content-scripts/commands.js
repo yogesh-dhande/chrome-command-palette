@@ -52,7 +52,10 @@ export function parseDomForCommands(commands) {
     } else if (template.trigger.url) {
       // this command is to open the specified url
       commands.push({
-        label: template.label.template,
+        labelText: template.label.template,
+        trigger: template.trigger,
+        scope: template.scope,
+        label: template.label,
         trigger: template.trigger,
       });
     }

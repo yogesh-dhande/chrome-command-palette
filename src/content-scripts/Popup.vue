@@ -249,11 +249,7 @@ export default {
       }
     },
     highlight(commandResult) {
-      return highlight(
-        commandResult,
-        '<span class="font-bold text-red-600">',
-        "</span>"
-      );
+      return highlight(commandResult, '<span class="text-red-600">', "</span>");
     },
   },
 };

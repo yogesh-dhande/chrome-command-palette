@@ -11,7 +11,7 @@ export function downloadCommands(filename) {
   csvContent += commands
     .map(
       (command) =>
-        `${command.scope.selector},${command.label.selector},${command.label.template},${command.labelText},${command.trigger.selector},${command.trigger.type},${command.trigger.url},${command.triggerElement.outerHTML}`
+        `${command.scope?.selector},${command.label.selector},${command.label.template},${command.labelText},${command.trigger.selector},${command.trigger.type},${command.trigger.url},${command.triggerElement?.outerHTML}`
     )
     .join("\n");
 
