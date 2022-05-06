@@ -1,229 +1,256 @@
 {
   "*": [
     {
-      "name": "links",
-      "scope": {
-        "selector": "a"
-      },
-      "label": {
-        "template": "{innerText}"
-      },
-      "trigger": {
-        "type": "open"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "a"
+        },
+        "label": {
+          "template": "{innerText}"
+        },
+        "trigger": {
+          "type": "open"
+        }
       }
     },
     {
-      "name": "buttons",
-      "scope": {
-        "selector": "button"
-      },
-      "label": {
-        "template": "button"
-      },
-      "trigger": {
-        "type": "click"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "button"
+        },
+        "label": {
+          "template": "button"
+        },
+        "trigger": {
+          "type": "click"
+        }
       }
     },
     {
-      "name": "inputs",
-      "scope": {
-        "selector": "input"
-      },
-      "label": {
-        "template": "input"
-      },
-      "trigger": {
-        "type": "focus"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "input"
+        },
+        "label": {
+          "template": "input"
+        },
+        "trigger": {
+          "type": "focus"
+        }
       }
     },
     {
-      "name": "textareas",
-      "scope": {
-        "selector": "textarea"
-      },
-      "label": {
-        "template": "input"
-      },
-      "trigger": {
-        "type": "focus"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "textarea"
+        },
+        "label": {
+          "template": "input"
+        },
+        "trigger": {
+          "type": "focus"
+        }
       }
     },
     {
-      "name": "role-links",
-      "scope": {
-        "selector": "[role=\"link\"]"
-      },
-      "label": {
-        "template": "{innerText}"
-      },
-      "trigger": {
-        "type": "open"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[role=\"link\"]"
+        },
+        "label": {
+          "template": "{innerText}"
+        },
+        "trigger": {
+          "type": "open"
+        }
       }
     },
     {
-      "name": "role-buttons",
-      "scope": {
-        "selector": "[role=\"button\"]"
-      },
-      "label": {
-        "template": "button"
-      },
-      "trigger": {
-        "type": "click"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[role=\"button\"]"
+        },
+        "label": {
+          "template": "button"
+        },
+        "trigger": {
+          "type": "click"
+        }
       }
     }
   ],
   "github.com": [
     {
-      "name": "hydro-click",
-      "scope": {
-        "selector": "[data-hydro-click]"
-      },
-      "label": {
-        "selector": null,
-        "template": "button"
-      },
-      "trigger": {
-        "selector": null,
-        "type": "click"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[data-hydro-click]"
+        },
+        "label": {
+          "template": "button"
+        },
+        "trigger": {
+          "type": "click"
+        }
       }
     },
     {
-      "trigger": {
-        "url": "/pulls/assigned"
-      },
-      "label": {
-        "template": "Pull Requests: Assigned"
+      "type": "link",
+      "link": {
+        "url": "/pulls/assigned",
+        "label": "Pull Requests: Assigned"
       }
     },
     {
-      "trigger": {
-        "url": "/pulls/mentioned"
-      },
-      "label": {
-        "template": "Pull Requests: Mentioned"
+      "type": "link",
+      "link": {
+        "url": "/pulls/mentioned",
+        "label": "Pull Requests: Mentioned"
       }
     },
     {
-      "trigger": {
-        "url": "/pulls/review-requested"
-      },
-      "label": {
-        "template": "Pull Requests: Review Requests"
+      "type": "link",
+      "link": {
+        "url": "/pulls/review-requested",
+        "label": "Pull Requests: Review Requests"
       }
     },
     {
-      "trigger": {
-        "url": "/issues/assigned"
-      },
-      "label": {
-        "template": "Issues: Assigned"
+      "type": "link",
+      "link": {
+        "url": "/issues/assigned",
+        "label": "Issues: Assigned"
       }
     },
     {
-      "trigger": {
-        "url": "/issues/mentioned"
-      },
-      "label": {
-        "template": "Issues: Mentioned"
+      "type": "link",
+      "link": {
+        "url": "/issues/mentioned",
+        "label": "Issues: Mentioned"
       }
     }
   ],
   "mail.google.com": [
     {
-      "name": "email-archive",
-      "scope": {
-        "selector": "[role=\"row\"]"
-      },
-      "label": {
-        "selector": "[role=\"link\"]",
-        "template": "Archive - {innerText}"
-      },
-      "trigger": {
-        "selector": "[data-tooltip=\"Archive\"]",
-        "type": "click"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[role=\"row\"]"
+        },
+        "label": {
+          "selector": "[role=\"link\"]",
+          "template": "{innerText}"
+        },
+        "trigger": {
+          "selector": "[role=\"link\"]",
+          "type": "open"
+        },
+        "options": [
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Archive"
+              },
+              "trigger": {
+                "selector": "[data-tooltip=\"Archive\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Delete"
+              },
+              "trigger": {
+                "selector": "[data-tooltip=\"Delete\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Mark Unread"
+              },
+              "trigger": {
+                "selector": "[data-tooltip=\"Mark as unread\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Mark Read"
+              },
+              "trigger": {
+                "selector": "[data-tooltip=\"Mark as read\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Snooze"
+              },
+              "trigger": {
+                "selector": "[data-tooltip=\"Snooze\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Star"
+              },
+              "trigger": {
+                "selector": "[role=\"button\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Select"
+              },
+              "trigger": {
+                "selector": "[role=\"checkbox\"]",
+                "type": "click"
+              }
+            }
+          }
+        ]
       }
     },
     {
-      "name": "email-delete",
-      "scope": {
-        "selector": "[role=\"row\"]"
-      },
-      "label": {
-        "selector": "[role=\"link\"]",
-        "template": "Delete - {innerText}"
-      },
-      "trigger": {
-        "selector": "[data-tooltip=\"Delete\"]",
-        "type": "click"
-      }
-    },
-    {
-      "name": "email-mark-unread",
-      "scope": {
-        "selector": "[role=\"row\"]"
-      },
-      "label": {
-        "selector": "[role=\"link\"]",
-        "template": "Mark Unread - {innerText}"
-      },
-      "trigger": {
-        "selector": "[data-tooltip=\"Mark as unread\"]",
-        "type": "click"
-      }
-    },
-    {
-      "name": "email-snooze",
-      "scope": {
-        "selector": "[role=\"row\"]"
-      },
-      "label": {
-        "selector": "[role=\"link\"]",
-        "template": "Snooze - {innerText}"
-      },
-      "trigger": {
-        "selector": "[data-tooltip=\"Snooze\"]",
-        "type": "click"
-      }
-    },
-    {
-      "name": "email-star",
-      "scope": {
-        "selector": "[role=\"row\"]"
-      },
-      "label": {
-        "selector": "[role=\"link\"]",
-        "template": "Star - {innerText}"
-      },
-      "trigger": {
-        "selector": "[role=\"button\"]",
-        "type": "click"
-      }
-    },
-    {
-      "name": "email-select",
-      "scope": {
-        "selector": "[role=\"row\"]"
-      },
-      "label": {
-        "selector": "[role=\"link\"]",
-        "template": "Select - {innerText}"
-      },
-      "trigger": {
-        "selector": "[role=\"checkbox\"]",
-        "type": "click"
-      }
-    },
-    {
-      "name": "toolbar-buttons",
-      "scope": {
-        "selector": ".aeH [role=\"button\"]"
-      },
-      "label": {
-        "template": "button"
-      },
-      "trigger": {
-        "type": "simulatedClick"
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": ".aeH [role=\"button\"]"
+        },
+        "label": {
+          "template": "button"
+        },
+        "trigger": {
+          "type": "simulatedClick"
+        }
       }
     }
   ]

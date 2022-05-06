@@ -12,9 +12,11 @@ export function renderTemplateString(templateString, el) {
       const params = templateString.match(paramsPattern);
       cache[templateString] = params;
     }
-    cache[templateString].forEach((param) => {
-      templateString = templateString.replace(`{${param}}`, el[param]);
-    });
+    if (cache[templateString]) {
+      cache[templateString].forEach((param) => {
+        templateString = templateString.replace(`{${param}}`, el[param]);
+      });
+    }
   }
   return templateString.substring(0, 80);
 }

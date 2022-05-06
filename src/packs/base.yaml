@@ -1,43 +1,49 @@
 "*":
-  - name: links
-    scope:
-      selector: a
-    label:
-      template: "{innerText}"
-    trigger:
-      type: open
-  - name: buttons
-    scope:
-      selector: button
-    label:
-      template: button
-    trigger:
-      type: click
-  - name: inputs
-    scope:
-      selector: input
-    label:
-      template: input
-    trigger:
-      type: focus
-  - name: textareas
-    scope:
-      selector: textarea
-    label:
-      template: input
-    trigger:
-      type: focus
-  - name: role-links
-    scope:
-      selector: '[role="link"]'
-    label:
-      template: "{innerText}"
-    trigger:
-      type: open
-  - name: role-buttons
-    scope:
-      selector: '[role="button"]'
-    label:
-      template: button
-    trigger:
-      type: click
+  - type: element
+    element:
+      scope:
+        selector: a
+      label:
+        template: "{innerText}"
+      trigger:
+        type: open
+  - type: element
+    element:
+      scope:
+        selector: button
+      label:
+        template: button
+      trigger:
+        type: click
+  - type: element
+    element:
+      scope:
+        selector: input
+      label:
+        template: input
+      trigger:
+        type: focus
+  - type: element
+    element:
+      scope:
+        selector: textarea
+      label:
+        template: input
+      trigger:
+        type: focus
+  - type: element
+    element:
+      scope:
+        selector: '[role="link"]'
+      label:
+        template: "{innerText}"
+      trigger:
+        type: open
+  - type: element
+    element:
+      scope:
+        selector: '[role="button"]'
+      label:
+        template: button
+      trigger:
+        type: click

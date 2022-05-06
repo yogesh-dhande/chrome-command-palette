@@ -2,7 +2,7 @@
   <TransitionRoot :show="visible" as="template" @after-leave="query = ''">
     <Dialog
       as="div"
-      class="fixed inset-0 z-100 overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
+      class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
       :class="{ 'z-0': !visible }"
       @close="visible = false"
     >
@@ -31,18 +31,9 @@
       >
         <Combobox
           as="div"
-          class="
-            mx-auto
-            max-w-2xl
-            transform
-            divide-y divide-gray-500 divide-opacity-20
-            overflow-hidden
-            rounded-xl
-            bg-gray-900
-            shadow-2xl
-            transition-all
-          "
-          @update:modelValue="onSelect"
+          id="combo"
+          @update:modelValue="(commandResult) => onSelect(commandResult.obj)"
+          v-model="selectedCommand"
         >
           <div class="relative">
             <SearchIcon
@@ -58,23 +49,12 @@
               aria-hidden="true"
             />
             <ComboboxInput
-              class="
-                h-12
-                w-full
-                border-0
-                bg-transparent
-                pl-11
-                pr-4
-                text-white
-                placeholder-gray-500
-                focus:ring-0
-                sm:text-sm
-              "
+              id="search"
               placeholder="Search..."
               @change="query = $event.target.value"
               autocomplete="off"
-              @keyup.enter="selectFirst"
               @keydown.ctrl="selectNth"
+              @keydown.ctrl.alt="selectOption"
             />
           </div>
 
@@ -107,25 +87,52 @@
                 >
                   <li
                     :class="[
-                      'flex cursor-default select-none items-center rounded-md px-3 py-2',
+                      'flex flex-col cursor-default select-none rounded-md px-3 py-2',
                       active && 'bg-gray-800 text-white',
                     ]"
                   >
-                    <component
-                      :is="getIconNameForTrigger(commandResult.obj.trigger)"
-                      :class="[
-                        'h-6 w-6 flex-none',
-                        active ? 'text-white' : 'text-gray-500',
-                      ]"
-                      aria-hidden="true"
-                    />
-                    <span
-                      class="ml-3 flex-auto truncate"
-                      v-html="highlight(commandResult)"
-                    ></span>
-                    <span v-if="active" class="ml-3 flex-none text-gray-400"
-                      >{{ commandResult.obj.triggerType }}...</span
-                    >
+                    <div class="flex">
+                      <span
+                        class="ml-3 flex-auto truncate"
+                        v-html="highlight(commandResult)"
+                      ></span>
+                      <component
+                        :is="getIconNameForCommand(commandResult.obj)"
+                        :class="[
+                          'h-6 w-6',
+                          active ? 'text-white' : 'text-gray-500',
+                        ]"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div v-if="active" class="flex flex-row space-x-2 text-sm">
+                      <div
+                        v-for="(option, i) in getOptions(commandResult.obj)"
+                        :key="option.labelText"
+                        class="
+                          text-sm text-center
+                          bg-gray-700
+                          rounded
+                          px-2
+                          py-1
+                          hover:bg-gray-500
+                        "
+                        @click="() => onSelect(option)"
+                      >
+                        <p>{{ option.labelText }}</p>
+                        <p
+                          class="
+                            border border-gray-200
+                            rounded-lg
+                            p-1
+                            text-xs
+                            mt-1
+                          "
+                        >
+                          ctrl+alt+<span class="font-bold">{{ i + 1 }}</span>
+                        </p>
+                      </div>
+                    </div>
                   </li>
                 </ComboboxOption>
               </ul>
@@ -170,7 +177,9 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 
-import { openUrl, trigger, getIconNameForTrigger } from "./triggers";
+import { openUrl, trigger, getIconNameForCommand } from "./triggers";
+import { renderTemplateString } from "./labels";
+import { isHidden } from "./commands";
 import { go, highlight } from "fuzzysort";
 
 export default {
@@ -194,6 +203,7 @@ export default {
   setup(props) {
     const recent = props.store.commands[0];
     const visible = ref(false);
+    const selectedCommand = ref("");
     const state = reactive({
       currentTab: null,
     });
@@ -214,34 +224,41 @@ export default {
       query,
       recent,
       filteredCommandResults,
-      getIconNameForTrigger,
+      getIconNameForCommand,
       highlight,
+      selectedCommand,
     };
   },
+  computed: {
+    options() {
+      return this.getOptions(this.selectedCommand);
+    },
+  },
   methods: {
-    onSelect(commandResult) {
+    onSelect(command) {
       this.visible = false;
-      this.triggerCommand(commandResult.obj);
+      this.triggerCommand(command);
     },
     selectFirst() {
       if (this.filteredCommandResults.length > 0) {
-        this.onSelect(this.filteredCommandResults[0]);
+        this.onSelect(this.filteredCommandResults[0].obj);
       }
     },
     selectNth(evt) {
-      const n = parseInt(evt.key);
-      if (n && n < 10) {
-        if (this.filteredCommandResults.length > n - 1) {
-          this.onSelect(this.filteredCommandResults[n - 1]);
+      if (!evt.shiftKey & !evt.altKey) {
+        console.log(evt);
+        const n = parseInt(evt.key);
+        if (n && n < this.filteredCommandResults.length) {
+          this.onSelect(this.filteredCommandResults[n - 1].obj);
         }
       }
     },
     triggerCommand(command) {
-      if (command.scopeElement) {
-        trigger(command.trigger.type, command.triggerElement);
-      } else if (command.trigger?.url) {
+      if (command.type == "element") {
+        trigger(command.config.trigger.type, command.triggerElement);
+      } else if (command.type == "link") {
         // Command is to open a specified link
-        const url = command.trigger.url;
+        const url = command.config.url;
         // TODO: add the ability to open urls in a new tab
         if (url.startsWith("/")) {
           openUrl(`${window.location.origin}${url}`);
@@ -251,6 +268,94 @@ export default {
     highlight(commandResult) {
       return highlight(commandResult, '<span class="text-red-600">', "</span>");
     },
+    getOptions(command) {
+      this.selectedCommand = command;
+      const options = [];
+      if (command.config.options && command.config.options.length > 0) {
+        command.config.options
+          .filter((option) => (option.type = "element"))
+          .forEach((option) => {
+            const type = option.type;
+            const scopeElement = command.scopeElement;
+            const config = option[type];
+            const labelElement = config.label.selector
+              ? scopeElement.querySelector(config.label.selector)
+              : scopeElement;
+
+            const labelText = renderTemplateString(
+              config.label.template,
+              labelElement
+            );
+
+            const triggerElement = config.trigger.selector
+              ? scopeElement.querySelector(config.trigger.selector)
+              : scopeElement;
+
+            if (
+              labelText &&
+              labelText !== "#" &&
+              triggerElement &&
+              !isHidden(triggerElement)
+            ) {
+              options.push({
+                type,
+                labelText,
+                scopeElement,
+                triggerElement,
+                config,
+              });
+            }
+          });
+      }
+      return options;
+    },
+    selectOption(evt) {
+      if (!evt.shiftKey) {
+        console.log(evt);
+        const options = this.getOptions(this.selectedCommand);
+        const n = parseInt(evt.code.substr(5)); // ctrl + shift + 1 == "Digit1"
+        if (n && n < options.length) {
+          this.onSelect(options[n - 1]);
+        }
+      }
+    },
   },
 };
 </script>
+
+<style scoped>
+#combo {
+  @apply mx-auto
+            max-w-2xl
+            transform
+            divide-y divide-gray-500 divide-opacity-20
+            overflow-hidden
+            rounded-xl
+            bg-gray-900
+            shadow-2xl
+            transition-all;
+}
+
+#search {
+  font-size: 16px;
+  @apply mx-auto
+            max-w-2xl
+            transform
+            divide-y divide-gray-500 divide-opacity-20
+            overflow-hidden
+            rounded-xl
+            bg-gray-900
+            shadow-2xl
+            transition-all
+                h-12
+                w-full
+                border-0
+                bg-transparent
+                pl-11
+                pr-4
+                text-white
+                placeholder-gray-500
+                focus:ring-0
+                sm:text-sm;
+}
+</style>

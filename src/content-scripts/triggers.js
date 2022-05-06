@@ -10,7 +10,7 @@ function simulateMouseClick(targetNode) {
     return targetNode.dispatchEvent(clickEvent);
   }
 
-  ["mouseover", "mousedown", "mouseup", "click"].forEach(function(eventType) {
+  ["mouseover", "mousedown", "mouseup"].forEach(function(eventType) {
     const r = triggerMouseEvent(targetNode, eventType);
   });
 }
@@ -22,8 +22,7 @@ export function openUrl(url, target) {
 export function trigger(type, el) {
   if (type === "click") {
     el.click();
-  }
-  if (type === "simulatedClick") {
+  } else if (type === "simulatedClick") {
     setTimeout(() => simulateMouseClick(el), 200);
   } else if (type === "open") {
     const url = el.href;
@@ -37,13 +36,17 @@ export function trigger(type, el) {
   }
 }
 
-export function getIconNameForTrigger(trigger) {
-  const type = trigger.type;
-  if ((type === "click") | (type === "simulatedClick")) {
-    return "CursorClickIcon";
-  } else if ((type === "open") | (trigger.url !== undefined)) {
+export function getIconNameForCommand(command) {
+  if (command.type == "link") {
     return "LinkIcon";
-  } else if (type === "focus") {
-    return "AnnotationIcon";
+  } else if ((command.type = "element")) {
+    const type = command.config.trigger.type;
+    if ((type === "click") | (type === "simulatedClick")) {
+      return "CursorClickIcon";
+    } else if (type === "open") {
+      return "LinkIcon";
+    } else if (type === "focus") {
+      return "AnnotationIcon";
+    }
   }
 }

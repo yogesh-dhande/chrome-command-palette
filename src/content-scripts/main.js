@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener((message) => {
 
       if (!downloaded) {
         downloaded = true;
-        downloadCommands(window.location.href);
+        // downloadCommands(window.location.href);
       }
     }
   }

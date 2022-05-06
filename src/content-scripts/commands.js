@@ -1,7 +1,7 @@
 import { renderTemplateString } from "./labels";
 import packs from "./packs.json";
 
-function isHidden(el) {
+export function isHidden(el) {
   const style = window.getComputedStyle(el);
   return style.display === "none";
 }
@@ -16,21 +16,25 @@ Object.keys(packs).forEach((urlpattern) => {
 
 export function parseDomForCommands(commands) {
   commandTemplates.forEach((template) => {
-    if (template.scope?.selector) {
+    // TODO need to return all commands
+    const type = template.type;
+    const config = template[template.type];
+    if (type === "element") {
+      // this command is to trigger an event on a DOM element
       document
-        .querySelectorAll(template.scope.selector)
+        .querySelectorAll(config.scope.selector)
         .forEach((scopeElement) => {
-          const labelElement = template.label.selector
-            ? scopeElement.querySelector(template.label.selector)
+          const labelElement = config.label.selector
+            ? scopeElement.querySelector(config.label.selector)
             : scopeElement;
 
           const labelText = renderTemplateString(
-            template.label.template,
+            config.label.template,
             labelElement
           );
 
-          const triggerElement = template.trigger.selector
-            ? scopeElement.querySelector(template.trigger.selector)
+          const triggerElement = config.trigger.selector
+            ? scopeElement.querySelector(config.trigger.selector)
             : scopeElement;
 
           if (
@@ -40,23 +44,20 @@ export function parseDomForCommands(commands) {
             !isHidden(triggerElement)
           ) {
             commands.push({
-              scopeElement,
+              type,
               labelText,
+              scopeElement,
               triggerElement,
-              scope: template.scope,
-              label: template.label,
-              trigger: template.trigger,
+              config: config,
             });
           }
         });
-    } else if (template.trigger.url) {
+    } else if (type == "link") {
       // this command is to open the specified url
       commands.push({
-        labelText: template.label.template,
-        trigger: template.trigger,
-        scope: template.scope,
-        label: template.label,
-        trigger: template.trigger,
+        type,
+        labelText: config.label,
+        config: config,
       });
     }
   });
