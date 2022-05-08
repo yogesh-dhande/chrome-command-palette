@@ -1,5 +1,3 @@
-import { isValidHttpUrl } from "./validation";
-
 function simulateMouseClick(targetNode) {
   function triggerMouseEvent(targetNode, eventType) {
     var clickEvent = new MouseEvent(eventType, {
@@ -19,18 +17,16 @@ export function openUrl(url, target) {
   window.open(url, target ? target : "_self");
 }
 
-export function trigger(type, el) {
+export function triggerElement(command) {
+  const type = command.config.trigger.type;
+  const el = command.triggerElement;
+
   if (type === "click") {
     el.click();
   } else if (type === "simulatedClick") {
     setTimeout(() => simulateMouseClick(el), 200);
   } else if (type === "open") {
-    const url = el.href;
-    if (isValidHttpUrl(url)) {
-      openUrl(url, el.target);
-    } else {
-      el.click();
-    }
+    openUrl(el.href, command.config.trigger.target);
   } else if (type === "focus") {
     setTimeout(() => el.focus(), 200);
   }

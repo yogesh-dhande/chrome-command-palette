@@ -177,7 +177,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 
-import { openUrl, trigger, getIconNameForCommand } from "./triggers";
+import { openUrl, triggerElement, getIconNameForCommand } from "./triggers";
 import { renderTemplateString } from "./labels";
 import { isHidden } from "./commands";
 import { go, highlight } from "fuzzysort";
@@ -246,23 +246,20 @@ export default {
     },
     selectNth(evt) {
       if (!evt.shiftKey & !evt.altKey) {
-        console.log(evt);
+        evt.preventDefault();
         const n = parseInt(evt.key);
-        if (n && n < this.filteredCommandResults.length) {
+        if (n && n < this.filteredCommandResults.length + 1) {
           this.onSelect(this.filteredCommandResults[n - 1].obj);
         }
       }
     },
     triggerCommand(command) {
       if (command.type == "element") {
-        trigger(command.config.trigger.type, command.triggerElement);
+        // Command is to open a specified link
+        triggerElement(command);
       } else if (command.type == "link") {
         // Command is to open a specified link
-        const url = command.config.url;
-        // TODO: add the ability to open urls in a new tab
-        if (url.startsWith("/")) {
-          openUrl(`${window.location.origin}${url}`);
-        }
+        openUrl(command.config.url, command.config.target);
       }
     },
     highlight(commandResult) {
@@ -271,7 +268,7 @@ export default {
     getOptions(command) {
       this.selectedCommand = command;
       const options = [];
-      if (command.config.options && command.config.options.length > 0) {
+      if (command.type === "element" && command.config.options?.length > 0) {
         command.config.options
           .filter((option) => (option.type = "element"))
           .forEach((option) => {
@@ -306,15 +303,28 @@ export default {
               });
             }
           });
+
+        // TODO handle options for type = "link" - is that a valid use case?
+      } else if (command.type === "link") {
+        options.push({
+          type: "link",
+          labelText: "Open in New Tab",
+          config: {
+            url: command.config.url,
+            label: "Open in New Tab",
+            target: "_blank",
+          },
+        });
       }
       return options;
     },
     selectOption(evt) {
       if (!evt.shiftKey) {
-        console.log(evt);
+        evt.preventDefault();
         const options = this.getOptions(this.selectedCommand);
-        const n = parseInt(evt.code.substr(5)); // ctrl + shift + 1 == "Digit1"
-        if (n && n < options.length) {
+        const n = parseInt(evt.key);
+        if (n && n < options.length + 1) {
+          console.log(options[n - 1]);
           this.onSelect(options[n - 1]);
         }
       }
