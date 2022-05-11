@@ -2,7 +2,7 @@
   <TransitionRoot :show="visible" as="template" @after-leave="query = ''">
     <Dialog
       as="div"
-      class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
+      class="fixed inset-0 z-[100] overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
       :class="{ 'z-0': !visible }"
       @close="visible = false"
     >
@@ -59,23 +59,19 @@
           </div>
 
           <ComboboxOptions
+            id="options-box"
             v-if="query === '' || filteredCommandResults.length > 0"
             static
             class="
-              max-h-80
+              max-h-96
               scroll-py-2
               divide-y divide-gray-500 divide-opacity-20
               overflow-y-auto
+              m-0
             "
           >
             <li class="p-2">
-              <h2
-                v-if="query === ''"
-                class="mt-4 mb-2 px-3 text-xs font-semibold text-gray-200"
-              >
-                Recent searches
-              </h2>
-              <ul class="text-sm text-gray-400">
+              <ul class="text-sm text-gray-400 m-0">
                 <ComboboxOption
                   v-for="(commandResult, i) in query === ''
                     ? recent
@@ -105,32 +101,27 @@
                         aria-hidden="true"
                       />
                     </div>
-                    <div v-if="active" class="flex flex-row space-x-2 text-sm">
+                    <div v-if="active" class="flex flex-row flex-wrap text-sm">
                       <div
                         v-for="(option, i) in getOptions(commandResult.obj)"
                         :key="option.labelText"
                         class="
                           text-sm text-center
-                          bg-gray-700
                           rounded
                           px-2
                           py-1
-                          hover:bg-gray-500
+                          bg-gray-700
+                          hover:bg-gray-600
+                          border border-gray-200
+                          p-1
+                          m-1
                         "
                         @click="() => onSelect(option)"
                       >
-                        <p>{{ option.labelText }}</p>
-                        <p
-                          class="
-                            border border-gray-200
-                            rounded-lg
-                            p-1
-                            text-xs
-                            mt-1
-                          "
-                        >
+                        <span class="border-r text-xs pr-1">
                           ctrl+alt+<span class="font-bold">{{ i + 1 }}</span>
-                        </p>
+                        </span>
+                        <span class="pl-1">{{ option.labelText }}</span>
                       </div>
                     </div>
                   </li>
@@ -367,5 +358,13 @@ export default {
                 placeholder-gray-500
                 focus:ring-0
                 sm:text-sm;
+}
+#options-box::-webkit-scrollbar {
+  background-color: #374151;
+  width: 8px;
+}
+
+#options-box::-webkit-scrollbar-thumb {
+  background-color: #64748b;
 }
 </style>

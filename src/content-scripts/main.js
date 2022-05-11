@@ -18,8 +18,7 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
-      store.commands = [];
-      parseDomForCommands(store.commands);
+      store.commands = parseDomForCommands();
 
       if (!downloaded) {
         downloaded = true;

@@ -1,11 +1,15 @@
-export function isValidHttpUrl(string) {
+export function validateUrl(urlString) {
   let url;
 
   try {
-    url = new URL(string);
+    if (urlString.startsWith("/")) {
+      urlString = `${window.location.origin}${urlString}`;
+    }
+    url = new URL(urlString);
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      return url.href;
+    }
   } catch (_) {
-    return false;
+    return null;
   }
-
-  return url.protocol === "http:" || url.protocol === "https:";
 }
