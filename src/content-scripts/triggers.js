@@ -33,9 +33,9 @@ export function triggerElement(command) {
 }
 
 export function getIconNameForCommand(command) {
-  if (command.type == "link") {
+  if (command.type === "link") {
     return "LinkIcon";
-  } else if ((command.type = "element")) {
+  } else if (command.type === "element") {
     const type = command.config.trigger.type;
     if ((type === "click") | (type === "simulatedClick")) {
       return "CursorClickIcon";
@@ -44,5 +44,7 @@ export function getIconNameForCommand(command) {
     } else if (type === "focus") {
       return "AnnotationIcon";
     }
+  } else if (command.type === "chrome") {
+    return "GlobeAltIcon";
   }
 }

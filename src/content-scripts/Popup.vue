@@ -22,7 +22,7 @@
 
       <TransitionChild
         as="template"
-        enter="ease-out duration-300"
+        enter="ease-out duration-75"
         enter-from="opacity-0 scale-95"
         enter-to="opacity-100 scale-100"
         leave="ease-in duration-75"
@@ -101,6 +101,13 @@
                         aria-hidden="true"
                       />
                     </div>
+                    <p
+                      v-if="commandResult.obj.type === 'link'"
+                      class="text-xs px-3"
+                    >
+                      {{ commandResult.obj.config.url }}
+                    </p>
+                    <p></p>
                     <div v-if="active" class="flex flex-row flex-wrap text-sm">
                       <div
                         v-for="(option, i) in getOptions(commandResult.obj)"
@@ -124,6 +131,9 @@
                         <span class="pl-1">{{ option.labelText }}</span>
                       </div>
                     </div>
+                    <pre v-if="active && store">{{
+                      JSON.stringify(commandResult.obj.config, undefined, 2)
+                    }}</pre>
                   </li>
                 </ComboboxOption>
               </ul>
@@ -149,13 +159,14 @@
 </template>
 
 <script>
-import { computed, ref, reactive, toRefs } from "vue";
+import { computed, ref } from "vue";
 
 import { SearchIcon } from "@heroicons/vue/solid";
 import {
   LinkIcon,
   AnnotationIcon,
   CursorClickIcon,
+  GlobeAltIcon,
 } from "@heroicons/vue/outline";
 import {
   Combobox,
@@ -169,8 +180,6 @@ import {
 } from "@headlessui/vue";
 
 import { openUrl, triggerElement, getIconNameForCommand } from "./triggers";
-import { renderTemplateString } from "./labels";
-import { isHidden } from "./commands";
 import { go, highlight } from "fuzzysort";
 
 export default {
@@ -188,6 +197,7 @@ export default {
     CursorClickIcon,
     LinkIcon,
     SearchIcon,
+    GlobeAltIcon,
     TransitionChild,
     TransitionRoot,
   },
@@ -195,23 +205,20 @@ export default {
     const recent = props.store.commands[0];
     const visible = ref(false);
     const selectedCommand = ref("");
-    const state = reactive({
-      currentTab: null,
-    });
+    const preferences = props.store.preferences;
 
     const query = ref("");
     const filteredCommandResults = computed(() =>
-      query.value === ""
-        ? []
-        : go(query.value.toLowerCase(), props.store.commands, {
-            key: "labelText",
-            limit: 10,
-          })
+      go(query.value.toLowerCase(), props.store.commands, {
+        key: "labelText",
+        limit: 10,
+        all: true,
+      })
     );
 
     return {
       visible,
-      ...toRefs(state),
+      preferences,
       query,
       recent,
       filteredCommandResults,
@@ -245,12 +252,14 @@ export default {
       }
     },
     triggerCommand(command) {
-      if (command.type == "element") {
+      if (command.type === "element") {
         // Command is to open a specified link
         triggerElement(command);
-      } else if (command.type == "link") {
+      } else if (command.type === "link") {
         // Command is to open a specified link
         openUrl(command.config.url, command.config.target);
+      } else if (command.type === "chrome") {
+        chrome.runtime.sendMessage({ type: "execute_chrome_command", command });
       }
     },
     highlight(commandResult) {
@@ -315,7 +324,6 @@ export default {
         const options = this.getOptions(this.selectedCommand);
         const n = parseInt(evt.key);
         if (n && n < options.length + 1) {
-          console.log(options[n - 1]);
           this.onSelect(options[n - 1]);
         }
       }

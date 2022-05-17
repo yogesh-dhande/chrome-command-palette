@@ -8,6 +8,9 @@ let downloaded = false;
 
 const store = {
   commands: [],
+  preferences: {
+    debug: true,
+  },
 };
 
 const vm = createApp(Popup, {
@@ -18,7 +21,12 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
-      store.commands = parseDomForCommands();
+      store.commands = parseDomForCommands(
+        message.bookmarks,
+        message.topSites,
+        message.chromeLinks,
+        message.tabs
+      );
 
       if (!downloaded) {
         downloaded = true;

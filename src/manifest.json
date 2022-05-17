@@ -1,9 +1,9 @@
 {
-  "name": "Chrome Extension",
+  "name": "Single Dispatch",
   "version": "1.0.0",
   "manifest_version": 3,
   "action": {
-    "default_title": "Chrome Extension"
+    "default_title": "Single Dispatch Command Palette"
   },
   "background": {
     "service_worker": "service_worker.js"
@@ -20,8 +20,8 @@
         "default": "Ctrl+K",
         "mac": "Command+K"
       },
-      "description": "Activate Chrome Extension"
+      "description": "Activate Single Dispatch Command Palette"
     }
   },
-  "permissions": ["tabs"]
+  "permissions": ["tabs", "bookmarks", "search", "topSites"]
 }

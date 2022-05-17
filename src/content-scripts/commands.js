@@ -28,15 +28,13 @@ function parseLinkCommand(label, url) {
   };
 }
 
-export function parseDomForCommands() {
+export function parseDomForCommands(bookmarks, topSites, chromeLinks, tabs) {
   const commandsMap = new Map();
+  let command;
 
   commandTemplates.forEach((template) => {
     const type = template.type;
     const config = template[template.type];
-    console.log(config);
-
-    let command;
 
     if (type === "element") {
       // this command is to trigger an event on a DOM element
@@ -91,6 +89,30 @@ export function parseDomForCommands() {
       commandsMap.set(command.key, command);
     }
   });
+  console.log(bookmarks);
+  bookmarks.forEach((bookmark) => {
+    command = parseLinkCommand(bookmark.label, bookmark.url);
+    commandsMap.set(command.key, command);
+  });
+  console.log(topSites);
+  topSites.forEach((site) => {
+    command = parseLinkCommand(site.label, site.url);
+    commandsMap.set(command.key, command);
+  });
+  console.log(chromeLinks);
+  chromeLinks.forEach((link) => {
+    command = parseLinkCommand(link.label, link.url);
+    commandsMap.set(command.key, command);
+  });
+
+  console.log(tabs);
+  tabs.forEach((tab) => {
+    const key = tab.config.id;
+    let command = { key, ...tab };
+    commandsMap.set(key, command);
+    console.log(command);
+  });
+
   console.log(Array.from(commandsMap.values()));
   return Array.from(commandsMap.values());
 }

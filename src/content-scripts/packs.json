@@ -103,6 +103,13 @@
     {
       "type": "link",
       "link": {
+        "url": "/pulls",
+        "label": "Pull Requests: Created"
+      }
+    },
+    {
+      "type": "link",
+      "link": {
         "url": "/pulls/assigned",
         "label": "Pull Requests: Assigned"
       }
@@ -124,6 +131,13 @@
     {
       "type": "link",
       "link": {
+        "url": "/issues",
+        "label": "Issues: Created"
+      }
+    },
+    {
+      "type": "link",
+      "link": {
         "url": "/issues/assigned",
         "label": "Issues: Assigned"
       }
@@ -133,6 +147,54 @@
       "link": {
         "url": "/issues/mentioned",
         "label": "Issues: Mentioned"
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": "#branch-select-menu summary",
+        "label": {
+          "template": "Switch branches"
+        },
+        "trigger": {
+          "type": "click"
+        },
+        "sequence": [
+          {
+            "type": "element",
+            "element": {
+              "scope": null,
+              "trigger": {
+                "selector": "#branch-select-menu .SelectMenu-tab:nth-child(1)",
+                "type": "click"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": "#branch-select-menu summary",
+        "label": {
+          "template": "Switch tags"
+        },
+        "trigger": {
+          "type": "click"
+        },
+        "sequence": [
+          {
+            "type": "element",
+            "element": {
+              "scope": null,
+              "trigger": {
+                "selector": "#branch-select-menu .SelectMenu-tab:nth-child(2)",
+                "type": "click"
+              }
+            }
+          }
+        ]
       }
     }
   ],
@@ -251,6 +313,73 @@
         "trigger": {
           "type": "simulatedClick"
         }
+      }
+    }
+  ],
+  "twitter.com": [
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "article"
+        },
+        "label": {
+          "selector": "[data-testid=\"tweetText\"]",
+          "template": "{innerText}"
+        },
+        "trigger": {
+          "type": null
+        },
+        "options": [
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Reply"
+              },
+              "trigger": {
+                "selector": "[data-testid=\"reply\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Retweet"
+              },
+              "trigger": {
+                "selector": "[data-testid=\"retweet\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Retweet"
+              },
+              "trigger": {
+                "selector": "[data-testid=\"retweet\"]",
+                "type": "click"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "element": {
+              "label": {
+                "template": "Share"
+              },
+              "trigger": {
+                "selector": "[aria-label=\"Share Tweet\"]",
+                "type": "click"
+              }
+            }
+          }
+        ]
       }
     }
   ]
