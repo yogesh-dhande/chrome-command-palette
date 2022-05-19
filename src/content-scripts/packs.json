@@ -46,6 +46,62 @@
       "type": "element",
       "element": {
         "scope": {
+          "selector": "[type=checkbox]"
+        },
+        "label": {
+          "template": "input"
+        },
+        "trigger": {
+          "type": "click"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[type=radio]"
+        },
+        "label": {
+          "template": "input"
+        },
+        "trigger": {
+          "type": "click"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[type=file]"
+        },
+        "label": {
+          "template": "input"
+        },
+        "trigger": {
+          "type": "click"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "select"
+        },
+        "label": {
+          "template": "input"
+        },
+        "trigger": {
+          "type": "focus"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
           "selector": "textarea"
         },
         "label": {
@@ -60,7 +116,7 @@
       "type": "element",
       "element": {
         "scope": {
-          "selector": "[role=\"link\"]"
+          "selector": "[role=link]"
         },
         "label": {
           "template": "{innerText}"
@@ -74,10 +130,24 @@
       "type": "element",
       "element": {
         "scope": {
-          "selector": "[role=\"button\"]"
+          "selector": "[role=button]"
         },
         "label": {
           "template": "button"
+        },
+        "trigger": {
+          "type": "click"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[role=checkbox]"
+        },
+        "label": {
+          "template": "{innerText}"
         },
         "trigger": {
           "type": "click"

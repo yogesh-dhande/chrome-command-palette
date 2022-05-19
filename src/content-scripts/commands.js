@@ -19,7 +19,7 @@ function parseLinkCommand(label, url) {
   return {
     type: "link",
     key: url,
-    labelText: label,
+    label,
     config: {
       url,
       label,
@@ -28,7 +28,7 @@ function parseLinkCommand(label, url) {
   };
 }
 
-export function parseDomForCommands(bookmarks, topSites, chromeLinks, tabs) {
+export function parseDomForCommands(data) {
   const commandsMap = new Map();
   let command;
 
@@ -46,7 +46,7 @@ export function parseDomForCommands(bookmarks, topSites, chromeLinks, tabs) {
             ? scopeElement.querySelector(elementConfig.label.selector)
             : scopeElement;
 
-          const labelText = renderTemplateString(
+          const label = renderTemplateString(
             elementConfig.label.template,
             labelElement
           );
@@ -56,15 +56,15 @@ export function parseDomForCommands(bookmarks, topSites, chromeLinks, tabs) {
             : scopeElement;
 
           if (
-            labelText &&
-            labelText !== "#" &&
+            label &&
+            label !== "#" &&
             triggerElement &&
             !isHidden(triggerElement)
           ) {
             if (elementConfig.trigger.type === "open") {
               const url = validateUrl(triggerElement.href);
               if (url) {
-                command = parseLinkCommand(labelText, url);
+                command = parseLinkCommand(label, url);
                 commandsMap.set(command.key, command);
                 return;
               } else {
@@ -75,7 +75,7 @@ export function parseDomForCommands(bookmarks, topSites, chromeLinks, tabs) {
             command = {
               type,
               key: triggerElement,
-              labelText,
+              label,
               scopeElement,
               triggerElement,
               config: config,
@@ -89,30 +89,21 @@ export function parseDomForCommands(bookmarks, topSites, chromeLinks, tabs) {
       commandsMap.set(command.key, command);
     }
   });
-  console.log(bookmarks);
-  bookmarks.forEach((bookmark) => {
+
+  data.bookmarks.forEach((bookmark) => {
     command = parseLinkCommand(bookmark.label, bookmark.url);
     commandsMap.set(command.key, command);
   });
-  console.log(topSites);
-  topSites.forEach((site) => {
+
+  data.topSites.forEach((site) => {
     command = parseLinkCommand(site.label, site.url);
     commandsMap.set(command.key, command);
   });
-  console.log(chromeLinks);
-  chromeLinks.forEach((link) => {
-    command = parseLinkCommand(link.label, link.url);
+
+  data.tabs.forEach((tab) => {
+    let command = { key: tab.config.id, ...tab };
     commandsMap.set(command.key, command);
   });
 
-  console.log(tabs);
-  tabs.forEach((tab) => {
-    const key = tab.config.id;
-    let command = { key, ...tab };
-    commandsMap.set(key, command);
-    console.log(command);
-  });
-
-  console.log(Array.from(commandsMap.values()));
   return Array.from(commandsMap.values());
 }

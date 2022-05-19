@@ -22,15 +22,18 @@ export function renderTemplateString(templateString, el) {
 }
 
 export function getLabelForInput(el) {
+  let label = "";
   if (el.ariaLabel) {
-    return el.ariaLabel;
+    label = el.ariaLabel;
   } else if (el.id) {
     const label_el = document.querySelector(`[for="${el.id}"]`);
     if (label_el) {
-      return label_el.innerText;
+      label = label_el.innerText;
     }
-    return el.placeholder;
+  } else {
+    label = el.placeholder;
   }
+  return `${label} Input`;
 }
 
 export function getLabelForButton(el) {

@@ -10,40 +10,44 @@ async function activateExtension(tab) {
   if (tab.id) {
     chrome.tabs.sendMessage(tab.id, {
       toggleVisible: true,
-      bookmarks: await getBookmarks(),
-      topSites: await getTopSites(),
-      chromeLinks,
-      tabs: await chromeCommands.tabs.list(),
+      data: {
+        bookmarks: await getBookmarks(),
+        topSites: await getTopSites(),
+        tabs: await chromeCommands.switchToTab.list(),
+        // apps: await chromeCommands.apps.list(),  // Chromium bug, API does not return apps https://bugs.chromium.org/p/chromium/issues/detail?id=1263843
+      },
     });
   }
 }
 
 chrome.action.onClicked.addListener(activateExtension);
 
-chrome.commands.onCommand.addListener(function(command) {
+chrome.commands.onCommand.addListener(async (command) => {
   if (command === "activate_extension") {
-    getCurrentTab().then(activateExtension);
+    const tab = await getCurrentTab();
+    await activateExtension(tab);
     return true;
   }
   return true;
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   switch (request.type) {
     case "execute_chrome_command":
-      chromeCommands[request.command.name].execute(request.command.config);
-      return true;
+      await chromeCommands[request.command.name].execute(
+        request.command.config
+      );
+      sendResponse(true);
+    case "search":
+      await chrome.search.query({
+        text: request.query,
+        disposition: "NEW_TAB",
+      });
+      sendResponse(true);
     default:
       break;
   }
 });
-
-function search(query) {
-  chrome.search.query({
-    text: query,
-    disposition: "NEW_TAB",
-  });
-}
 
 async function getBookmarks() {
   const bookmarks = [];
@@ -76,31 +80,66 @@ async function getTopSites() {
 }
 
 const chromeCommands = {
-  tabs: {
+  switchToTab: {
     async list() {
       const tabList = await chrome.tabs.query({});
       return tabList.map((tab) => {
         return {
           type: "chrome",
-          name: "tabs",
-          labelText: `Tabs: ${tab.title}`,
+          name: "switchToTab",
+          label: `Tabs: ${tab.title}`,
           config: {
             id: tab.id,
             windowId: tab.windowId,
             url: tab.url,
             favIconUrl: tab.favIconUrl,
           },
+          options: [
+            {
+              type: "chrome",
+              name: "closeTab",
+              label: "Close Tab",
+              config: {
+                id: tab.id,
+              },
+            },
+          ],
         };
       });
     },
-    execute(config) {
-      chrome.windows.update(config.windowId, {
+    async execute(config) {
+      await chrome.windows.update(config.windowId, {
         focused: true,
       });
-      chrome.tabs.update(config.id, {
+      await chrome.tabs.update(config.id, {
         active: true,
         highlighted: true,
       });
+    },
+  },
+  closeTab: {
+    async execute(config) {
+      await chrome.tabs.remove([config.id]);
+    },
+  },
+  apps: {
+    async list() {
+      const appList = await chrome.management.getAll();
+      return appList
+        .filter((app) => app.appLaunchUrl) // only keep apps as extensions cannot be launched
+        .map((app) => {
+          return {
+            type: "chrome",
+            name: "apps",
+            label: `App: ${app.name}`,
+            config: {
+              id: app.id,
+            },
+          };
+        });
+    },
+    async execute(config) {
+      await chrome.management.launchApp(config.id);
     },
   },
 };

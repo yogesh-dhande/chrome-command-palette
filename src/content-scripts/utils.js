@@ -6,12 +6,12 @@ export function downloadCommands(filename) {
   let csvContent = "data:text/csv;charset=utf-8,";
 
   csvContent +=
-    "scopeSelector,labelSelector,labelTemplate,labelText,triggerSelector,triggerType,triggerUrl,triggerElement\n";
+    "scopeSelector,labelSelector,labelTemplate,label,triggerSelector,triggerType,triggerUrl,triggerElement\n";
 
   csvContent += commands
     .map(
       (command) =>
-        `${command.scope?.selector},${command.label.selector},${command.label.template},${command.labelText},${command.trigger.selector},${command.trigger.type},${command.trigger.url},${command.triggerElement?.outerHTML}`
+        `${command.scope?.selector},${command.label.selector},${command.label.template},${command.label},${command.trigger.selector},${command.trigger.type},${command.trigger.url},${command.triggerElement?.outerHTML}`
     )
     .join("\n");
 

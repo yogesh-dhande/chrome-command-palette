@@ -9,7 +9,7 @@ let downloaded = false;
 const store = {
   commands: [],
   preferences: {
-    debug: true,
+    debug: false,
   },
 };
 
@@ -21,12 +21,7 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
-      store.commands = parseDomForCommands(
-        message.bookmarks,
-        message.topSites,
-        message.chromeLinks,
-        message.tabs
-      );
+      store.commands = parseDomForCommands(message.data);
 
       if (!downloaded) {
         downloaded = true;

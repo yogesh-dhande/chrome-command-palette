@@ -2,6 +2,7 @@
   "name": "Single Dispatch",
   "version": "1.0.0",
   "manifest_version": 3,
+  "description": "Get a command palette on every website. Navigate through any web page, tabs, or bookmarks with your keyboard.",
   "action": {
     "default_title": "Single Dispatch Command Palette"
   },

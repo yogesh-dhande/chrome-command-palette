@@ -32,7 +32,7 @@
         <Combobox
           as="div"
           id="combo"
-          @update:modelValue="(commandResult) => onSelect(commandResult.obj)"
+          @update:modelValue="(command) => onSelect(command)"
           v-model="selectedCommand"
         >
           <div class="relative">
@@ -53,10 +53,17 @@
               placeholder="Search..."
               @change="query = $event.target.value"
               autocomplete="off"
-              @keydown.ctrl="selectNth"
-              @keydown.ctrl.alt="selectOption"
+              @keydown="handleKeys"
             />
           </div>
+          <button
+            v-if="query"
+            @click="search"
+            class="text-gray-100 text-sm select-none rounded-md mx-4 px-3 py-2"
+          >
+            <span class="border-r text-xs pr-1 mr-1">ctrl+alt+s</span>Search in
+            New Tab
+          </button>
 
           <ComboboxOptions
             id="options-box"
@@ -77,7 +84,7 @@
                     ? recent
                     : filteredCommandResults"
                   :key="i"
-                  :value="commandResult"
+                  :value="commandResult.obj"
                   as="template"
                   v-slot="{ active }"
                 >
@@ -105,13 +112,13 @@
                       v-if="commandResult.obj.type === 'link'"
                       class="text-xs px-3"
                     >
-                      {{ commandResult.obj.config.url }}
+                      {{ commandResult.obj.config.url.substring(0, 80) }}
                     </p>
                     <p></p>
                     <div v-if="active" class="flex flex-row flex-wrap text-sm">
                       <div
                         v-for="(option, i) in getOptions(commandResult.obj)"
-                        :key="option.labelText"
+                        :key="option.label"
                         class="
                           text-sm text-center
                           rounded
@@ -128,10 +135,10 @@
                         <span class="border-r text-xs pr-1">
                           ctrl+alt+<span class="font-bold">{{ i + 1 }}</span>
                         </span>
-                        <span class="pl-1">{{ option.labelText }}</span>
+                        <span class="pl-1">{{ option.label }}</span>
                       </div>
                     </div>
-                    <pre v-if="active && store">{{
+                    <pre v-if="active && store.preferences.debug">{{
                       JSON.stringify(commandResult.obj.config, undefined, 2)
                     }}</pre>
                   </li>
@@ -204,18 +211,19 @@ export default {
   setup(props) {
     const recent = props.store.commands[0];
     const visible = ref(false);
-    const selectedCommand = ref("");
     const preferences = props.store.preferences;
 
     const query = ref("");
     const filteredCommandResults = computed(() =>
       go(query.value.toLowerCase(), props.store.commands, {
-        key: "labelText",
+        key: "label",
         limit: 10,
         all: true,
       })
     );
 
+    const selectedCommand = ref(props.store.commands[0]);
+    const activeCommand = ref(props.store.commands[0]);
     return {
       visible,
       preferences,
@@ -225,14 +233,26 @@ export default {
       getIconNameForCommand,
       highlight,
       selectedCommand,
+      activeCommand,
     };
   },
-  computed: {
-    options() {
-      return this.getOptions(this.selectedCommand);
-    },
-  },
   methods: {
+    handleKeys(evt) {
+      // TODO handle tab key
+      // TODO use preferences to match
+      if (evt.ctrlKey && !evt.shiftKey && !evt.altKey) {
+        this.selectNth(evt);
+      } else if (evt.ctrlKey && evt.altKey && !evt.shiftKey) {
+        if (evt.code == "KeyS") {
+          this.search();
+        } else {
+          this.selectOption(evt);
+        }
+      }
+    },
+    search() {
+      chrome.runtime.sendMessage({ type: "search", query: this.query });
+    },
     onSelect(command) {
       this.visible = false;
       this.triggerCommand(command);
@@ -243,12 +263,10 @@ export default {
       }
     },
     selectNth(evt) {
-      if (!evt.shiftKey & !evt.altKey) {
-        evt.preventDefault();
-        const n = parseInt(evt.key);
-        if (n && n < this.filteredCommandResults.length + 1) {
-          this.onSelect(this.filteredCommandResults[n - 1].obj);
-        }
+      evt.preventDefault();
+      const n = parseInt(evt.key);
+      if (n && n < this.filteredCommandResults.length + 1) {
+        this.onSelect(this.filteredCommandResults[n - 1].obj);
       }
     },
     triggerCommand(command) {
@@ -263,10 +281,14 @@ export default {
       }
     },
     highlight(commandResult) {
-      return highlight(commandResult, '<span class="text-red-600">', "</span>");
+      return highlight(
+        commandResult,
+        '<span class="text-cyan-300 font-bold">',
+        "</span>"
+      );
     },
     getOptions(command) {
-      this.selectedCommand = command;
+      this.activeCommand = command;
       const options = [];
       if (command.type === "element" && command.config.options?.length > 0) {
         command.config.options
@@ -279,7 +301,7 @@ export default {
               ? scopeElement.querySelector(config.label.selector)
               : scopeElement;
 
-            const labelText = renderTemplateString(
+            const label = renderTemplateString(
               config.label.template,
               labelElement
             );
@@ -289,14 +311,14 @@ export default {
               : scopeElement;
 
             if (
-              labelText &&
-              labelText !== "#" &&
+              label &&
+              label !== "#" &&
               triggerElement &&
               !isHidden(triggerElement)
             ) {
               options.push({
                 type,
-                labelText,
+                label,
                 scopeElement,
                 triggerElement,
                 config,
@@ -304,28 +326,28 @@ export default {
             }
           });
 
-        // TODO handle options for type = "link" - is that a valid use case?
+        // TODO add option to open in new window
       } else if (command.type === "link") {
         options.push({
           type: "link",
-          labelText: "Open in New Tab",
+          label: "Open in New Tab",
           config: {
             url: command.config.url,
             label: "Open in New Tab",
             target: "_blank",
           },
         });
+      } else if (command.type === "chrome" && command.options) {
+        return command.options;
       }
       return options;
     },
     selectOption(evt) {
-      if (!evt.shiftKey) {
-        evt.preventDefault();
-        const options = this.getOptions(this.selectedCommand);
-        const n = parseInt(evt.key);
-        if (n && n < options.length + 1) {
-          this.onSelect(options[n - 1]);
-        }
+      evt.preventDefault();
+      const options = this.getOptions(this.activeCommand);
+      const n = parseInt(evt.key);
+      if (n && n < options.length + 1) {
+        this.onSelect(options[n - 1]);
       }
     },
   },
