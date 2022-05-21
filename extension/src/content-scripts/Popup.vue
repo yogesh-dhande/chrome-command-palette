@@ -54,16 +54,41 @@
               @change="query = $event.target.value"
               autocomplete="off"
               @keydown="handleKeys"
+              @keydown.right="selectNextCategory"
+              @keydown.left="selectPreviousCategory"
             />
           </div>
-          <button
-            v-if="query"
-            @click="search"
-            class="text-gray-100 text-sm select-none rounded-md mx-4 px-3 py-2"
-          >
-            <span class="border-r text-xs pr-1 mr-1">ctrl+alt+s</span>Search in
-            New Tab
-          </button>
+          <div class="mx-6">
+            <ComboboxButton
+              v-if="query"
+              @click="search"
+              class="text-gray-100 text-xs select-none rounded-md px-2 py-1"
+            >
+              <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New
+              Tab
+            </ComboboxButton>
+            <div class="flex space-x-2 text-xs mt-1 items-center">
+              <div>&#8680;</div>
+              <div
+                v-for="category in categories"
+                :key="category"
+                :class="[
+                  'px-2 py-1 hover:bg-gray-700 underline rounded-md',
+                  selectedCategory === category && 'bg-gray-600',
+                ]"
+              >
+                <input
+                  type="radio"
+                  :id="`category-${category}`"
+                  :value="category"
+                  v-model="selectedCategory"
+                  class="hidden"
+                />
+                <label :for="`category-${category}`">{{ category }}</label>
+              </div>
+              <div>&#8678;</div>
+            </div>
+          </div>
 
           <ComboboxOptions
             id="options-box"
@@ -74,7 +99,8 @@
               scroll-py-2
               divide-y divide-gray-500 divide-opacity-20
               overflow-y-auto
-              m-0
+              my-0
+              mx-2
             "
           >
             <li class="p-2">
@@ -94,46 +120,48 @@
                       active && 'bg-gray-800 text-white',
                     ]"
                   >
-                    <div class="flex">
-                      <span
-                        class="ml-3 flex-auto truncate"
-                        v-html="highlight(commandResult)"
-                      ></span>
+                    <div class="flex justify-between">
+                      <div>
+                        <p
+                          class="flex-auto truncate my-0"
+                          v-html="highlight(commandResult)"
+                        ></p>
+                        <p
+                          v-if="commandResult.obj.type === 'link'"
+                          class="text-xs m-0"
+                        >
+                          {{ commandResult.obj.config.url.substring(0, 80) }}
+                        </p>
+                      </div>
+
                       <component
                         :is="getIconNameForCommand(commandResult.obj)"
                         :class="[
-                          'h-6 w-6',
-                          active ? 'text-white' : 'text-gray-500',
+                          'h-4 w-4 inline',
+                          active ? 'text-cyan-300' : 'text-cyan-50',
                         ]"
                         aria-hidden="true"
                       />
                     </div>
-                    <p
-                      v-if="commandResult.obj.type === 'link'"
-                      class="text-xs px-3"
-                    >
-                      {{ commandResult.obj.config.url.substring(0, 80) }}
-                    </p>
-                    <p></p>
+
                     <div v-if="active" class="flex flex-row flex-wrap text-sm">
                       <div
                         v-for="(option, i) in getOptions(commandResult.obj)"
                         :key="option.label"
                         class="
-                          text-sm text-center
-                          rounded
+                          text-xs text-center
+                          rounded-md
                           px-2
                           py-1
                           bg-gray-700
                           hover:bg-gray-600
                           border border-gray-200
-                          p-1
                           m-1
                         "
                         @click="() => onSelect(option)"
                       >
-                        <span class="border-r text-xs pr-1">
-                          ctrl+alt+<span class="font-bold">{{ i + 1 }}</span>
+                        <span class="border-r pr-1">
+                          ctrl+alt+{{ i + 1 }}
                         </span>
                         <span class="pl-1">{{ option.label }}</span>
                       </div>
@@ -180,6 +208,7 @@ import {
   ComboboxInput,
   ComboboxOptions,
   ComboboxOption,
+  ComboboxButton,
   Dialog,
   DialogOverlay,
   TransitionChild,
@@ -187,6 +216,7 @@ import {
 } from "@headlessui/vue";
 
 import { openUrl, triggerElement, getIconNameForCommand } from "./triggers";
+import { getCommandFromScope, categories } from "./commands";
 import { go, highlight } from "fuzzysort";
 
 export default {
@@ -198,6 +228,7 @@ export default {
     ComboboxInput,
     ComboboxOptions,
     ComboboxOption,
+    ComboboxButton,
     Dialog,
     DialogOverlay,
     AnnotationIcon,
@@ -212,19 +243,57 @@ export default {
     const recent = props.store.commands[0];
     const visible = ref(false);
     const preferences = props.store.preferences;
+    const allCategories = Object.values(categories);
+    const selectedCategory = ref(categories.ALL);
 
     const query = ref("");
-    const filteredCommandResults = computed(() =>
-      go(query.value.toLowerCase(), props.store.commands, {
+
+    const shortcuts = [
+      {
+        key: "/ts",
+        category: categories.TOP_SITES,
+      },
+      {
+        key: "/t",
+        category: categories.TABS,
+      },
+      {
+        key: "/b",
+        category: categories.BOOKMARKS,
+      },
+      {
+        key: "/p",
+        category: categories.PAGE,
+      },
+      {
+        key: "/a",
+        category: categories.ALL,
+      },
+    ];
+    const filteredCommandResults = computed(() => {
+      let kw = query.value.toLowerCase();
+      for (let shortcut of shortcuts) {
+        if (kw.startsWith(shortcut.key + " ")) {
+          selectedCategory.value = shortcut.category;
+          kw = kw.substring(shortcut.key.length + 1);
+        }
+      }
+      const categorizedCommands = props.store.commands.filter((command) =>
+        command.categories.includes(selectedCategory.value)
+      );
+      return go(kw, categorizedCommands, {
         key: "label",
         limit: 10,
         all: true,
-      })
-    );
+      });
+    });
 
     const selectedCommand = ref(props.store.commands[0]);
     const activeCommand = ref(props.store.commands[0]);
+
     return {
+      categories: allCategories,
+      selectedCategory,
       visible,
       preferences,
       query,
@@ -238,11 +307,21 @@ export default {
   },
   methods: {
     handleKeys(evt) {
-      // TODO handle tab key
+      // alt tab is the way to tab through categories when an option was selected
+      if (evt.code === "Tab" && !evt.ctrlKey && evt.altKey && !evt.shiftKey) {
+        this.selectNextCategory(evt);
+      } else if (
+        evt.code === "Tab" &&
+        !evt.ctrlKey &&
+        evt.shiftKey &&
+        !evt.altKey
+      ) {
+        this.selectPreviousCategory(evt);
+      }
       // TODO use preferences to match
-      if (evt.ctrlKey && !evt.shiftKey && !evt.altKey) {
+      else if (evt.ctrlKey && evt.shiftKey && !evt.altKey) {
         this.selectNth(evt);
-      } else if (evt.ctrlKey && evt.altKey && !evt.shiftKey) {
+      } else if (evt.ctrlKey && !evt.shiftKey && evt.altKey) {
         if (evt.code == "KeyS") {
           this.search();
         } else {
@@ -250,12 +329,36 @@ export default {
         }
       }
     },
-    search() {
-      chrome.runtime.sendMessage({ type: "search", query: this.query });
+    selectNextCategory(evt) {
+      evt.preventDefault();
+      const index = this.categories.findIndex(
+        (cat) => cat === this.selectedCategory
+      );
+      if (index + 1 === this.categories.length) {
+        this.selectedCategory = this.categories[0];
+      } else {
+        this.selectedCategory = this.categories[index + 1];
+      }
+    },
+    selectPreviousCategory(evt) {
+      evt.preventDefault();
+      const index = this.categories.findIndex(
+        (cat) => cat === this.selectedCategory
+      );
+      if (index === 0) {
+        this.selectedCategory = this.categories[this.categories.length - 1];
+      } else {
+        this.selectedCategory = this.categories[index - 1];
+      }
+    },
+    async search() {
+      await chrome.runtime.sendMessage({ type: "search", query: this.query });
     },
     onSelect(command) {
       this.visible = false;
       this.triggerCommand(command);
+      // reset category
+      this.selectedCategory = categories.ALL;
     },
     selectFirst() {
       if (this.filteredCommandResults.length > 0) {
@@ -263,9 +366,9 @@ export default {
       }
     },
     selectNth(evt) {
-      evt.preventDefault();
       const n = parseInt(evt.key);
       if (n && n < this.filteredCommandResults.length + 1) {
+        evt.preventDefault();
         this.onSelect(this.filteredCommandResults[n - 1].obj);
       }
     },
@@ -297,33 +400,12 @@ export default {
             const type = option.type;
             const scopeElement = command.scopeElement;
             const config = option[type];
-            const labelElement = config.label.selector
-              ? scopeElement.querySelector(config.label.selector)
-              : scopeElement;
-
-            const label = renderTemplateString(
-              config.label.template,
-              labelElement
+            const commandOption = getCommandFromScope(
+              scopeElement,
+              type,
+              config
             );
-
-            const triggerElement = config.trigger.selector
-              ? scopeElement.querySelector(config.trigger.selector)
-              : scopeElement;
-
-            if (
-              label &&
-              label !== "#" &&
-              triggerElement &&
-              !isHidden(triggerElement)
-            ) {
-              options.push({
-                type,
-                label,
-                scopeElement,
-                triggerElement,
-                config,
-              });
-            }
+            if (commandOption) options.push(commandOption);
           });
 
         // TODO add option to open in new window
@@ -343,11 +425,13 @@ export default {
       return options;
     },
     selectOption(evt) {
-      evt.preventDefault();
-      const options = this.getOptions(this.activeCommand);
-      const n = parseInt(evt.key);
-      if (n && n < options.length + 1) {
-        this.onSelect(options[n - 1]);
+      if (this.activeCommand) {
+        const options = this.getOptions(this.activeCommand);
+        const n = parseInt(evt.key);
+        if (n && n < options.length + 1) {
+          evt.preventDefault();
+          this.onSelect(options[n - 1]);
+        }
       }
     },
   },
@@ -355,8 +439,11 @@ export default {
 </script>
 
 <style scoped>
+.glow {
+  box-shadow: 0 0 20px #2f7083;
+}
 #combo {
-  @apply mx-auto
+  @apply mx-auto text-gray-100
             max-w-2xl
             transform
             divide-y divide-gray-500 divide-opacity-20

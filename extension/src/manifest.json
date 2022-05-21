@@ -4,11 +4,13 @@
   "manifest_version": 3,
   "description": "Get a command palette on every website. Navigate through any web page, tabs, or bookmarks with your keyboard.",
   "action": {
-    "default_title": "Single Dispatch Command Palette"
+    "default_title": "Single Dispatch Command Palette",
+    "default_popup": "popup/index.html"
   },
   "background": {
     "service_worker": "service_worker.js"
   },
+  "options_page": "options/index.html",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -22,6 +24,13 @@
         "mac": "Command+K"
       },
       "description": "Activate Single Dispatch Command Palette"
+    },
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+M",
+        "mac": "Command+M"
+      },
+      "description": "Single Dispatch Popup"
     }
   },
   "permissions": ["tabs", "bookmarks", "search", "topSites"]

@@ -8,7 +8,7 @@ async function getCurrentTab() {
 
 async function activateExtension(tab) {
   if (tab.id) {
-    chrome.tabs.sendMessage(tab.id, {
+    await chrome.tabs.sendMessage(tab.id, {
       toggleVisible: true,
       data: {
         bookmarks: await getBookmarks(),
@@ -37,13 +37,13 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       await chromeCommands[request.command.name].execute(
         request.command.config
       );
-      sendResponse(true);
+      return true;
     case "search":
       await chrome.search.query({
         text: request.query,
         disposition: "NEW_TAB",
       });
-      sendResponse(true);
+      return true;
     default:
       break;
   }
@@ -119,7 +119,7 @@ const chromeCommands = {
   },
   closeTab: {
     async execute(config) {
-      await chrome.tabs.remove([config.id]);
+      await chrome.tabs.remove(config.id);
     },
   },
   apps: {
