@@ -2,12 +2,14 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
+    "firebase": "firebase emulators:start",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^5.0.4",
+    "@pinia/nuxt": "^0.1.9",
     "autoprefixer": "^10.4.7",
     "nuxt": "3.0.0-rc.3",
     "postcss": "^8.4.14",
@@ -15,6 +17,10 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.1",
-    "@heroicons/vue": "^1.0.6"
+    "@heroicons/vue": "^1.0.6",
+    "@splitbee/web": "^0.3.0",
+    "axios": "^0.27.2",
+    "firebase": "^9.8.1",
+    "pinia": "^2.0.14"
   }
 }

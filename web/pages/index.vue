@@ -5,7 +5,7 @@
         <div class="flex-0 h-3/4" />
         <div class="flex-1 h-1/4 w-full bg-gray-200" />
       </div>
-      <div class="pt-20 md:pt-40 relative z-10">
+      <div class="pt-10 md:pt-20 relative z-10">
         <div class="text-center px-4 sm:px-8 max-w-7xl mx-auto">
           <h1
             class="
@@ -43,7 +43,7 @@
               data-aos="zoom-y-out"
               data-aos-delay="150"
             >
-              A command palette on every website
+              Get a command palette on every website
             </p>
           </div>
 
