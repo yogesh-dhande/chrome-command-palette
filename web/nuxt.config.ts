@@ -27,6 +27,7 @@ export default defineNuxtConfig({
       functionsUrl: process.env.NUXT_ENV_FIREBASE_FUNCTIONS_URL,
       useFirebaseEmulators: deployTarget === "development",
       analyticsApiKey: process.env.NUXT_ENV_ANALYTICS_API_KEY,
+      extensionID: process.env.NUXT_ENV_EXTENSION_ID,
     },
   },
 });

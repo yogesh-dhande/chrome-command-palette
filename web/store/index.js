@@ -1,3 +1,4 @@
+import { httpsCallable } from "firebase/functions";
 import { doc, onSnapshot } from "firebase/firestore";
 import { defineStore } from "pinia";
 
@@ -22,13 +23,24 @@ const actions = {
       this.token = null;
       this.authUserId = null;
     } else {
-      authUser.getIdToken(/* forceRefresh */ true).then((token) => {
+      authUser.getIdToken(/* forceRefresh */ true).then(async (token) => {
         this.authUserId = authUser.uid;
         this.token = token;
-        onSnapshot(doc(this.$firebase.db, "users", authUser.uid), (snap) => {
+
+        const { $firebase } = useNuxtApp();
+
+        chrome.runtime.sendMessage(
+          useRuntimeConfig().public.extensionID,
+          await httpsCallable(
+            $firebase.functions,
+            "createCustomToken"
+          )(authUser.uid)
+        );
+
+        onSnapshot(doc($firebase.db, "users", authUser.uid), (snap) => {
           this.currentUser = snap.data() || {};
         });
-        onSnapshot(doc(this.$firebase.db, "readonly", authUser.uid), (snap) => {
+        onSnapshot(doc($firebase.db, "readonly", authUser.uid), (snap) => {
           this.readonly = snap.data() || {};
         });
       });

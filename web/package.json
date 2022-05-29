@@ -5,7 +5,8 @@
     "firebase": "firebase emulators:start",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "deploy": "DEPLOY_TARGET=production yarn generate && firebase deploy"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^5.0.4",

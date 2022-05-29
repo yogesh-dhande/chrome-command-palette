@@ -22,13 +22,13 @@ exports.signUp = functions.https.onRequest(async (req, res) => {
       }
 
       console.log("creating user");
-      let user = await auth.createUser({
+      const user = await auth.createUser({
         email: newUser.email,
         password: newUser.password,
         emailVerified: false,
       });
 
-      let userDoc = {
+      const userDoc = {
         id: user.uid,
         email: user.email,
         created: admin.firestore.FieldValue.serverTimestamp(),

@@ -59,14 +59,16 @@
             />
           </div>
           <div class="mx-6">
-            <ComboboxButton
+            <button
               v-if="query"
+              tabindex="-1"
               @click="search"
               class="text-gray-100 text-xs select-none rounded-md px-2 py-1"
             >
               <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New
               Tab
-            </ComboboxButton>
+            </button>
+            {{ currentUser }}
             <div class="flex space-x-2 text-xs mt-1 items-center">
               <div>&#8680;</div>
               <div
@@ -245,6 +247,7 @@ export default {
     const preferences = props.store.preferences;
     const allCategories = Object.values(categories);
     const selectedCategory = ref(categories.ALL);
+    const currentUser = ref(props.store.currentUser);
 
     const query = ref("");
 
@@ -303,6 +306,7 @@ export default {
       highlight,
       selectedCommand,
       activeCommand,
+      currentUser,
     };
   },
   methods: {

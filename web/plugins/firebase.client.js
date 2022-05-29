@@ -49,12 +49,13 @@ export default defineNuxtPlugin((nuxtApp) => {
   const firebase = {
     db,
     auth,
+    functions,
     sendVerificationEmail,
   };
 
   return new Promise((resolve, reject) => {
-    auth.onAuthStateChanged(async (user) => {
-      await store.onAuthStateChangedAction(user);
+    auth.onAuthStateChanged(async (authUser) => {
+      await store.onAuthStateChangedAction(authUser);
       return resolve({
         provide: {
           firebase,

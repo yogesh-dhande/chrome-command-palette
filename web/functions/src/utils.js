@@ -18,7 +18,7 @@ exports.isEmpty = (obj) => {
 };
 
 exports.getUIDFromRequest = async (req) => {
-  let decodedToken = await auth.verifyIdToken(
+  const decodedToken = await auth.verifyIdToken(
     req.get("authorization").replace("Bearer ", "")
   );
   return decodedToken.uid;

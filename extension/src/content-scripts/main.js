@@ -19,9 +19,11 @@ const vm = createApp(Popup, {
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
+    console.log(message.data.store);
     vm.visible = !vm.visible;
     if (vm.visible) {
       store.commands = parseDomForCommands(message.data);
+      Object.assign(store, message.data.store);
 
       if (!downloaded) {
         downloaded = true;
