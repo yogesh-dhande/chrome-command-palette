@@ -1,6 +1,5 @@
 export function validateUrl(urlString) {
   let url;
-
   try {
     if (urlString.startsWith("/")) {
       urlString = `${window.location.origin}${urlString}`;

@@ -1,7 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { getApps, initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+  onSnapshot,
+  doc,
+} from "firebase/firestore";
 
 import { signInWithCustomToken } from "firebase/auth";
 
