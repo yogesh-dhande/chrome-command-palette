@@ -238,7 +238,6 @@ export default {
   },
   methods: {
     logout() {
-      console.log("logging out");
       signOut(this.firebase.auth).finally(() => {
         this.$router.go();
       });
