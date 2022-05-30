@@ -39,7 +39,6 @@ if (useFirebaseEmulators) {
 export const store = {
   isLoggedIn: false,
   authUserId: null,
-  readonly: {},
   currentUser: {},
 };
 
@@ -49,9 +48,6 @@ auth.onAuthStateChanged(async (authUser) => {
     store.isLoggedIn = true;
     onSnapshot(doc(db, "users", authUser.uid), (snap) => {
       store.currentUser = snap.data() || {};
-    });
-    onSnapshot(doc(db, "readonly", authUser.uid), (snap) => {
-      store.readonly = snap.data() || {};
     });
   } else {
     store.authUserId = null;

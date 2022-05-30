@@ -31,13 +31,10 @@ exports.signUp = functions.https.onRequest(async (req, res) => {
       const userDoc = {
         id: user.uid,
         email: user.email,
+        plan: "free",
         created: admin.firestore.FieldValue.serverTimestamp(),
       };
       await db.collection("users").doc(user.uid).set(userDoc);
-      await db.collection("readonly").doc(user.uid).set({
-        id: user.uid,
-        plan: "free",
-      });
       return res.status(200).send(newUser);
     } catch (error) {
       console.log(error);

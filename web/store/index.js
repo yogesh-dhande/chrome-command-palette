@@ -6,7 +6,6 @@ const state = () => ({
   authUserId: null,
   token: null,
   currentUser: {},
-  readonly: {},
 });
 
 const getters = {
@@ -39,9 +38,6 @@ const actions = {
 
         onSnapshot(doc($firebase.db, "users", authUser.uid), (snap) => {
           this.currentUser = snap.data() || {};
-        });
-        onSnapshot(doc($firebase.db, "readonly", authUser.uid), (snap) => {
-          this.readonly = snap.data() || {};
         });
       });
     }
