@@ -311,7 +311,7 @@ export default {
       await chrome.runtime.sendMessage({ type: "search", query: this.query });
     },
     onSelect(command) {
-      this.visible = false;
+      this.$emit("close");
       this.triggerCommand(command);
       // reset category
       this.selectedCategory = categories.ALL;

@@ -30,9 +30,8 @@
         leave-to="opacity-0 scale-95"
       >
         <div class="dialog-root">
-          {{ commands }}
-          <Login v-if="!store.isLoggedIn" />
-          <CommandPalette v-else />
+          <Login v-if="!store.isLoggedIn" @close="visible = false" />
+          <CommandPalette v-else @close="visible = false" />
         </div>
       </TransitionChild>
     </Dialog>

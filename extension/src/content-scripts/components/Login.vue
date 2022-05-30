@@ -2,23 +2,35 @@
   <div class="p-8 text-center">
     Please
     <a
-      href=""
+      :href="`${baseUrl}/login`"
+      target="_blank"
+      @click="recordTab"
       class="
         font-bold
-        text-cyan-400
-        visited:text-cyan-400
-        focus:px-2 focus:mx-2
+        text-cyan-300
+        visited:text-cyan-300
+        focus:px-2
+        focus:py-1
+        focus:mx-2
+        focus:ring-cyan-100
+        focus:outline-cyan-200
       "
       >Log In</a
     >
     or
     <a
-      href=""
+      :href="`${baseUrl}/register`"
+      target="_blank"
+      @click="recordTab"
       class="
         font-bold
-        text-teal-400
-        visited:text-teal-400
-        focus:px-2 focus:mx-2
+        text-teal-300
+        visited:text-teal-300
+        focus:px-2
+        focus:mx-2
+        focus:py-1
+        focus:ring-teal-100
+        focus:outline-teal-200
       "
       >Sign Up</a
     >
@@ -41,7 +53,22 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    console.log(import.meta.env);
+    return {
+      baseUrl: import.meta.env.VITE_BASE_URL,
+    };
+  },
+  methods: {
+    recordTab() {
+      this.$emit("close");
+      chrome.runtime.sendMessage({
+        type: "RECORD_TAB",
+      });
+    },
+  },
+};
 </script>
 
 <style>

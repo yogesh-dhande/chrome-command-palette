@@ -8,7 +8,7 @@ import {
   doc,
 } from "firebase/firestore";
 
-import { signInWithCustomToken } from "firebase/auth";
+import { signInWithCustomToken, signOut } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCdNGL1QkKTdQww_q6sUi_ansozZ39QIk0",
@@ -30,8 +30,7 @@ if (!apps.length) {
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
-const useFirebaseEmulators = true;
-if (useFirebaseEmulators) {
+if (import.meta.env.VITE_USE_FIREBASE_EMULATORS) {
   connectAuthEmulator(auth, "http://localhost:10000");
   connectFirestoreEmulator(db, "localhost", 10002);
 }
@@ -57,6 +56,10 @@ auth.onAuthStateChanged(async (authUser) => {
   }
 });
 
-export async function login(token, store) {
+export async function login(token) {
   return await signInWithCustomToken(auth, token);
+}
+
+export async function logout() {
+  return await signOut(auth);
 }

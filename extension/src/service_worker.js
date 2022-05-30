@@ -1,10 +1,17 @@
 import { chromeCommands } from "./packs/chrome";
 import { getCurrentTab, activateExtension } from "./utils";
-import { login } from "./firebaseConfig";
+import { login, logout } from "./firebaseConfig";
+
+let recordedTabConfig = null;
 
 chrome.runtime.onMessageExternal.addListener(
   async (message, sender, sendResponse) => {
     await login(message.data);
+    if (recordedTabConfig) {
+      await chromeCommands.switchToTab.execute(recordedTabConfig);
+      const tab = await getCurrentTab();
+      await activateExtension(tab);
+    }
     return true;
   }
 );
@@ -32,6 +39,15 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         text: request.query,
         disposition: "NEW_TAB",
       });
+      return true;
+    case "RECORD_TAB":
+      const tab = sender.tab;
+      recordedTabConfig = {
+        id: tab.id,
+        windowId: tab.windowId,
+        url: tab.url,
+        favIconUrl: tab.favIconUrl,
+      };
       return true;
     default:
       break;
