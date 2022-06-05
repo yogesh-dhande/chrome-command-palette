@@ -30,7 +30,7 @@
               block
               w-full
               text-sm
-              bg-gray-800
+              bg-gray-900
               rounded-md
             "
             @focus="
@@ -66,7 +66,7 @@
         @blur="validatePasswordConfirmation"
       ></password-input>
       <input-errors :errors="passwordConfirmationErrors"></input-errors>
-
+      <Pricing />
       <submit
         class="mt-3"
         :is-loading="isLoading"
@@ -108,10 +108,10 @@ export default {
     InputErrors,
   },
   data() {
-    const { $splitbee, $firebase } = useNuxtApp();
+    const { $analytics, $firebase } = useNuxtApp();
     const config = useRuntimeConfig().public;
     return {
-      splitbee: $splitbee,
+      splitbee: $analytics,
       firebase: $firebase,
       BASE_URL: config.baseUrl,
       functionsUrl: config.functionsUrl,

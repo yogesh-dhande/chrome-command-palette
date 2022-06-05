@@ -12,6 +12,9 @@ const getters = {
   loggedIn(state) {
     return state.authUserId && state.currentUser.name !== "demo";
   },
+  isPaidAccount(state) {
+    return state.currentUser.plan === "paid";
+  },
 };
 
 const actions = {

@@ -31,7 +31,7 @@
               block
               w-full
               text-sm
-              bg-gray-800
+              bg-gray-900
               rounded-md
             "
             @focus="clearErrors"
@@ -120,12 +120,12 @@ export default {
   },
   middleware: "guest",
   data() {
-    const { $splitbee, $firebase } = useNuxtApp();
+    const { $analytics, $firebase } = useNuxtApp();
     const { query } = useRoute();
 
     return {
       redirect: query.redirect ? query.redirect : "/",
-      splitbee: $splitbee,
+      analytics: $analytics,
       firebase: $firebase,
       email: "",
       password: "",
@@ -151,7 +151,7 @@ export default {
           this.email,
           this.password
         );
-        this.splitbee.track("Log In");
+        this.analytics.track("Log In");
 
         store.setAuthState(userCredential.user);
 
@@ -162,7 +162,7 @@ export default {
         this.$router.push(this.redirect);
       } catch (error) {
         this.errors.push(error.message);
-        this.splitbee.track("Error", { errors: this.errors });
+        this.analytics.track("Error", { errors: this.errors });
       } finally {
         this.isLoading = false;
       }

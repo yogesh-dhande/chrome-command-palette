@@ -3,7 +3,7 @@
     <div class="relative">
       <div class="absolute inset-0 flex flex-col" aria-hidden="true">
         <div class="flex-0 h-3/4" />
-        <div class="flex-1 h-1/4 w-full bg-gray-200" />
+        <div class="flex-1 h-1/4 w-full bg-gray-100" />
       </div>
       <div class="pt-10 md:pt-20 relative z-10">
         <div class="text-center px-4 sm:px-8 max-w-7xl mx-auto">
@@ -56,6 +56,29 @@
       </div>
     </div>
     <Features />
+    <section id="pricing" class="bg-gray-100">
+      <div class="pt-12 sm:pt-16 lg:pt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center">
+            <h2
+              class="
+                text-3xl
+                font-extrabold
+                text-gray-900
+                sm:text-4xl
+                lg:text-5xl
+              "
+            >
+              Join our beta!
+            </h2>
+            <p class="mt-4 text-xl text-gray-600">
+              Lock in early-adopter pricing!
+            </p>
+          </div>
+        </div>
+      </div>
+      <Pricing />
+    </section>
   </div>
 </template>
 

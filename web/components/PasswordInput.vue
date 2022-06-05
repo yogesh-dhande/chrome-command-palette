@@ -17,7 +17,7 @@
           block
           w-full
           text-sm
-          bg-gray-800
+          bg-gray-900
           rounded-md
         "
         v-model="value"

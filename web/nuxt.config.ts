@@ -13,6 +13,23 @@ export default defineNuxtConfig({
   typescript: {
     shim: false,
   },
+  app: {
+    head: {
+      title: "Single Dispatch",
+      meta: [
+        {
+          hid: "description",
+          name: "description",
+          content: "Start using Single Dispatch",
+        },
+      ],
+      script: [
+        {
+          src: "https://cdn.paddle.com/paddle/paddle.js",
+        },
+      ],
+    },
+  },
   modules: ["@nuxtjs/tailwindcss"],
   buildModules: ["@pinia/nuxt"],
   runtimeConfig: {
@@ -28,6 +45,8 @@ export default defineNuxtConfig({
       useFirebaseEmulators: deployTarget === "development",
       analyticsApiKey: process.env.NUXT_ENV_ANALYTICS_API_KEY,
       extensionID: process.env.NUXT_ENV_EXTENSION_ID,
+      paddleVendorId: process.env.NUXT_ENV_PADDLE_VENDOR_ID,
+      paddleAnnualProductId: process.env.NUXT_ENV_PADDLE_ANNUAL_PRODUCT_ID,
     },
   },
 });

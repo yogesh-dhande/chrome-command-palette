@@ -1,14 +1,21 @@
 <template>
-  <div class="bg-gray-800">
+  <div class="bg-gray-900">
     <div class="min-h-screen">
       <NavBar
-        class="sticky top-0 z-50 bg-gray-800"
+        class="
+          sticky
+          top-0
+          z-50
+          bg-gray-900 bg-opacity-50
+          backdrop-blur backdrop-filter
+        "
         :class="{
-          'shadow-2xl bg-gray-800 border-b-2 border-gray-900 border-opacity-75':
+          'shadow-2xl bg-gray-900 border-b-2 border-gray-900 border-opacity-75':
             !view.atTopOfPage,
         }"
       />
       <slot />
+      <Footer />
     </div>
   </div>
 </template>

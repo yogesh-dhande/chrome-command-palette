@@ -14,10 +14,10 @@
       text-white
       hover:text-cyan-50
       bg-gradient-to-r
-      from-cyan-600
-      to-teal-600
-      hover:from-cyan-700 hover:to-teal-700
-      focus:ring-4 focus:ring-yellow-200 focus:bg-yellow-700
+      from-cyan-500
+      to-teal-500
+      hover:from-cyan-600 hover:to-teal-600
+      focus:ring-4 focus:ring-cyan-200 focus:bg-cyan-700
       disabled:opacity-50
     "
     @click="(e) => $emit('click', e)"

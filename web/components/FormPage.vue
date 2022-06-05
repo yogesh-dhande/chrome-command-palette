@@ -2,7 +2,7 @@
   <div
     class="
       mx-auto
-      bg-gray-800
+      bg-gray-900
       min-h-screen
       flex flex-1
       justify-center
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-export default {}
+export default {};
 </script>
 
 <style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="py-16 bg-gray-200 overflow-hidden lg:py-24">
+  <div class="py-16 bg-gray-100 overflow-hidden lg:py-24">
     <div class="relative max-w-xl mx-auto px-4 sm:px-8 lg:max-w-7xl">
       <div class="relative" data-aos="zoom-y-out" data-aos-delay="150">
         <h2
@@ -206,6 +206,6 @@
 
 <style scoped>
 .glow {
-  box-shadow: 5px 5px 10px #824e72;
+  box-shadow: 5px 5px 10px #2f7083;
 }
 </style>

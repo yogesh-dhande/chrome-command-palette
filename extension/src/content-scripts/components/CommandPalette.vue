@@ -84,7 +84,7 @@
             <li
               :class="[
                 'flex flex-col cursor-default select-none rounded-md px-3 py-2',
-                active && 'bg-gray-800 text-white',
+                active && 'bg-gray-900 text-white',
               ]"
             >
               <div class="flex justify-between">

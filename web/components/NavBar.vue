@@ -89,7 +89,7 @@
               border-transparent
             "
           >
-            <nuxt-link to="/" class="italic">💩</nuxt-link>
+            <nuxt-link to="/">⌨️</nuxt-link>
           </div>
         </div>
 
@@ -97,8 +97,7 @@
           <div class="hidden lg:block md:ml-6">
             <div class="flex space-x-4 items-center">
               <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-
-              <div v-if="!loggedIn" class="self-center">
+              <div v-if="!store.loggedIn" class="self-center">
                 <nuxt-link
                   to="/login"
                   class="
@@ -162,7 +161,7 @@
     <div class="lg:hidden" :class="{ hidden: !showMobileMenu }">
       <div class="px-2 pt-2 pb-3 space-y-1">
         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-        <div v-if="!loggedIn">
+        <div v-if="!store.loggedIn">
           <nuxt-link
             to="/login"
             class="
@@ -217,31 +216,19 @@
   </nav>
 </template>
 
-<script>
-import { mapState } from "pinia";
+<script setup>
 import { useStore } from "~/store";
 import { signOut } from "firebase/auth";
 import { ref } from "vue";
 
-export default {
-  setup() {
-    const { $splitbee, $firebase } = useNuxtApp();
-    const showMobileMenu = ref(false);
-    return {
-      splitbee: $splitbee,
-      firebase: $firebase,
-      showMobileMenu,
-    };
-  },
-  computed: {
-    ...mapState(useStore, ["loggedIn"]),
-  },
-  methods: {
-    logout() {
-      signOut(this.firebase.auth).finally(() => {
-        this.$router.go();
-      });
-    },
-  },
-};
+const store = useStore();
+const router = useRouter();
+const { $firebase } = useNuxtApp();
+const showMobileMenu = ref(false);
+
+function logout() {
+  signOut($firebase.auth).finally(() => {
+    router.go();
+  });
+}
 </script>
