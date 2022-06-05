@@ -1,7 +1,8 @@
 import { chromeCommands } from "./packs/chrome";
 import { getCurrentTab, activateExtension } from "./utils";
-import { login, logout } from "./firebaseConfig";
+import { login } from "./firebaseConfig";
 
+// Used to store info on the tab to login page so it can be focused after login
 let recordedTabConfig = null;
 
 chrome.runtime.onMessageExternal.addListener(
@@ -11,6 +12,7 @@ chrome.runtime.onMessageExternal.addListener(
       await chromeCommands.switchToTab.execute(recordedTabConfig);
       const tab = await getCurrentTab();
       await activateExtension(tab);
+      recordedTabConfig = null;
     }
     return true;
   }
