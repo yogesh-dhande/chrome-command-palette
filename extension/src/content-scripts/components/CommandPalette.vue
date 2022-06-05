@@ -4,6 +4,27 @@
     @update:modelValue="(command) => onSelect(command)"
     v-model="selectedCommand"
   >
+    <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
+      <div>&#8680;</div>
+      <div
+        v-for="category in categories"
+        :key="category"
+        :class="[
+          'px-2 py-1 hover:bg-gray-700 underline rounded-md',
+          selectedCategory === category && 'bg-gray-600',
+        ]"
+      >
+        <input
+          type="radio"
+          :id="`category-${category}`"
+          :value="category"
+          v-model="selectedCategory"
+          class="hidden"
+        />
+        <label :for="`category-${category}`">{{ category }}</label>
+      </div>
+      <div>&#8678;</div>
+    </div>
     <div class="relative">
       <SearchIcon
         class="
@@ -36,27 +57,6 @@
       >
         <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New Tab
       </button>
-      <div class="flex space-x-2 text-xs mt-1 items-center">
-        <div>&#8680;</div>
-        <div
-          v-for="category in categories"
-          :key="category"
-          :class="[
-            'px-2 py-1 hover:bg-gray-700 underline rounded-md',
-            selectedCategory === category && 'bg-gray-600',
-          ]"
-        >
-          <input
-            type="radio"
-            :id="`category-${category}`"
-            :value="category"
-            v-model="selectedCategory"
-            class="hidden"
-          />
-          <label :for="`category-${category}`">{{ category }}</label>
-        </div>
-        <div>&#8678;</div>
-      </div>
     </div>
 
     <ComboboxOptions
