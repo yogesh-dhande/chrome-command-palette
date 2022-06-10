@@ -1,1 +1,1 @@
-# Chrome Command Palette
+# Single Dispatch
