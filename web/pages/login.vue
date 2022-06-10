@@ -114,11 +114,15 @@ import { useStore } from "~/store";
 
 export default {
   beforeRouteLeave(to, from, next) {
-    // Reset internal state when leaving the page so avoid confusion
+    // Reset internal state when leaving the page to avoid confusion
     this.fpform = false;
     next();
   },
-  middleware: "guest",
+  setup() {
+    definePageMeta({
+      middleware: ["guest"],
+    });
+  },
   data() {
     const { $analytics, $firebase } = useNuxtApp();
     const { query } = useRoute();
@@ -193,5 +197,3 @@ export default {
   },
 };
 </script>
-<style>
-</style>

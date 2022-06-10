@@ -1,9 +1,9 @@
-import { useStore } from "~/store";
+import { useStore } from "@/store";
 
-export default function ({ $pinia, redirect }) {
-  const store = useStore($pinia);
-  // If the user is not authenticated
-  if (!store.loggedIn) {
-    return redirect("/login?redirect=/");
+export default defineNuxtRouteMiddleware((to, from) => {
+  console.log(to);
+  const store = useStore();
+  if (store.loggedIn) {
+    return navigateTo("/login?redirect=/");
   }
-}
+});

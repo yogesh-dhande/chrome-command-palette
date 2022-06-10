@@ -1,8 +1,9 @@
-import { useStore } from "~/store";
+import { useStore } from "@/store";
 
-export default function ({ $pinia, redirect }) {
-  const store = useStore($pinia);
+export default defineNuxtRouteMiddleware((to, from) => {
+  console.log(to);
+  const store = useStore();
   if (store.loggedIn) {
-    return redirect("/");
+    return navigateTo("/tips");
   }
-}
+});

@@ -56,29 +56,7 @@
       </div>
     </div>
     <Features />
-    <section id="pricing" class="bg-gray-100">
-      <div class="pt-12 sm:pt-16 lg:pt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center">
-            <h2
-              class="
-                text-3xl
-                font-extrabold
-                text-gray-900
-                sm:text-4xl
-                lg:text-5xl
-              "
-            >
-              Join our beta!
-            </h2>
-            <p class="mt-4 text-xl text-gray-600">
-              Lock in early-adopter pricing!
-            </p>
-          </div>
-        </div>
-      </div>
-      <Pricing />
-    </section>
+    <Cta />
   </div>
 </template>
 

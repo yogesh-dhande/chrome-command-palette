@@ -89,7 +89,22 @@
               border-transparent
             "
           >
-            <nuxt-link to="/">⌨️</nuxt-link>
+            <nuxt-link to="/" class="">
+              <span
+                class="
+                  text-lg
+                  font-bold
+                  leading-tight
+                  text-cyan-200
+                  hover:text-cyan-300
+                "
+                ><img
+                  src="@/public/favicon.ico"
+                  alt="logo"
+                  class="w-6 h-6 inline mx-2"
+                />Single Dispatch</span
+              >
+            </nuxt-link>
           </div>
         </div>
 

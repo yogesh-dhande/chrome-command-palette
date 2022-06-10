@@ -199,7 +199,7 @@
         </div>
       </div>
     </div>
-    Search through docs and get to answers quickly
+    <!-- Search through docs and get to answers quickly -->
   </div>
 </template>
 

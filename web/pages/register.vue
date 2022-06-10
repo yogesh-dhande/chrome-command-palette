@@ -66,15 +66,16 @@
         @blur="validatePasswordConfirmation"
       ></password-input>
       <input-errors :errors="passwordConfirmationErrors"></input-errors>
-      <Pricing />
-      <submit
-        class="mt-3"
-        :is-loading="isLoading"
-        :errors="errors"
-        :disabled="disabled"
-        label="Sign Up"
-        @click="register"
-      />
+      <Pricing>
+        <submit
+          class="mt-3"
+          :is-loading="isLoading"
+          :errors="errors"
+          :disabled="disabled"
+          label="Sign Up"
+          @click="register"
+      /></Pricing>
+
       <div class="py-1 sm:px-6 text-md font-medium">
         <span class="float-right">
           <nuxt-link
@@ -101,9 +102,14 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import InputErrors from "~/components/InputErrors.vue";
 import axios from "axios";
+import { useStore } from "@/store";
 
 export default {
-  middleware: "guest",
+  setup() {
+    definePageMeta({
+      middleware: ["guest"],
+    });
+  },
   components: {
     InputErrors,
   },
@@ -111,10 +117,9 @@ export default {
     const { $analytics, $firebase } = useNuxtApp();
     const config = useRuntimeConfig().public;
     return {
-      splitbee: $analytics,
+      analytics: $analytics,
       firebase: $firebase,
-      BASE_URL: config.baseUrl,
-      functionsUrl: config.functionsUrl,
+      config,
       email: "",
       emailErrors: [],
       password: "",
@@ -143,6 +148,43 @@ export default {
     },
   },
   methods: {
+    openCheckout() {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-undef
+        Paddle.Environment.set("sandbox");
+      }
+      // eslint-disable-next-line no-undef
+      Paddle.Setup({ vendor: parseInt(this.config.paddleVendorId) });
+      // eslint-disable-next-line no-undef
+      Paddle.Checkout.open({
+        product: this.config.paddleAnnualProductId,
+        email: this.email,
+        successCallback: this.successCallback,
+      });
+      this.analytics.track("Select Plan", {
+        type: "annual",
+      });
+    },
+    async successCallback() {
+      const store = useStore();
+      try {
+        await axios.post(
+          `${this.config.functionsUrl}/upgradePlan`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${store.token}`,
+            },
+          }
+        );
+      } catch (error) {
+        this.$analytics.track("Failed to update plan info", error.message);
+      }
+      this.$analytics.track("Payment Successful");
+
+      // TODO send to a thank you page or docs
+      this.$router.push("/tips");
+    },
     async register(e) {
       e.preventDefault();
       // on each new attempt clear the old errors
@@ -151,7 +193,7 @@ export default {
         // set loading class to true
         this.isLoading = true;
         try {
-          const res = await axios.post(`${this.functionsUrl}/signUp`, {
+          const res = await axios.post(`${this.config.functionsUrl}/signUp`, {
             email: this.email,
             password: this.password,
             passwordConfirmation: this.passwordConfirmation,
@@ -162,13 +204,14 @@ export default {
             this.password
           );
           this.firebase.sendVerificationEmail(userCredential.user);
-          this.splitbee.track("Sign Up");
-          this.$router.push("/");
+          this.analytics.track("Sign Up");
+          this.isLoading = false;
+          this.openCheckout();
         } catch (error) {
           if (error.response && error.response.data.message) {
             this.errors.push(error.response.data.message);
           }
-          this.splitbee.track("Error", { errors: this.errors });
+          this.analytics.track("Error", { errors: this.errors });
         } finally {
           this.isLoading = false;
         }

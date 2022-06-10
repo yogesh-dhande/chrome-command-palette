@@ -6,6 +6,11 @@
   "action": {
     "default_title": "Single Dispatch Command Palette"
   },
+  "icons": {
+    "16": "/assets/16x16.png",
+    "48": "/assets/48x48.png",
+    "128": "/assets/128x128.png"
+  },
   "background": {
     "service_worker": "service_worker.js"
   },
