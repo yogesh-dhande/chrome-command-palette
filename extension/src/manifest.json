@@ -27,13 +27,6 @@
         "mac": "Command+K"
       },
       "description": "Activate Single Dispatch Command Palette"
-    },
-    "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Ctrl+M",
-        "mac": "Command+M"
-      },
-      "description": "Single Dispatch Popup"
     }
   },
   "externally_connectable": {
