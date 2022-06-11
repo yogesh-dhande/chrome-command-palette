@@ -7,8 +7,9 @@ import { store } from "./store";
 
 let downloaded = false;
 
-console.log(document.body.lastElementChild);
-const vm = createApp(Popup, {}).mount(document.body.lastElementChild);
+const container = document.createElement("div");
+document.body.appendChild(container);
+const vm = createApp(Popup, {}).mount(container);
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.toggleVisible) {
