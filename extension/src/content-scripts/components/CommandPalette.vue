@@ -1,15 +1,7 @@
 <template>
   <Combobox as="div">
     <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
-      <div>&#8680;</div>
-      <div
-        v-for="category in categories"
-        :key="category"
-        :class="[
-          'px-2 py-1 hover:bg-gray-700 underline rounded-md',
-          selectedCategory === category && 'bg-gray-600',
-        ]"
-      >
+      <div v-for="category in categories" :key="category">
         <input
           type="radio"
           :id="`category-${category}`"
@@ -17,9 +9,15 @@
           v-model="selectedCategory"
           class="hidden"
         />
-        <label :for="`category-${category}`">{{ category }}</label>
+        <label
+          :for="`category-${category}`"
+          :class="[
+            'px-2 py-1 hover:bg-gray-700 underline rounded-md text-gray-100 text-sm',
+            selectedCategory === category && 'bg-gray-600',
+          ]"
+          >{{ category }}</label
+        >
       </div>
-      <div>&#8678;</div>
     </div>
     <div class="relative">
       <SearchIcon
@@ -90,16 +88,16 @@
             >
               <div class="flex justify-between">
                 <div>
-                  <p
+                  <div
                     class="flex-auto my-0"
                     v-html="highlight(commandResult)"
-                  ></p>
-                  <p
+                  ></div>
+                  <div
                     v-if="commandResult.obj.type === 'link'"
                     class="text-xs m-0"
                   >
                     {{ commandResult.obj.config.url.substring(0, 80) }}
-                  </p>
+                  </div>
                 </div>
 
                 <component
@@ -151,9 +149,9 @@
       class="py-14 px-6 text-center sm:px-14"
     >
       <FolderIcon class="mx-auto h-6 w-6 text-gray-500" aria-hidden="true" />
-      <p class="mt-4 text-sm text-gray-200">
+      <div class="mt-4 text-sm text-gray-200">
         We couldn't find any commands with that term. Please try again.
-      </p>
+      </div>
     </div>
   </Combobox>
 </template>
