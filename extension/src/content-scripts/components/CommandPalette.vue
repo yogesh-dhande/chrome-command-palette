@@ -1,9 +1,5 @@
 <template>
-  <Combobox
-    as="div"
-    @update:modelValue="(command) => onSelect(command)"
-    v-model="selectedCommand"
-  >
+  <Combobox as="div">
     <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
       <div>&#8680;</div>
       <div
@@ -46,8 +42,10 @@
         @keydown="handleKeys"
         @keydown.right="selectNextCategory"
         @keydown.left="selectPreviousCategory"
+        @keydown.enter="selectActiveCommand"
       />
     </div>
+    <ComboboxButton class="hidden" ref="combo-btn"></ComboboxButton>
     <div class="mx-6">
       <button
         v-if="query"
@@ -84,9 +82,11 @@
             <li
               :class="[
                 'flex flex-col cursor-default select-none rounded-md px-3 py-2',
-                active && 'bg-gray-900 text-white',
+                (active || activeCommand == commandResult.obj) &&
+                  'bg-gray-800 text-white',
               ]"
             >
+              <p v-if="activeCommand">{{ commandResult.obj.label }}</p>
               <div class="flex justify-between">
                 <div>
                   <p
@@ -105,13 +105,18 @@
                   :is="getIconNameForCommand(commandResult.obj)"
                   :class="[
                     'h-4 w-4 inline',
-                    active ? 'text-cyan-300' : 'text-cyan-50',
+                    active || activeCommand == commandResult.obj
+                      ? 'text-cyan-300'
+                      : 'text-cyan-50',
                   ]"
                   aria-hidden="true"
                 />
               </div>
 
-              <div v-if="active" class="flex flex-row flex-wrap text-sm">
+              <div
+                v-if="active || activeCommand == commandResult.obj"
+                class="flex flex-row flex-wrap text-sm"
+              >
                 <div
                   v-for="(option, i) in getOptions(commandResult.obj)"
                   :key="option.label"
@@ -200,6 +205,7 @@ export default {
     const selectedCategory = ref(categories.ALL);
 
     const query = ref("");
+    console.log("setting up");
 
     const shortcuts = [
       {
@@ -223,6 +229,11 @@ export default {
         category: categories.ALL,
       },
     ];
+
+    const activeCommand = ref(
+      store.commands.length > 0 ? store.commands[0] : null
+    );
+
     const filteredCommandResults = computed(() => {
       let kw = query.value.toLowerCase();
       for (let shortcut of shortcuts) {
@@ -234,19 +245,19 @@ export default {
       const categorizedCommands = store.commands.filter((command) =>
         command.categories.includes(selectedCategory.value)
       );
-      return go(kw, categorizedCommands, {
+      const results = go(kw, categorizedCommands, {
         key: "label",
         limit: 10,
         all: true,
       });
+      console.log("results.len", results.length);
+      if (results.length === 0) {
+        activeCommand.value = null;
+      } else {
+        activeCommand.value = results[0].obj;
+      }
+      return results;
     });
-
-    const selectedCommand = ref(
-      store.commands.length > 0 ? store.commands[0] : null
-    );
-    const activeCommand = ref(
-      store.commands.length > 0 ? store.commands[0] : null
-    );
 
     return {
       categories: allCategories,
@@ -257,15 +268,16 @@ export default {
       filteredCommandResults,
       getIconNameForCommand,
       highlight,
-      selectedCommand,
       activeCommand,
     };
   },
   methods: {
     handleKeys(evt) {
       // alt tab is the way to tab through categories when an option was selected
-      if (evt.code === "Tab" && !evt.ctrlKey && evt.altKey && !evt.shiftKey) {
+      if (evt.code === "Tab" && !evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
         this.selectNextCategory(evt);
+        console.log("handling tab");
+        document.getElementById("search").value = this.query;
       } else if (
         evt.code === "Tab" &&
         !evt.ctrlKey &&
@@ -316,6 +328,11 @@ export default {
       // reset category
       this.selectedCategory = categories.ALL;
     },
+    selectActiveCommand() {
+      if (this.activeCommand) {
+        this.onSelect(this.activeCommand);
+      }
+    },
     selectFirst() {
       if (this.filteredCommandResults.length > 0) {
         this.onSelect(this.filteredCommandResults[0].obj);
@@ -340,7 +357,6 @@ export default {
       }
     },
     highlight(commandResult) {
-      console.log(commandResult);
       return highlight(
         commandResult,
         '<span class="text-cyan-300 font-bold">',

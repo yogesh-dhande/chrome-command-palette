@@ -99,7 +99,7 @@
                   hover:text-cyan-300
                 "
                 ><img
-                  src="@/public/favicon.ico"
+                  src="/favicon.ico"
                   alt="logo"
                   class="w-6 h-6 inline mx-2"
                 />Single Dispatch</span

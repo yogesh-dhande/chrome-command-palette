@@ -7,6 +7,7 @@ import { store } from "./store";
 
 let downloaded = false;
 
+console.log(document.body.lastElementChild);
 const vm = createApp(Popup, {}).mount(document.body.lastElementChild);
 
 chrome.runtime.onMessage.addListener((message) => {
@@ -16,7 +17,6 @@ chrome.runtime.onMessage.addListener((message) => {
       store.commands = parseDomForCommands(message.data);
       store.currentUser = message.data.store.currentUser;
       store.isLoggedIn = message.data.store.isLoggedIn;
-      console.log(message.data.store);
       if (!downloaded) {
         downloaded = true;
         // downloadCommands(window.location.href);
