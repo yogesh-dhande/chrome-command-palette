@@ -45,6 +45,7 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
         command = parseLinkCommand(
           label,
           url,
+          elementConfig.disabled,
           [categories.ALL, categories.PAGE],
           triggerElement
         );
@@ -67,7 +68,13 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
   return command;
 }
 
-function parseLinkCommand(label, url, categories, triggerElement = null) {
+function parseLinkCommand(
+  label,
+  url,
+  disabled,
+  categories,
+  triggerElement = null
+) {
   return {
     type: "link",
     key: url,
@@ -77,6 +84,7 @@ function parseLinkCommand(label, url, categories, triggerElement = null) {
       url,
       label,
       target: "_self",
+      disabled,
     },
     triggerElement,
   };
@@ -101,16 +109,18 @@ export function parseDomForCommands(data) {
         });
     } else if (type == "link") {
       // this command is to open the specified url
-      command = parseLinkCommand(config.label, validateUrl(config.url), [
-        categories.ALL,
-        categories.PAGE,
-      ]);
+      command = parseLinkCommand(
+        config.label,
+        validateUrl(config.url),
+        config.disabled,
+        [categories.ALL, categories.PAGE]
+      );
       commandsMap.set(command.key, command);
     }
   });
 
   data.bookmarks.forEach((bookmark) => {
-    command = parseLinkCommand(bookmark.label, bookmark.url, [
+    command = parseLinkCommand(bookmark.label, bookmark.url, false, [
       categories.ALL,
       categories.BOOKMARKS,
     ]);
@@ -118,7 +128,7 @@ export function parseDomForCommands(data) {
   });
 
   data.topSites.forEach((site) => {
-    command = parseLinkCommand(site.label, site.url, [
+    command = parseLinkCommand(site.label, site.url, false, [
       categories.ALL,
       categories.TOP_SITES,
     ]);
@@ -134,5 +144,7 @@ export function parseDomForCommands(data) {
     commandsMap.set(command.key, command);
   });
 
-  return Array.from(commandsMap.values());
+  return Array.from(commandsMap.values()).filter(
+    (command) => !command.config.disabled
+  );
 }
