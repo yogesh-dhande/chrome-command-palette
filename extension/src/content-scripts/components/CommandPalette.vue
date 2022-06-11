@@ -68,6 +68,7 @@
         overflow-y-auto
         my-0
         mx-2
+        truncate
       "
     >
       <li class="p-2">
@@ -89,7 +90,7 @@
               <div class="flex justify-between">
                 <div>
                   <p
-                    class="flex-auto truncate my-0"
+                    class="flex-auto my-0"
                     v-html="highlight(commandResult)"
                   ></p>
                   <p
