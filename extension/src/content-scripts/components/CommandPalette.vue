@@ -86,7 +86,6 @@
                   'bg-gray-800 text-white',
               ]"
             >
-              <p v-if="activeCommand">{{ commandResult.obj.label }}</p>
               <div class="flex justify-between">
                 <div>
                   <p
@@ -250,7 +249,7 @@ export default {
         limit: 10,
         all: true,
       });
-      console.log("results.len", results.length);
+      console.log(results.length);
       if (results.length === 0) {
         activeCommand.value = null;
       } else {
@@ -357,11 +356,14 @@ export default {
       }
     },
     highlight(commandResult) {
-      return highlight(
-        commandResult,
-        '<span class="text-cyan-300 font-bold">',
-        "</span>"
-      );
+      if (this.query) {
+        return highlight(
+          commandResult,
+          '<span class="text-cyan-300 font-bold">',
+          "</span>"
+        );
+      }
+      return commandResult.obj.label;
     },
     getOptions(command) {
       this.activeCommand = command;

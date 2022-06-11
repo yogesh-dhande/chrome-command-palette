@@ -14,7 +14,7 @@
     "aos": "^3.0.0-beta.6",
     "autoprefixer": "^10.4.4",
     "firebase": "^9.8.1",
-    "fuzzysort": "^1.2.1",
+    "fuzzysort": "^2.0.1",
     "js-yaml": "^4.1.0",
     "tailwindcss": "^3.0.24",
     "vite-plugin-chrome-extension": "^0.0.7",
