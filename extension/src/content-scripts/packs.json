@@ -11,8 +11,7 @@
         },
         "trigger": {
           "type": "open"
-        },
-        "disabled": true
+        }
       }
     },
     {
