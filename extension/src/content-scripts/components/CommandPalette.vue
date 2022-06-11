@@ -176,7 +176,7 @@ import {
 
 import {
   openUrl,
-  triggerElement,
+  triggerElementCommand,
   getIconNameForCommand,
 } from "@/content-scripts/triggers";
 import { getCommandFromScope, categories } from "@/content-scripts/commands";
@@ -348,10 +348,10 @@ export default {
     triggerCommand(command) {
       if (command.type === "element") {
         // Command is to open a specified link
-        triggerElement(command);
+        triggerElementCommand(command);
       } else if (command.type === "link") {
         // Command is to open a specified link
-        openUrl(command.config.url, command.config.target);
+        openUrl(command);
       } else if (command.type === "chrome") {
         chrome.runtime.sendMessage({ type: "execute_chrome_command", command });
       }

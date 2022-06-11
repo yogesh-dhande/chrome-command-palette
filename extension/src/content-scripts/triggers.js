@@ -13,11 +13,18 @@ function simulateMouseClick(targetNode) {
   });
 }
 
-export function openUrl(url, target) {
-  window.open(url, target ? target : "_self");
+export function openUrl(command) {
+  if (command.triggerElement) {
+    command.triggerElement.click();
+  } else {
+    window.open(
+      command.config.url,
+      command.config.target ? command.config.target : "_self"
+    );
+  }
 }
 
-export function triggerElement(command) {
+export function triggerElementCommand(command) {
   const type = command.config.trigger.type;
   const el = command.triggerElement;
 
@@ -25,8 +32,6 @@ export function triggerElement(command) {
     el.click();
   } else if (type === "simulatedClick") {
     setTimeout(() => simulateMouseClick(el), 200);
-  } else if (type === "open") {
-    openUrl(el.href, command.config.trigger.target);
   } else if (type === "focus") {
     setTimeout(() => el.focus(), 200);
   }

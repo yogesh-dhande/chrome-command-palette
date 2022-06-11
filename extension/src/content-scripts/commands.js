@@ -42,10 +42,12 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
     if (elementConfig.trigger.type === "open") {
       const url = validateUrl(triggerElement.href);
       if (url) {
-        command = parseLinkCommand(label, url, [
-          categories.ALL,
-          categories.PAGE,
-        ]);
+        command = parseLinkCommand(
+          label,
+          url,
+          [categories.ALL, categories.PAGE],
+          triggerElement
+        );
         return command;
       } else {
         // does not have a valid url but there may be a click handler attached to the element
@@ -65,7 +67,7 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
   return command;
 }
 
-function parseLinkCommand(label, url, categories) {
+function parseLinkCommand(label, url, categories, triggerElement = null) {
   return {
     type: "link",
     key: url,
@@ -76,6 +78,7 @@ function parseLinkCommand(label, url, categories) {
       label,
       target: "_self",
     },
+    triggerElement,
   };
 }
 
