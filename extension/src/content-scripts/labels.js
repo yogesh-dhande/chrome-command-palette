@@ -33,7 +33,7 @@ export function getLabelForInput(el) {
   } else {
     label = el.placeholder;
   }
-  return `${label} Input`;
+  return label ? `${label} Input` : null;
 }
 
 export function getLabelForButton(el) {
