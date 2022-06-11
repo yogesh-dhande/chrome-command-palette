@@ -45,13 +45,9 @@ auth.onAuthStateChanged(async (authUser) => {
   if (authUser) {
     store.authUserId = authUser.uid;
     store.isLoggedIn = true;
-    onSnapshot(doc(db, "users", authUser.uid), (snap) => {
-      store.currentUser = snap.data() || {};
-    });
   } else {
     store.authUserId = null;
     store.isLoggedIn = false;
-    store.currentUser = {};
     store.currentUser = {};
   }
 });

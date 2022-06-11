@@ -204,7 +204,6 @@ export default {
     const selectedCategory = ref(categories.ALL);
 
     const query = ref("");
-    console.log("setting up");
 
     const shortcuts = [
       {
