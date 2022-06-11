@@ -43,6 +43,7 @@
         @keydown.right="selectNextCategory"
         @keydown.left="selectPreviousCategory"
         @keydown.enter="selectActiveCommand"
+        @keydown.esc="$emit('close')"
       />
     </div>
     <ComboboxButton class="hidden" ref="combo-btn"></ComboboxButton>
