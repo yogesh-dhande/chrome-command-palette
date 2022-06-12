@@ -2,6 +2,14 @@ mail.google.com:
   - type: element
     element:
       scope:
+        selector: '.aeH [role="button"]'
+      label:
+        template: button
+      trigger:
+        type: simulatedClick
+  - type: element
+    element:
+      scope:
         selector: '[role="row"]'
       label:
         selector: '[role="link"]'
@@ -59,11 +67,3 @@ mail.google.com:
             trigger:
               selector: '[role="checkbox"]'
               type: click
-  - type: element
-    element:
-      scope:
-        selector: '.aeH [role="button"]'
-      label:
-        template: button
-      trigger:
-        type: simulatedClick

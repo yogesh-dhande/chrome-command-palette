@@ -3,8 +3,7 @@ import { validateUrl } from "./validation";
 import packs from "./packs.json";
 
 export function isHidden(el) {
-  const style = window.getComputedStyle(el);
-  return style.display === "none";
+  return el.offsetParent === null;
 }
 
 export const categories = {
@@ -46,6 +45,7 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
           label,
           url,
           elementConfig.disabled,
+          elementConfig.order,
           [categories.ALL, categories.PAGE],
           triggerElement
         );
@@ -71,6 +71,7 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
 function parseLinkCommand(
   label,
   url,
+  order,
   disabled,
   categories,
   triggerElement = null
@@ -84,6 +85,7 @@ function parseLinkCommand(
       url,
       label,
       target: "_self",
+      order,
       disabled,
     },
     triggerElement,
@@ -93,10 +95,10 @@ function parseLinkCommand(
 export function parseDomForCommands(data) {
   const commandsMap = new Map();
   let command;
-
-  commandTemplates.forEach((template) => {
+  commandTemplates.forEach((template, index) => {
     const type = template.type;
     const config = template[template.type];
+    config.order = config.order || index + 1;
 
     if (type === "element") {
       // this command is to trigger an event on a DOM element
@@ -112,27 +114,12 @@ export function parseDomForCommands(data) {
       command = parseLinkCommand(
         config.label,
         validateUrl(config.url),
+        config.order,
         config.disabled,
         [categories.ALL, categories.PAGE]
       );
       commandsMap.set(command.key, command);
     }
-  });
-
-  data.bookmarks.forEach((bookmark) => {
-    command = parseLinkCommand(bookmark.label, bookmark.url, false, [
-      categories.ALL,
-      categories.BOOKMARKS,
-    ]);
-    commandsMap.set(command.key, command);
-  });
-
-  data.topSites.forEach((site) => {
-    command = parseLinkCommand(site.label, site.url, false, [
-      categories.ALL,
-      categories.TOP_SITES,
-    ]);
-    commandsMap.set(command.key, command);
   });
 
   data.tabs.forEach((tab) => {
@@ -144,7 +131,23 @@ export function parseDomForCommands(data) {
     commandsMap.set(command.key, command);
   });
 
-  return Array.from(commandsMap.values()).filter(
-    (command) => !command.config.disabled
-  );
+  data.bookmarks.forEach((bookmark) => {
+    command = parseLinkCommand(bookmark.label, bookmark.url, -1, false, [
+      categories.ALL,
+      categories.BOOKMARKS,
+    ]);
+    commandsMap.set(command.key, command);
+  });
+
+  data.topSites.forEach((site) => {
+    command = parseLinkCommand(site.label, site.url, -1, false, [
+      categories.ALL,
+      categories.TOP_SITES,
+    ]);
+    commandsMap.set(command.key, command);
+  });
+
+  return Array.from(commandsMap.values())
+    .filter((command) => !command.config.disabled)
+    .sort((a, b) => b.config.order - a.config.order);
 }

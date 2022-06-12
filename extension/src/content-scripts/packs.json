@@ -273,6 +273,20 @@
       "type": "element",
       "element": {
         "scope": {
+          "selector": ".aeH [role=\"button\"]"
+        },
+        "label": {
+          "template": "button"
+        },
+        "trigger": {
+          "type": "simulatedClick"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
           "selector": "[role=\"row\"]"
         },
         "label": {
@@ -369,20 +383,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "type": "element",
-      "element": {
-        "scope": {
-          "selector": ".aeH [role=\"button\"]"
-        },
-        "label": {
-          "template": "button"
-        },
-        "trigger": {
-          "type": "simulatedClick"
-        }
       }
     }
   ],

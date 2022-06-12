@@ -12,6 +12,7 @@ export const chromeCommands = {
             windowId: tab.windowId,
             url: tab.url,
             favIconUrl: tab.favIconUrl,
+            order: 0,
           },
           options: [
             {

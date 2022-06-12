@@ -242,6 +242,7 @@ export default {
       const categorizedCommands = store.commands.filter((command) =>
         command.categories.includes(selectedCategory.value)
       );
+
       const results = go(kw, categorizedCommands, {
         key: "label",
         limit: 10,
