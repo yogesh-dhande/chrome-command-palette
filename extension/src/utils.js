@@ -43,11 +43,9 @@ export async function activateExtension(tab) {
   if (tab.id) {
     try {
       const url = `${import.meta.env.VITE_FIREBASE_FUNCTIONS_URL}/getPacks`;
-      console.log(url);
       const res = await fetch(url, { method: "GET" });
-
       const packs = await res.json();
-      console.log(packs);
+
       const commandTemplates = [];
       Object.keys(packs).forEach((urlpattern) => {
         if ((urlpattern === "*") | tab.url.includes(urlpattern)) {

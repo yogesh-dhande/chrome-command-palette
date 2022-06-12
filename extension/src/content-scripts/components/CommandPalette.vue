@@ -192,41 +192,12 @@ export default {
 
     const query = ref("");
 
-    const shortcuts = [
-      {
-        key: "/ts",
-        category: categories.TOP_SITES,
-      },
-      {
-        key: "/t",
-        category: categories.TABS,
-      },
-      {
-        key: "/b",
-        category: categories.BOOKMARKS,
-      },
-      {
-        key: "/p",
-        category: categories.PAGE,
-      },
-      {
-        key: "/a",
-        category: categories.ALL,
-      },
-    ];
-
     const activeCommand = ref(
       store.commands.length > 0 ? store.commands[0] : null
     );
 
     const filteredCommandResults = computed(() => {
       let kw = query.value.toLowerCase();
-      for (let shortcut of shortcuts) {
-        if (kw.startsWith(shortcut.key + " ")) {
-          selectedCategory.value = shortcut.category;
-          kw = kw.substring(shortcut.key.length + 1);
-        }
-      }
       const categorizedCommands = store.commands.filter((command) =>
         command.categories.includes(selectedCategory.value)
       );
