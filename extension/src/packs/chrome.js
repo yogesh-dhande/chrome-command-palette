@@ -41,26 +41,6 @@ export const chromeCommands = {
       await chrome.tabs.remove(config.id);
     },
   },
-  apps: {
-    async list() {
-      const appList = await chrome.management.getAll();
-      return appList
-        .filter((app) => app.appLaunchUrl) // only keep apps as extensions cannot be launched
-        .map((app) => {
-          return {
-            type: "chrome",
-            name: "apps",
-            label: `App: ${app.name}`,
-            config: {
-              id: app.id,
-            },
-          };
-        });
-    },
-    async execute(config) {
-      await chrome.management.launchApp(config.id);
-    },
-  },
 };
 
 export const chromeLinks = [

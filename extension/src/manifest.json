@@ -37,5 +37,5 @@
       "https://www.singledispatch.com/*"
     ]
   },
-  "permissions": ["tabs", "bookmarks", "search", "topSites"]
+  "permissions": ["tabs"]
 }
