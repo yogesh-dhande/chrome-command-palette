@@ -12,8 +12,8 @@
         <label
           :for="`category-${category}`"
           :class="[
-            'px-2 py-1 hover:bg-gray-700 underline rounded-md text-gray-100 text-sm',
-            selectedCategory === category && 'bg-gray-600',
+            'px-2 py-1 hover:bg-gray-700 rounded-md text-gray-100 text-sm',
+            selectedCategory === category && 'bg-gray-800 text-cyan-300',
           ]"
           >{{ category }}</label
         >
@@ -83,15 +83,12 @@
               :class="[
                 'flex flex-col cursor-default select-none rounded-md px-3 py-2',
                 (active || activeCommand == commandResult.obj) &&
-                  'bg-gray-800 text-white',
+                  'bg-gray-800 text-cyan-50',
               ]"
             >
               <div class="flex justify-between">
                 <div>
-                  <div
-                    class="flex-auto my-0"
-                    v-html="highlight(commandResult)"
-                  ></div>
+                  <div class="my-0" v-html="highlight(commandResult)"></div>
                   <div
                     v-if="commandResult.obj.type === 'link'"
                     class="text-xs m-0"
@@ -124,9 +121,9 @@
                     rounded-md
                     px-2
                     py-1
-                    bg-gray-700
-                    hover:bg-gray-600
-                    border border-gray-200
+                    bg-gray-900
+                    hover:bg-gray-800
+                    border border-cyan-100
                     m-1
                   "
                   @click="() => onSelect(option)"
