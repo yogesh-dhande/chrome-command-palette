@@ -307,7 +307,8 @@
               "trigger": {
                 "selector": "[data-tooltip=\"Archive\"]",
                 "type": "click"
-              }
+              },
+              "allowHidden": true
             }
           },
           {
@@ -319,7 +320,8 @@
               "trigger": {
                 "selector": "[data-tooltip=\"Delete\"]",
                 "type": "click"
-              }
+              },
+              "allowHidden": true
             }
           },
           {
@@ -331,7 +333,8 @@
               "trigger": {
                 "selector": "[data-tooltip=\"Mark as unread\"]",
                 "type": "click"
-              }
+              },
+              "allowHidden": true
             }
           },
           {
@@ -343,7 +346,8 @@
               "trigger": {
                 "selector": "[data-tooltip=\"Mark as read\"]",
                 "type": "click"
-              }
+              },
+              "allowHidden": true
             }
           },
           {
@@ -355,7 +359,8 @@
               "trigger": {
                 "selector": "[data-tooltip=\"Snooze\"]",
                 "type": "click"
-              }
+              },
+              "allowHidden": true
             }
           },
           {
@@ -367,7 +372,8 @@
               "trigger": {
                 "selector": "[role=\"button\"]",
                 "type": "click"
-              }
+              },
+              "allowHidden": true
             }
           },
           {
@@ -379,7 +385,8 @@
               "trigger": {
                 "selector": "[role=\"checkbox\"]",
                 "type": "click"
-              }
+              },
+              "allowHidden": true
             }
           }
         ]

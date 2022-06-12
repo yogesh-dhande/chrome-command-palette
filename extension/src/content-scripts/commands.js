@@ -2,7 +2,10 @@ import { renderTemplateString } from "./labels";
 import { validateUrl } from "./validation";
 import packs from "./packs.json";
 
-export function isHidden(el) {
+export function isHidden(el, elementConfig) {
+  if (elementConfig.allowHidden) {
+    return false;
+  }
   return el.offsetParent === null;
 }
 
@@ -37,7 +40,12 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
     ? scopeElement.querySelector(elementConfig.trigger.selector)
     : scopeElement;
 
-  if (label && label !== "#" && triggerElement && !isHidden(triggerElement)) {
+  if (
+    label &&
+    label !== "#" &&
+    triggerElement &&
+    !isHidden(triggerElement, elementConfig)
+  ) {
     if (elementConfig.trigger.type === "open") {
       const url = validateUrl(triggerElement.href);
       if (url) {
