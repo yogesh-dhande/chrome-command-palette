@@ -12,8 +12,8 @@ export function isHidden(el, elementConfig) {
 export const categories = {
   ALL: "All",
   PAGE: "Page",
-  BOOKMARKS: "Bookmarks",
   TABS: "Tabs",
+  BOOKMARKS: "Bookmarks",
   TOP_SITES: "Top Sites",
 };
 
@@ -52,8 +52,8 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
         command = parseLinkCommand(
           label,
           url,
-          elementConfig.disabled,
           elementConfig.order,
+          elementConfig.disabled,
           [categories.ALL, categories.PAGE],
           triggerElement
         );
