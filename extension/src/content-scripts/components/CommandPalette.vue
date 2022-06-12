@@ -148,7 +148,6 @@
       v-if="query !== '' && filteredCommandResults.length === 0"
       class="py-14 px-6 text-center sm:px-14"
     >
-      <FolderIcon class="mx-auto h-6 w-6 text-gray-500" aria-hidden="true" />
       <div class="mt-4 text-sm text-gray-200">
         We couldn't find any commands with that term. Please try again.
       </div>
