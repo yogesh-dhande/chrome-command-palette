@@ -247,7 +247,6 @@ export default {
         limit: 10,
         all: true,
       });
-      console.log(results.length);
       if (results.length === 0) {
         activeCommand.value = null;
       } else {
@@ -273,7 +272,6 @@ export default {
       // alt tab is the way to tab through categories when an option was selected
       if (evt.code === "Tab" && !evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
         this.selectNextCategory(evt);
-        console.log("handling tab");
         document.getElementById("search").value = this.query;
       } else if (
         evt.code === "Tab" &&

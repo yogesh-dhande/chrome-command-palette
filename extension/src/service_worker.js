@@ -29,19 +29,17 @@ chrome.commands.onCommand.addListener(async (command) => {
   return true;
 });
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-  switch (request.type) {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  switch (message.type) {
     case "execute_chrome_command":
-      await chromeCommands[request.command.name].execute(
-        request.command.config
-      );
-      return true;
+      chromeCommands[message.command.name].execute(message.command.config);
+      break;
     case "search":
-      await chrome.search.query({
-        text: request.query,
+      chrome.search.query({
+        text: message.query,
         disposition: "NEW_TAB",
       });
-      return true;
+      break;
     case "RECORD_TAB":
       const tab = sender.tab;
       recordedTabConfig = {
@@ -50,8 +48,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         url: tab.url,
         favIconUrl: tab.favIconUrl,
       };
-      return true;
+      break;
     default:
       break;
   }
+  sendResponse(null);
 });

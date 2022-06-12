@@ -55,7 +55,6 @@
 <script>
 export default {
   data() {
-    console.log(import.meta.env);
     return {
       baseUrl: import.meta.env.VITE_BASE_URL,
     };

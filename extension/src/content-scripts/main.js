@@ -11,7 +11,7 @@ const container = document.createElement("div");
 document.body.appendChild(container);
 const vm = createApp(Popup, {}).mount(container);
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
@@ -24,4 +24,5 @@ chrome.runtime.onMessage.addListener((message) => {
       }
     }
   }
+  sendResponse(null);
 });
