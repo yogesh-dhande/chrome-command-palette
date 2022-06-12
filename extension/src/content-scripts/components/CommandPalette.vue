@@ -12,8 +12,8 @@
         <label
           :for="`category-${category}`"
           :class="[
-            'px-2 py-1 hover:bg-gray-700 rounded-md text-gray-100 text-sm',
-            selectedCategory === category && 'bg-gray-800 text-cyan-300',
+            'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
+            selectedCategory === category && 'bg-gray-700 text-cyan-300',
           ]"
           >{{ category }}</label
         >
@@ -40,11 +40,12 @@
         @keydown="handleKeys"
         @keydown.right="selectNextCategory"
         @keydown.left="selectPreviousCategory"
-        @keydown.enter="selectActiveCommand"
+        @keydown.enter="triggerActiveCommand"
         @keydown.esc="$emit('close')"
+        @keydown.down="selectNextActiveCommand"
+        @keydown.up="selectPreviousActiveCommand"
       />
     </div>
-    <ComboboxButton class="hidden" ref="combo-btn"></ComboboxButton>
     <div class="mx-6">
       <button
         v-if="query"
@@ -62,20 +63,19 @@
       static
     >
       <li class="p-2">
-        <ul class="text-sm text-gray-400 m-0 p-0">
+        <ul class="text-sm text-gray-200 m-0 p-0">
           <ComboboxOption
             v-for="(commandResult, i) in filteredCommandResults"
             :key="i"
             :value="commandResult.obj"
             as="template"
-            v-slot="{ active }"
           >
             <li
               :class="[
                 'flex flex-col cursor-default select-none rounded-md px-3 py-2',
-                (active || activeCommand == commandResult.obj) &&
-                  'bg-gray-800 text-cyan-50',
+                activeCommandIndex === i && 'bg-gray-700 text-white',
               ]"
+              @click="triggerActiveCommand"
             >
               <div class="flex justify-between">
                 <div>
@@ -92,16 +92,14 @@
                   :is="getIconNameForCommand(commandResult.obj)"
                   :class="[
                     'h-4 w-4 inline',
-                    active || activeCommand == commandResult.obj
-                      ? 'text-cyan-300'
-                      : 'text-cyan-50',
+                    activeCommandIndex === i ? 'text-cyan-300' : 'text-white',
                   ]"
                   aria-hidden="true"
                 />
               </div>
 
               <div
-                v-if="active || activeCommand == commandResult.obj"
+                v-if="activeCommandIndex === i"
                 class="flex flex-row flex-wrap text-sm"
               >
                 <div
@@ -112,9 +110,10 @@
                     rounded-md
                     px-2
                     py-1
-                    bg-gray-900
-                    hover:bg-gray-800
-                    border border-cyan-100
+                    bg-gray-800
+                    hover:bg-gray-700 hover:text-cyan-300
+                    border border-gray-100
+                    hover:border-cyan-300
                     m-1
                   "
                   @click="() => onSelect(option)"
@@ -183,7 +182,7 @@ export default {
     SearchIcon,
     GlobeAltIcon,
   },
-  setup(props) {
+  setup() {
     const recent = ref(store.commands.length > 0 ? store.commands[0] : null);
 
     const preferences = store.preferences;
@@ -192,6 +191,7 @@ export default {
 
     const query = ref("");
 
+    const activeCommandIndex = ref(0);
     const activeCommand = ref(
       store.commands.length > 0 ? store.commands[0] : null
     );
@@ -208,8 +208,10 @@ export default {
         all: true,
       });
       if (results.length === 0) {
+        activeCommandIndex.value = null;
         activeCommand.value = null;
       } else {
+        activeCommandIndex.value = 0;
         activeCommand.value = results[0].obj;
       }
       return results;
@@ -224,6 +226,7 @@ export default {
       filteredCommandResults,
       getIconNameForCommand,
       highlight,
+      activeCommandIndex,
       activeCommand,
     };
   },
@@ -277,13 +280,33 @@ export default {
     async search() {
       await chrome.runtime.sendMessage({ type: "search", query: this.query });
     },
+    selectNextActiveCommand(evt) {
+      evt.preventDefault();
+      if (this.activeCommandIndex + 1 === this.filteredCommandResults.length) {
+        this.activeCommandIndex = 0;
+      } else {
+        this.activeCommandIndex += 1;
+      }
+      this.activeCommand =
+        this.filteredCommandResults[this.activeCommandIndex].obj;
+    },
+    selectPreviousActiveCommand(evt) {
+      evt.preventDefault();
+      if (this.activeCommandIndex === 0) {
+        this.activeCommandIndex = this.filteredCommandResults.length - 1;
+      } else {
+        this.activeCommandIndex -= 1;
+      }
+      this.activeCommand =
+        this.filteredCommandResults[this.activeCommandIndex].obj;
+    },
     onSelect(command) {
       this.$emit("close");
       this.triggerCommand(command);
       // reset category
       this.selectedCategory = categories.ALL;
     },
-    selectActiveCommand() {
+    triggerActiveCommand() {
       if (this.activeCommand) {
         this.onSelect(this.activeCommand);
       }
@@ -322,7 +345,6 @@ export default {
       return commandResult.obj.label;
     },
     getOptions(command) {
-      this.activeCommand = command;
       const options = [];
       if (command.type === "element" && command.config.options?.length > 0) {
         command.config.options
