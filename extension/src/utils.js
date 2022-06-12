@@ -1,6 +1,28 @@
 import { store } from "./firebaseConfig";
 import { chromeCommands } from "./chrome";
 
+async function updatePacks() {
+  try {
+    const url = `${import.meta.env.VITE_FIREBASE_FUNCTIONS_URL}/getPacks`;
+    const res = await fetch(url, { method: "GET" });
+    const packs = await res.json();
+    chrome.storage.sync.set({ singleDispatchPacks: packs });
+    console.log("Packs updated");
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+updatePacks();
+
+const packsUpdateInterval = setInterval(async () => {
+  try {
+    await updatePacks();
+  } catch (error) {
+    console.log(error);
+  }
+}, 1000 * 60 * import.meta.env.VITE_PACKS_UPDATE_INTERVAL_MINUTES);
+
 export async function getBookmarks() {
   const bookmarks = [];
 
@@ -41,11 +63,8 @@ export async function getCurrentTab() {
 
 export async function activateExtension(tab) {
   if (tab.id) {
-    try {
-      const url = `${import.meta.env.VITE_FIREBASE_FUNCTIONS_URL}/getPacks`;
-      const res = await fetch(url, { method: "GET" });
-      const packs = await res.json();
-
+    chrome.storage.sync.get(["singleDispatchPacks"], async (obj) => {
+      const packs = obj.singleDispatchPacks;
       const commandTemplates = [];
       Object.keys(packs).forEach((urlpattern) => {
         if ((urlpattern === "*") | tab.url.includes(urlpattern)) {
@@ -61,11 +80,8 @@ export async function activateExtension(tab) {
           bookmarks: await getBookmarks(),
           topSites: await getTopSites(),
           tabs: await chromeCommands.switchToTab.list(),
-          // apps: await chromeCommands.apps.list(),  // Chromium bug, API does not return apps https://bugs.chromium.org/p/chromium/issues/detail?id=1263843
         },
       });
-    } catch (error) {
-      console.log(error);
-    }
+    });
   }
 }
