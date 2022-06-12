@@ -60,18 +60,9 @@
       id="options-box"
       v-if="query === '' || filteredCommandResults.length > 0"
       static
-      class="
-        max-h-96
-        scroll-py-2
-        divide-y divide-gray-500 divide-opacity-20
-        overflow-y-auto
-        my-0
-        mx-2
-        truncate
-      "
     >
       <li class="p-2">
-        <ul class="text-sm text-gray-400 m-0">
+        <ul class="text-sm text-gray-400 m-0 p-0">
           <ComboboxOption
             v-for="(commandResult, i) in filteredCommandResults"
             :key="i"
@@ -434,6 +425,18 @@ export default {
                 focus:ring-0
                 sm:text-sm;
 }
+
+#options-box {
+  @apply max-h-96
+        scroll-py-2
+        divide-y divide-gray-500 divide-opacity-20
+        overflow-y-auto
+        my-0
+        mx-2
+        truncate
+        p-0;
+}
+
 #options-box::-webkit-scrollbar {
   background-color: #374151;
   width: 8px;
