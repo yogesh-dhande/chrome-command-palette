@@ -1,13 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { getApps, initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
-import {
-  connectFirestoreEmulator,
-  getFirestore,
-  onSnapshot,
-  doc,
-} from "firebase/firestore";
-
 import { signInWithCustomToken, signOut } from "firebase/auth";
 
 const firebaseConfig = {
@@ -28,11 +21,9 @@ if (!apps.length) {
 }
 
 const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
 
 if (import.meta.env.VITE_USE_FIREBASE_EMULATORS) {
   connectAuthEmulator(auth, "http://localhost:10000");
-  connectFirestoreEmulator(db, "localhost", 10002);
 }
 
 export const store = {

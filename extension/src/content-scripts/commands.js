@@ -1,6 +1,5 @@
 import { renderTemplateString } from "./labels";
 import { validateUrl } from "./validation";
-import packs from "./packs.json";
 
 export function isHidden(el, elementConfig) {
   if (elementConfig.allowHidden) {
@@ -16,14 +15,6 @@ export const categories = {
   BOOKMARKS: "Bookmarks",
   TOP_SITES: "Top Sites",
 };
-
-const commandTemplates = [];
-
-Object.keys(packs).forEach((urlpattern) => {
-  if ((urlpattern === "*") | window.location.href.includes(urlpattern)) {
-    commandTemplates.push(...packs[urlpattern]);
-  }
-});
 
 export function getCommandFromScope(scopeElement, type, elementConfig) {
   let command;
@@ -103,7 +94,7 @@ function parseLinkCommand(
 export function parseDomForCommands(data) {
   const commandsMap = new Map();
   let command;
-  commandTemplates.forEach((template, index) => {
+  data.commandTemplates.forEach((template, index) => {
     const type = template.type;
     const config = template[template.type];
     config.order = config.order || index + 1;

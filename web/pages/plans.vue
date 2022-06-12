@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { useStore } from "@/store";
 const store = useStore();
 const { $analytics } = useNuxtApp();

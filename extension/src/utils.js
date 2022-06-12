@@ -1,5 +1,5 @@
 import { store } from "./firebaseConfig";
-import { chromeCommands } from "./packs/chrome";
+import { chromeCommands } from "./chrome";
 
 export async function getBookmarks() {
   const bookmarks = [];
@@ -41,15 +41,33 @@ export async function getCurrentTab() {
 
 export async function activateExtension(tab) {
   if (tab.id) {
-    await chrome.tabs.sendMessage(tab.id, {
-      toggleVisible: true,
-      data: {
-        store,
-        bookmarks: await getBookmarks(),
-        topSites: await getTopSites(),
-        tabs: await chromeCommands.switchToTab.list(),
-        // apps: await chromeCommands.apps.list(),  // Chromium bug, API does not return apps https://bugs.chromium.org/p/chromium/issues/detail?id=1263843
-      },
-    });
+    try {
+      const url = `${import.meta.env.VITE_FIREBASE_FUNCTIONS_URL}/getPacks`;
+      console.log(url);
+      const res = await fetch(url, { method: "GET" });
+
+      const packs = await res.json();
+      console.log(packs);
+      const commandTemplates = [];
+      Object.keys(packs).forEach((urlpattern) => {
+        if ((urlpattern === "*") | tab.url.includes(urlpattern)) {
+          commandTemplates.push(...packs[urlpattern]);
+        }
+      });
+
+      await chrome.tabs.sendMessage(tab.id, {
+        toggleVisible: true,
+        data: {
+          store,
+          commandTemplates,
+          bookmarks: await getBookmarks(),
+          topSites: await getTopSites(),
+          tabs: await chromeCommands.switchToTab.list(),
+          // apps: await chromeCommands.apps.list(),  // Chromium bug, API does not return apps https://bugs.chromium.org/p/chromium/issues/detail?id=1263843
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

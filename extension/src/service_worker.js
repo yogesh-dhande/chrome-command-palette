@@ -1,4 +1,4 @@
-import { chromeCommands } from "./packs/chrome";
+import { chromeCommands } from "./chrome";
 import { getCurrentTab, activateExtension } from "./utils";
 import { login } from "./firebaseConfig";
 
