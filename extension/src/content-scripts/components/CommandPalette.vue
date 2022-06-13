@@ -1,6 +1,7 @@
 <template>
   <Combobox as="div">
     <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
+      <!-- <img :src="logoUrl" alt="logo" class="w-6 h-6 inline mx-2" /> -->
       <div v-for="category in categories" :key="category">
         <input
           type="radio"
@@ -122,7 +123,7 @@
                   <span class="pl-1">{{ option.label }}</span>
                 </div>
               </div>
-              <pre v-if="active && preferences.debug">{{
+              <pre v-if="activeCommandIndex === i && preferences.debug">{{
                 JSON.stringify(commandResult.obj.config, undefined, 2)
               }}</pre>
             </li>
@@ -186,8 +187,13 @@ export default {
     const recent = ref(store.commands.length > 0 ? store.commands[0] : null);
 
     const preferences = store.preferences;
-    const allCategories = Object.values(categories);
-    const selectedCategory = ref(categories.ALL);
+    const allCategories = [
+      categories.PAGE,
+      categories.TABS,
+      categories.BOOKMARKS,
+      categories.TOP_SITES,
+    ];
+    const selectedCategory = ref(allCategories[0]);
 
     const query = ref("");
 
@@ -304,7 +310,7 @@ export default {
       this.$emit("close");
       this.triggerCommand(command);
       // reset category
-      this.selectedCategory = categories.ALL;
+      this.selectedCategory = categories[0];
     },
     triggerActiveCommand() {
       if (this.activeCommand) {
