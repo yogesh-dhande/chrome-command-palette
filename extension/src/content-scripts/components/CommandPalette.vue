@@ -1,7 +1,7 @@
 <template>
   <Combobox as="div">
     <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
-      <!-- <img :src="logoUrl" alt="logo" class="w-6 h-6 inline mx-2" /> -->
+      <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
       <div v-for="category in categories" :key="category">
         <input
           type="radio"
@@ -234,6 +234,7 @@ export default {
       highlight,
       activeCommandIndex,
       activeCommand,
+      logoUrl: chrome.runtime.getURL("assets/128x128.png"),
     };
   },
   methods: {
