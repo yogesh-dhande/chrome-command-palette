@@ -47,7 +47,7 @@ export async function getTopSites() {
   const topSites = await chrome.topSites.get();
   return topSites.map((site) => {
     return {
-      label: `Top Sites: ${site.title}`,
+      label: `Frequently Visited: ${site.title}`,
       url: site.url,
     };
   });

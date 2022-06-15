@@ -34,7 +34,7 @@
             <p
               class="
                 text-2xl
-                md:text-5xl
+                md:text-4xl
                 leading-8
                 text-cyan-50
                 mb-8
@@ -43,7 +43,7 @@
               data-aos="zoom-y-out"
               data-aos-delay="150"
             >
-              Get a command palette on every website
+              A command palette on every website
             </p>
           </div>
 
@@ -56,7 +56,7 @@
       </div>
     </div>
     <Features />
-    <Cta />
+    <!-- <Cta /> -->
   </div>
 </template>
 

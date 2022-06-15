@@ -13,7 +13,7 @@ export const categories = {
   PAGE: "Page",
   TABS: "Tabs",
   BOOKMARKS: "Bookmarks",
-  TOP_SITES: "Top Sites",
+  TOP_SITES: "Frequently Visited",
 };
 
 export function getCommandFromScope(scopeElement, type, elementConfig) {
