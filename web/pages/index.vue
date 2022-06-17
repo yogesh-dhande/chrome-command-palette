@@ -9,6 +9,8 @@
         <div class="text-center px-4 sm:px-8 max-w-7xl mx-auto">
           <h1
             class="
+              max-w-2xl
+              mx-auto
               text-5xl
               md:text-7xl
               font-bold
@@ -27,8 +29,9 @@
                 via-white
                 to-teal-300
               "
-              >Single Dispatch</span
             >
+              Command Palette</span
+            ><span class="block">for any website</span>
           </h1>
           <div class="md:mt-5">
             <p
@@ -42,13 +45,11 @@
               "
               data-aos="zoom-y-out"
               data-aos-delay="150"
-            >
-              A command palette on every website
-            </p>
+            ></p>
           </div>
 
           <img
-            class="glow mt-12 sm:mt-24 rounded-lg"
+            class="glow mt-8 sm:mt-16 rounded-lg"
             src="@/assets/img/screenshot.png"
             alt=""
           />

@@ -4,7 +4,7 @@
       <div class="relative" data-aos="zoom-y-out" data-aos-delay="150">
         <h2
           class="
-            text-center text-3xl
+            text-3xl
             leading-8
             font-extrabold
             tracking-tight
@@ -14,7 +14,7 @@
         >
           A delightful way to navigate the web
         </h2>
-        <p class="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
+        <p class="mt-4 text-xl text-gray-500">
           Command palettes are not just for your code editor! Navigate through
           web pages, tabs or bookmarks with just your keyboard. Simply open the
           command palette with a keyboard shortcut and start typing.
@@ -30,8 +30,8 @@
           </p>
           <p>
             Have too many windows open and not sure which window you need to get
-            to? Single Dispatch will search through all open windows and focus
-            on the tab you want.
+            to? You can search through all open windows and switch to the tab
+            you want.
           </p>
         </template>
         <template #image>
@@ -44,7 +44,10 @@
 
       <FeatureItem>
         <template #header>Open bookmarks or frequently visited sites </template>
-        <template #description> </template>
+        <template #description
+          >No need to worry about perfectly organizing your bookmarks into
+          folders and subfolders when you can just search for them!</template
+        >
         <template #image>
           <img
             class="relative mx-auto rounded-lg glow"

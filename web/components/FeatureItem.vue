@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-32">
+  <div class="mt-24">
     <div class="mx-2">
       <h3
         class="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl"
