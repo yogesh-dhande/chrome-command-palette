@@ -1,8 +1,8 @@
 {
   "name": "Single Dispatch",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "manifest_version": 3,
-  "description": "Get a command palette on every website. Navigate through any web page, tabs, or bookmarks with your keyboard.",
+  "description": "Command palette for any website. Switch between tabs, open bookmarks or links and click on buttons with your keyboard.",
   "action": {
     "default_title": "Single Dispatch Command Palette"
   },
@@ -18,12 +18,6 @@
     {
       "resources": ["assets/128x128.png"],
       "matches": ["<all_urls>"]
-    }
-  ],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content-scripts/main.js"]
     }
   ],
   "commands": {
@@ -43,5 +37,5 @@
       "https://www.singledispatch.com/*"
     ]
   },
-  "permissions": ["tabs", "search"]
+  "permissions": ["tabs", "search", "scripting", "activeTab"]
 }

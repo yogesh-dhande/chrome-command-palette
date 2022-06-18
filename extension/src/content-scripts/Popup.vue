@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import "@/styles/main.css";
 import { ref } from "vue";
 
 import {

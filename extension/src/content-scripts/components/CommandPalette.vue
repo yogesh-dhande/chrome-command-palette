@@ -33,10 +33,10 @@
         "
         aria-hidden="true"
       />
-      <ComboboxInput
+      <input
         id="search"
         placeholder="Search..."
-        @change="query = $event.target.value"
+        @input="query = $event.target.value"
         autocomplete="off"
         @keydown="handleKeys"
         @keydown.right="selectNextCategory"
@@ -242,7 +242,6 @@ export default {
       // alt tab is the way to tab through categories when an option was selected
       if (evt.code === "Tab" && !evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
         this.selectNextCategory(evt);
-        document.getElementById("search").value = this.query;
       } else if (
         evt.code === "Tab" &&
         !evt.ctrlKey &&
@@ -406,35 +405,37 @@ export default {
 #search {
   font-size: 16px;
   @apply mx-auto
-            max-w-2xl
-            transform
-            divide-y divide-gray-500 divide-opacity-20
-            overflow-hidden
-            rounded-xl
-            bg-gray-900
-            shadow-2xl
-            transition-all
-                h-12
-                w-full
-                border-0
-                bg-transparent
-                pl-11
-                pr-4
-                text-white
-                placeholder-gray-500
-                focus:ring-0
-                sm:text-sm;
+    max-w-2xl
+    transform
+    divide-y divide-gray-500 divide-opacity-20
+    overflow-hidden
+    rounded-xl
+    bg-gray-900
+    shadow-2xl
+    transition-all
+    h-12
+    w-full
+    border-0
+    bg-transparent
+    m-0 py-0
+    pl-11
+    pr-4
+    text-white
+    placeholder-gray-500
+    focus:ring-0
+    focus:outline-none
+    sm:text-sm;
 }
 
 #options-box {
   @apply max-h-96
-        scroll-py-2
-        divide-y divide-gray-500 divide-opacity-20
-        overflow-y-auto
-        my-0
-        mx-2
-        truncate
-        p-0;
+    scroll-py-2
+    divide-y divide-gray-500 divide-opacity-20
+    overflow-y-auto
+    my-0
+    mx-2
+    truncate
+    p-0;
 }
 
 #options-box::-webkit-scrollbar {
