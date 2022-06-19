@@ -2,6 +2,10 @@ const { auth } = require("./app");
 
 exports.cors = require("cors")({
   origin: [
+    "chrome-extension://cadibejahflciiphngiclgeofbgkcogb",
+    "chrome-extension://ebphfkpocnckimopiifpfpnnieolonkk",
+    "chrome-extension://oinlccplnpbkkkbmcbpfednfklhklnkk",
+    "chrome-extension://fonljknpoebddgohcghlilchfbnkeina",
     "https://singledispatch.com",
     "https://www.singledispatch.com",
     "https://singledispatch.web.app",

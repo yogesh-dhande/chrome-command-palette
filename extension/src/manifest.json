@@ -1,6 +1,6 @@
 {
   "name": "Single Dispatch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "manifest_version": 3,
   "description": "Command palette for any website. Switch between tabs, open bookmarks or links and click on buttons with your keyboard.",
   "action": {
@@ -20,6 +20,12 @@
       "matches": ["<all_urls>"]
     }
   ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-scripts/main.js"]
+    }
+  ],
   "commands": {
     "activate_extension": {
       "suggested_key": {
@@ -37,5 +43,5 @@
       "https://www.singledispatch.com/*"
     ]
   },
-  "permissions": ["tabs", "search", "scripting", "activeTab"]
+  "permissions": ["tabs", "search"]
 }

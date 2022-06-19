@@ -63,14 +63,6 @@ export async function getCurrentTab() {
 
 export async function activateExtension(tab) {
   if (tab.id) {
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id, allFrames: true },
-      files: ["content-scripts/main.js"],
-    });
-    await chrome.scripting.insertCSS({
-      target: { tabId: tab.id, allFrames: true },
-      files: ["styles/main.css"],
-    });
     chrome.storage.sync.get(["singleDispatchPacks"], async (obj) => {
       const packs = obj.singleDispatchPacks;
       const commandTemplates = [];
