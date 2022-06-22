@@ -135,6 +135,13 @@ export function parseDomForCommands(data) {
     callback: () => history.forward(),
   });
 
+  commandsMap.set("reload", {
+    type: "callback",
+    label: "Reload this page",
+    categories: [categories.ALL, categories.PAGE],
+    callback: () => location.reload(),
+  });
+
   data.tabs.forEach((tab) => {
     let command = {
       key: tab.config.id,

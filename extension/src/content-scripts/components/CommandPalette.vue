@@ -52,7 +52,15 @@
         v-if="query"
         tabindex="-1"
         @click="search"
-        class="text-gray-100 text-xs select-none rounded-md px-2 py-1"
+        class="
+          bg-gray-900
+          border-none
+          text-gray-100 text-xs
+          select-none
+          rounded-md
+          px-2
+          py-1
+        "
       >
         <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New Tab
       </button>
@@ -64,7 +72,7 @@
       static
     >
       <li class="p-2">
-        <ul class="text-sm text-gray-200 m-0 p-0">
+        <ul class="text-sm text-gray-200 m-0 p-0 list-none">
           <ComboboxOption
             v-for="(commandResult, i) in filteredCommandResults"
             :key="i"
@@ -435,7 +443,8 @@ export default {
     my-0
     mx-2
     truncate
-    p-0;
+    p-0
+    list-none;
 }
 
 #options-box::-webkit-scrollbar {
