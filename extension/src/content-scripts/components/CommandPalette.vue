@@ -331,13 +331,13 @@ export default {
     },
     triggerCommand(command) {
       if (command.type === "element") {
-        // Command is to open a specified link
         triggerElementCommand(command);
       } else if (command.type === "link") {
-        // Command is to open a specified link
         openUrl(command);
       } else if (command.type === "chrome") {
         chrome.runtime.sendMessage({ type: "execute_chrome_command", command });
+      } else if (command.type === "callback") {
+        command.callback();
       }
     },
     highlight(commandResult) {

@@ -121,6 +121,20 @@ export function parseDomForCommands(data) {
     }
   });
 
+  commandsMap.set("goBack", {
+    type: "callback",
+    label: "Go Back",
+    categories: [categories.ALL, categories.PAGE],
+    callback: () => history.back(),
+  });
+
+  commandsMap.set("goForward", {
+    type: "callback",
+    label: "Go Forward",
+    categories: [categories.ALL, categories.PAGE],
+    callback: () => history.forward(),
+  });
+
   data.tabs.forEach((tab) => {
     let command = {
       key: tab.config.id,
@@ -146,7 +160,8 @@ export function parseDomForCommands(data) {
     commandsMap.set(command.key, command);
   });
 
+  // TODO: not every command has a config anymore
   return Array.from(commandsMap.values())
-    .filter((command) => !command.config.disabled)
-    .sort((a, b) => b.config.order - a.config.order);
+    .filter((command) => !command.config?.disabled)
+    .sort((a, b) => b.config?.order - a.config?.order);
 }
