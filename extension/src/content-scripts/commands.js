@@ -123,14 +123,14 @@ export function parseDomForCommands(data) {
 
   commandsMap.set("goBack", {
     type: "callback",
-    label: "Go Back",
+    label: "Go back",
     categories: [categories.ALL, categories.PAGE],
     callback: () => history.back(),
   });
 
   commandsMap.set("goForward", {
     type: "callback",
-    label: "Go Forward",
+    label: "Go forward",
     categories: [categories.ALL, categories.PAGE],
     callback: () => history.forward(),
   });

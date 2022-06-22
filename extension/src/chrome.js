@@ -1,3 +1,5 @@
+import { getCurrentTab } from "./utils";
+
 export const chromeCommands = {
   switchToTab: {
     async list() {
@@ -40,6 +42,40 @@ export const chromeCommands = {
   closeTab: {
     async execute(config) {
       await chrome.tabs.remove(config.id);
+    },
+  },
+  splitTab: {
+    async list() {
+      return [
+        {
+          type: "chrome",
+          name: "splitTab",
+          label: `Tabs: Split tab to right`,
+          config: {
+            side: "right",
+          },
+        },
+      ];
+    },
+    async execute(config) {
+      const window = await chrome.windows.getCurrent();
+      const width = (window.width / 2) | 0; // window height needs to be an integer
+      // make window half width
+      chrome.windows.update(window.id, {
+        left: window.left,
+        top: window.top,
+        width,
+        height: window.height,
+      });
+      // create a new window and move the current tab to it
+      await chrome.windows.create({
+        focused: false,
+        left: window.left + width,
+        top: window.top,
+        width,
+        height: window.height,
+        tabId: (await getCurrentTab()).id,
+      });
     },
   },
 };

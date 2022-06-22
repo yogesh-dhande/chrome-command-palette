@@ -7,7 +7,6 @@ async function updatePacks() {
     const res = await fetch(url, { method: "GET" });
     const packs = await res.json();
     chrome.storage.sync.set({ singleDispatchPacks: packs });
-    console.log("Packs updated");
   } catch (error) {
     console.log(error);
   }
@@ -79,7 +78,13 @@ export async function activateExtension(tab) {
           commandTemplates,
           bookmarks: await getBookmarks(),
           topSites: await getTopSites(),
-          tabs: await chromeCommands.switchToTab.list(),
+          tabs: [].concat.apply(
+            [],
+            await Promise.all([
+              chromeCommands.switchToTab.list(),
+              chromeCommands.splitTab.list(),
+            ])
+          ),
         },
       });
     });
