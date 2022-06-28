@@ -167,8 +167,16 @@ export function parseDomForCommands(data) {
     commandsMap.set(command.key, command);
   });
 
+  // remove commands with duplicate labels since they can’t be distinguished in the command palette
+  const countsByLabel = {};
+  Array.from(commandsMap.values()).forEach((command) => {
+    countsByLabel[command.label] = countsByLabel[command.label]
+      ? countsByLabel[command.label] + 1
+      : 1;
+  });
   // TODO: not every command has a config anymore
   return Array.from(commandsMap.values())
     .filter((command) => !command.config?.disabled)
+    .filter((command) => countsByLabel[command.label] == 1)
     .sort((a, b) => b.config?.order - a.config?.order);
 }
