@@ -29,6 +29,16 @@ chrome.commands.onCommand.addListener(async (command) => {
   return true;
 });
 
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    chrome.tabs.create({
+      url: "https://blog.singledispatch.com/welcome",
+    });
+  }
+});
+
+chrome.runtime.setUninstallURL("https://blog.singledispatch.com/uninstalled");
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case "execute_chrome_command":

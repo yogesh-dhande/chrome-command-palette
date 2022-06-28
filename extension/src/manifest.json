@@ -1,6 +1,6 @@
 {
   "name": "Single Dispatch",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "manifest_version": 3,
   "description": "Command palette for any website. Switch between tabs, open bookmarks or links and click on buttons with your keyboard.",
   "action": {
