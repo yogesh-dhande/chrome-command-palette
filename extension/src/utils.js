@@ -22,16 +22,6 @@ const packsUpdateInterval = setInterval(async () => {
   }
 }, 1000 * 60 * import.meta.env.VITE_PACKS_UPDATE_INTERVAL_MINUTES);
 
-export async function getTopSites() {
-  const topSites = await chrome.topSites.get();
-  return topSites.map((site) => {
-    return {
-      label: `Frequently Visited: ${site.title}`,
-      url: site.url,
-    };
-  });
-}
-
 export async function getCurrentTab() {
   const [tab] = await chrome.tabs.query({
     active: true,
@@ -65,7 +55,6 @@ export async function activateExtension(tab) {
               chromeCommands.splitTab.list(),
             ])
           ),
-          topSites: await getTopSites(),
         },
       });
     });

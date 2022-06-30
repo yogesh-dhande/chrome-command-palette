@@ -13,7 +13,6 @@ export const categories = {
   PAGE: "Page",
   TABS: "Tabs",
   BOOKMARKS: "Bookmarks",
-  TOP_SITES: "Frequently Visited",
 };
 
 export function getCommandFromScope(scopeElement, type, elementConfig) {
@@ -150,14 +149,6 @@ export function parseDomForCommands(data) {
       `${chromeCommand.label}-${chromeCommand.config.id}`,
       chromeCommand
     );
-  });
-
-  data.topSites.forEach((site) => {
-    command = parseLinkCommand(site.label, site.url, -1, false, [
-      categories.ALL,
-      categories.TOP_SITES,
-    ]);
-    commandsMap.set(command.key, command);
   });
 
   // remove commands with duplicate labels since they can’t be distinguished in the command palette

@@ -211,7 +211,6 @@ export default {
       categories.PAGE,
       categories.TABS,
       categories.BOOKMARKS,
-      categories.TOP_SITES,
     ];
     const selectedCategory = ref(allCategories[0]);
 
