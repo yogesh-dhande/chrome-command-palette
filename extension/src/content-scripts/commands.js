@@ -124,6 +124,7 @@ export function parseDomForCommands(data) {
   commandsMap.set("goBack", {
     type: "callback",
     label: "Go back",
+    config: {},
     categories: [categories.ALL, categories.PAGE],
     callback: () => history.back(),
   });
@@ -131,6 +132,7 @@ export function parseDomForCommands(data) {
   commandsMap.set("goForward", {
     type: "callback",
     label: "Go forward",
+    config: {},
     categories: [categories.ALL, categories.PAGE],
     callback: () => history.forward(),
   });
@@ -138,25 +140,16 @@ export function parseDomForCommands(data) {
   commandsMap.set("reload", {
     type: "callback",
     label: "Reload this page",
+    config: {},
     categories: [categories.ALL, categories.PAGE],
     callback: () => location.reload(),
   });
 
-  data.tabs.forEach((tab) => {
-    let command = {
-      key: tab.config.id,
-      categories: [categories.ALL, categories.TABS],
-      ...tab,
-    };
-    commandsMap.set(command.key, command);
-  });
-
-  data.bookmarks.forEach((bookmark) => {
-    command = parseLinkCommand(bookmark.label, bookmark.url, -1, false, [
-      categories.ALL,
-      categories.BOOKMARKS,
-    ]);
-    commandsMap.set(command.key, command);
+  data.chromeCommands.forEach((chromeCommand) => {
+    commandsMap.set(
+      `${chromeCommand.label}-${chromeCommand.config.id}`,
+      chromeCommand
+    );
   });
 
   data.topSites.forEach((site) => {
@@ -174,6 +167,7 @@ export function parseDomForCommands(data) {
       ? countsByLabel[command.label] + 1
       : 1;
   });
+
   // TODO: not every command has a config anymore
   return Array.from(commandsMap.values())
     .filter((command) => !command.config?.disabled)

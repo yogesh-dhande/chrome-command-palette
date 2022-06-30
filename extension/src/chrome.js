@@ -1,4 +1,5 @@
 import { getCurrentTab } from "./utils";
+import { categories } from "./content-scripts/commands";
 
 export const chromeCommands = {
   switchToTab: {
@@ -7,21 +8,23 @@ export const chromeCommands = {
       return tabList.map((tab) => {
         return {
           type: "chrome",
-          name: "switchToTab",
           label: `Tabs: ${tab.title}`,
           config: {
+            name: "switchToTab",
             id: tab.id,
             windowId: tab.windowId,
             url: tab.url,
             favIconUrl: tab.favIconUrl,
             order: 0,
           },
+          categories: [categories.ALL, categories.TABS],
           options: [
             {
               type: "chrome",
-              name: "closeTab",
+
               label: "Close Tab",
               config: {
+                name: "closeTab",
                 id: tab.id,
               },
             },
@@ -49,11 +52,13 @@ export const chromeCommands = {
       return [
         {
           type: "chrome",
-          name: "splitTab",
+
           label: `Tabs: Split tab to right`,
           config: {
+            name: "splitTab",
             side: "right",
           },
+          categories: [categories.ALL, categories.TABS],
         },
       ];
     },
@@ -76,6 +81,94 @@ export const chromeCommands = {
         height: window.height,
         tabId: (await getCurrentTab()).id,
       });
+    },
+  },
+  addToBookmarks: {
+    async list() {
+      return [
+        {
+          type: "chrome",
+
+          label: "Bookmark this page",
+          config: {
+            name: "addToBookmarks",
+            form: {
+              title: {
+                type: "text",
+                default: (await getCurrentTab()).title,
+              },
+            },
+          },
+          categories: [categories.ALL, categories.BOOKMARKS],
+        },
+      ];
+    },
+    async execute(config) {
+      await chrome.bookmarks.create({
+        title: config.form.title,
+        url: (await getCurrentTab()).url,
+      });
+    },
+  },
+  openBookmark: {
+    async list() {
+      const bookmarks = [];
+
+      function dumpNode(node) {
+        if (node.url) {
+          bookmarks.push({
+            type: "chrome",
+
+            label: `Bookmarks: ${node.title}`,
+            config: {
+              name: "openBookmark",
+              url: node.url,
+            },
+            categories: [categories.ALL, categories.BOOKMARKS],
+            options: [
+              {
+                type: "chrome",
+                label: "New tab",
+                config: {
+                  name: "createTab",
+                  url: node.url,
+                },
+              },
+              {
+                type: "chrome",
+                label: "Remove",
+                config: {
+                  name: "removeBookmark",
+                  id: node.id,
+                },
+              },
+            ],
+          });
+        } else if (node.children) {
+          node.children.forEach((child) => dumpNode(child));
+        }
+      }
+
+      function dumpTreeNodes(bookmarkNodes) {
+        bookmarkNodes.forEach(dumpNode);
+      }
+
+      const bookmarkTreeNodes = await chrome.bookmarks.getTree();
+      dumpTreeNodes(bookmarkTreeNodes);
+      return bookmarks;
+    },
+    async execute(config) {
+      await chrome.tabs.update({ url: config.url });
+    },
+  },
+  createTab: {
+    async execute(config) {
+      await chrome.tabs.create({ url: config.url });
+    },
+  },
+  removeBookmark: {
+    async execute(config) {
+      await chrome.bookmarks.remove(config.id);
     },
   },
 };

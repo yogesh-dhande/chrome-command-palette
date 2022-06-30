@@ -1,154 +1,163 @@
 <template>
-  <Combobox as="div">
-    <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
-      <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
-      <div v-for="category in categories" :key="category">
-        <input
-          type="radio"
-          :id="`category-${category}`"
-          :value="category"
-          v-model="selectedCategory"
-          class="hidden"
-        />
-        <label
-          :for="`category-${category}`"
-          :class="[
-            'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
-            selectedCategory === category && 'bg-gray-700 text-cyan-300',
-          ]"
-          >{{ category }}</label
-        >
-      </div>
+  <div>
+    <div v-if="form">
+      <CommandForm
+        @submit="handleFormSubmit"
+        :form="form"
+        :title="activeCommand.label"
+      ></CommandForm>
     </div>
-    <div class="relative">
-      <SearchIcon
-        class="
-          pointer-events-none
-          absolute
-          top-3.5
-          left-4
-          h-5
-          w-5
-          text-gray-500
-        "
-        aria-hidden="true"
-      />
-      <input
-        id="search"
-        placeholder="Search..."
-        @input="query = $event.target.value"
-        autocomplete="off"
-        @keydown="handleKeys"
-        @keydown.right="selectNextCategory"
-        @keydown.left="selectPreviousCategory"
-        @keydown.enter="triggerActiveCommand"
-        @keydown.esc="$emit('close')"
-        @keydown.down="selectNextActiveCommand"
-        @keydown.up="selectPreviousActiveCommand"
-      />
-    </div>
-    <div class="mx-6">
-      <button
-        v-if="query"
-        tabindex="-1"
-        @click="search"
-        class="
-          bg-gray-900
-          border-none
-          text-gray-100 text-xs
-          select-none
-          rounded-md
-          px-2
-          py-1
-        "
-      >
-        <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New Tab
-      </button>
-    </div>
-
-    <ComboboxOptions
-      id="options-box"
-      v-if="query === '' || filteredCommandResults.length > 0"
-      static
-    >
-      <li class="p-2">
-        <ul class="text-sm text-gray-200 m-0 p-0 list-none">
-          <ComboboxOption
-            v-for="(commandResult, i) in filteredCommandResults"
-            :key="i"
-            :value="commandResult.obj"
-            as="template"
+    <Combobox v-else as="div">
+      <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
+        <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
+        <div v-for="category in categories" :key="category">
+          <input
+            type="radio"
+            :id="`category-${category}`"
+            :value="category"
+            v-model="selectedCategory"
+            class="hidden"
+          />
+          <label
+            :for="`category-${category}`"
+            :class="[
+              'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
+              selectedCategory === category && 'bg-gray-700 text-cyan-300',
+            ]"
+            >{{ category }}</label
           >
-            <li
-              :class="[
-                'flex flex-col cursor-default select-none rounded-md px-3 py-2',
-                activeCommandIndex === i && 'bg-gray-700 text-white',
-              ]"
-              @click="triggerActiveCommand"
+        </div>
+      </div>
+      <div class="relative">
+        <SearchIcon
+          class="
+            pointer-events-none
+            absolute
+            top-3.5
+            left-4
+            h-5
+            w-5
+            text-gray-500
+          "
+          aria-hidden="true"
+        />
+        <input
+          id="search"
+          placeholder="Search..."
+          @input="query = $event.target.value"
+          autocomplete="off"
+          @keydown="handleKeys"
+          @keydown.right="selectNextCategory"
+          @keydown.left="selectPreviousCategory"
+          @keydown.enter="triggerActiveCommand"
+          @keydown.esc="$emit('close')"
+          @keydown.down="selectNextActiveCommand"
+          @keydown.up="selectPreviousActiveCommand"
+        />
+      </div>
+      <div class="mx-6">
+        <button
+          v-if="query"
+          tabindex="-1"
+          @click="search"
+          class="
+            bg-gray-900
+            border-none
+            text-gray-100 text-xs
+            select-none
+            rounded-md
+            px-2
+            py-1
+          "
+        >
+          <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New Tab
+        </button>
+      </div>
+
+      <ComboboxOptions
+        id="options-box"
+        v-if="query === '' || filteredCommandResults.length > 0"
+        static
+      >
+        <li class="p-2">
+          <ul class="text-sm text-gray-200 m-0 p-0 list-none">
+            <ComboboxOption
+              v-for="(commandResult, i) in filteredCommandResults"
+              :key="i"
+              :value="commandResult.obj"
+              as="template"
             >
-              <div class="flex justify-between">
-                <div>
-                  <div class="my-0" v-html="highlight(commandResult)"></div>
+              <li
+                :class="[
+                  'flex flex-col cursor-default select-none rounded-md px-3 py-2',
+                  activeCommandIndex === i && 'bg-gray-700 text-white',
+                ]"
+                @click="triggerActiveCommand"
+              >
+                <div class="flex justify-between">
+                  <div>
+                    <div class="my-0" v-html="highlight(commandResult)"></div>
+                    <div
+                      v-if="commandResult.obj.type === 'link'"
+                      class="text-xs m-0"
+                    >
+                      {{ commandResult.obj.config.url.substring(0, 80) }}
+                    </div>
+                  </div>
+
+                  <component
+                    :is="getIconNameForCommand(commandResult.obj)"
+                    :class="[
+                      'h-4 w-4 inline',
+                      activeCommandIndex === i ? 'text-cyan-300' : 'text-white',
+                    ]"
+                    aria-hidden="true"
+                  />
+                </div>
+
+                <div
+                  v-if="activeCommandIndex === i"
+                  class="flex flex-row flex-wrap text-sm"
+                >
                   <div
-                    v-if="commandResult.obj.type === 'link'"
-                    class="text-xs m-0"
+                    v-for="(option, i) in getOptions(commandResult.obj)"
+                    :key="option.label"
+                    class="
+                      text-xs text-center
+                      rounded-md
+                      px-2
+                      py-1
+                      bg-gray-800
+                      hover:bg-gray-700 hover:text-cyan-300
+                      border border-gray-100
+                      hover:border-cyan-300
+                      m-1
+                    "
+                    @click="() => onSelect(option)"
                   >
-                    {{ commandResult.obj.config.url.substring(0, 80) }}
+                    <span class="border-r pr-1"> ctrl+alt+{{ i + 1 }} </span>
+                    <span class="pl-1">{{ option.label }}</span>
                   </div>
                 </div>
+                <pre v-if="activeCommandIndex === i && preferences.debug">{{
+                  JSON.stringify(commandResult.obj.config, undefined, 2)
+                }}</pre>
+              </li>
+            </ComboboxOption>
+          </ul>
+        </li>
+      </ComboboxOptions>
 
-                <component
-                  :is="getIconNameForCommand(commandResult.obj)"
-                  :class="[
-                    'h-4 w-4 inline',
-                    activeCommandIndex === i ? 'text-cyan-300' : 'text-white',
-                  ]"
-                  aria-hidden="true"
-                />
-              </div>
-
-              <div
-                v-if="activeCommandIndex === i"
-                class="flex flex-row flex-wrap text-sm"
-              >
-                <div
-                  v-for="(option, i) in getOptions(commandResult.obj)"
-                  :key="option.label"
-                  class="
-                    text-xs text-center
-                    rounded-md
-                    px-2
-                    py-1
-                    bg-gray-800
-                    hover:bg-gray-700 hover:text-cyan-300
-                    border border-gray-100
-                    hover:border-cyan-300
-                    m-1
-                  "
-                  @click="() => onSelect(option)"
-                >
-                  <span class="border-r pr-1"> ctrl+alt+{{ i + 1 }} </span>
-                  <span class="pl-1">{{ option.label }}</span>
-                </div>
-              </div>
-              <pre v-if="activeCommandIndex === i && preferences.debug">{{
-                JSON.stringify(commandResult.obj.config, undefined, 2)
-              }}</pre>
-            </li>
-          </ComboboxOption>
-        </ul>
-      </li>
-    </ComboboxOptions>
-
-    <div
-      v-if="query !== '' && filteredCommandResults.length === 0"
-      class="py-14 px-6 text-center sm:px-14"
-    >
-      <div class="mt-4 text-sm text-gray-200">
-        We couldn't find any commands with that term. Please try again.
+      <div
+        v-if="query !== '' && filteredCommandResults.length === 0"
+        class="py-14 px-6 text-center sm:px-14"
+      >
+        <div class="mt-4 text-sm text-gray-200">
+          We couldn't find any commands with that term. Please try again.
+        </div>
       </div>
-    </div>
-  </Combobox>
+    </Combobox>
+  </div>
 </template>
 
 <script>
@@ -167,6 +176,7 @@ import {
   CursorClickIcon,
   GlobeAltIcon,
 } from "@heroicons/vue/outline";
+import CommandForm from "./CommandForm.vue";
 
 import {
   openUrl,
@@ -190,9 +200,11 @@ export default {
     LinkIcon,
     SearchIcon,
     GlobeAltIcon,
+    CommandForm,
   },
   setup() {
     const recent = ref(store.commands.length > 0 ? store.commands[0] : null);
+    const form = ref(null);
 
     const preferences = store.preferences;
     const allCategories = [
@@ -211,12 +223,11 @@ export default {
     );
 
     const filteredCommandResults = computed(() => {
-      let kw = query.value.toLowerCase();
       const categorizedCommands = store.commands.filter((command) =>
         command.categories.includes(selectedCategory.value)
       );
 
-      const results = go(kw, categorizedCommands, {
+      const results = go(query.value.toLowerCase(), categorizedCommands, {
         key: "label",
         limit: 10,
         all: true,
@@ -228,10 +239,12 @@ export default {
         activeCommandIndex.value = 0;
         activeCommand.value = results[0].obj;
       }
+
       return results;
     });
 
     return {
+      form,
       categories: allCategories,
       selectedCategory,
       preferences,
@@ -315,8 +328,13 @@ export default {
         this.filteredCommandResults[this.activeCommandIndex].obj;
     },
     onSelect(command) {
-      this.$emit("close");
-      this.triggerCommand(command);
+      if (command.config?.form) {
+        this.form = command.config?.form;
+      }
+      if (!this.form) {
+        this.$emit("close");
+        this.triggerCommand(command);
+      }
       // reset category
       this.selectedCategory = categories[0];
     },
@@ -347,6 +365,12 @@ export default {
       } else if (command.type === "callback") {
         command.callback();
       }
+    },
+    async handleFormSubmit(formData) {
+      this.activeCommand.config.form = formData;
+      this.triggerCommand(this.activeCommand);
+      this.$emit("close");
+      this.form = null;
     },
     highlight(commandResult) {
       if (this.query) {
@@ -412,13 +436,10 @@ export default {
 
 #search {
   font-size: 16px;
-  @apply mx-auto
-    max-w-2xl
-    transform
+  @apply transform
     divide-y divide-gray-500 divide-opacity-20
     overflow-hidden
     rounded-xl
-    bg-gray-900
     shadow-2xl
     transition-all
     h-12

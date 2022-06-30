@@ -42,7 +42,9 @@ chrome.runtime.setUninstallURL("https://blog.singledispatch.com/uninstalled");
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case "execute_chrome_command":
-      chromeCommands[message.command.name].execute(message.command.config);
+      chromeCommands[message.command.config.name].execute(
+        message.command.config
+      );
       break;
     case "search":
       chrome.search.query({

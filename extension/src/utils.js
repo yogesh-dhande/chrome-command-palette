@@ -22,26 +22,6 @@ const packsUpdateInterval = setInterval(async () => {
   }
 }, 1000 * 60 * import.meta.env.VITE_PACKS_UPDATE_INTERVAL_MINUTES);
 
-export async function getBookmarks() {
-  const bookmarks = [];
-
-  function dumpNode(node) {
-    if (node.url) {
-      bookmarks.push({ url: node.url, label: `Bookmarks: ${node.title}` });
-    } else if (node.children) {
-      node.children.forEach((child) => dumpNode(child));
-    }
-  }
-
-  function dumpTreeNodes(bookmarkNodes) {
-    bookmarkNodes.forEach(dumpNode);
-  }
-
-  const bookmarkTreeNodes = await chrome.bookmarks.getTree();
-  dumpTreeNodes(bookmarkTreeNodes);
-  return bookmarks;
-}
-
 export async function getTopSites() {
   const topSites = await chrome.topSites.get();
   return topSites.map((site) => {
@@ -76,15 +56,16 @@ export async function activateExtension(tab) {
         data: {
           store,
           commandTemplates,
-          bookmarks: await getBookmarks(),
-          topSites: await getTopSites(),
-          tabs: [].concat.apply(
+          chromeCommands: [].concat.apply(
             [],
             await Promise.all([
+              chromeCommands.openBookmark.list(),
+              chromeCommands.addToBookmarks.list(),
               chromeCommands.switchToTab.list(),
               chromeCommands.splitTab.list(),
             ])
           ),
+          topSites: await getTopSites(),
         },
       });
     });
