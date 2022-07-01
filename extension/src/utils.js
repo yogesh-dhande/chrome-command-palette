@@ -49,8 +49,8 @@ export async function activateExtension(tab) {
           chromeCommands: [].concat.apply(
             [],
             await Promise.all([
-              chromeCommands.openBookmark.list(),
               chromeCommands.addToBookmarks.list(),
+              chromeCommands.openBookmark.list(),
               chromeCommands.switchToTab.list(),
               chromeCommands.splitTab.list(),
             ])
