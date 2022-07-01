@@ -10,7 +10,7 @@
     <Combobox v-else as="div">
       <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
         <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
-        <div v-for="category in categories" :key="category">
+        <div v-for="category in tabCategories" :key="category">
           <input
             type="radio"
             :id="`category-${category}`"
@@ -205,14 +205,13 @@ export default {
   setup() {
     const recent = ref(store.commands.length > 0 ? store.commands[0] : null);
     const form = ref(null);
+    const preferences = store.currentUser.preferences;
 
-    const preferences = store.preferences;
-    const allCategories = [
-      categories.PAGE,
-      categories.TABS,
-      categories.BOOKMARKS,
-    ];
-    const selectedCategory = ref(allCategories[0]);
+    let tabCategories = preferences.additionalCategories;
+    if (preferences.showAllTab) {
+      tabCategories = [categories.ALL].concat(preferences.additionalCategories);
+    }
+    const selectedCategory = ref(tabCategories[0]);
 
     const query = ref("");
 
@@ -222,9 +221,14 @@ export default {
     );
 
     const filteredCommandResults = computed(() => {
-      const categorizedCommands = store.commands.filter((command) =>
-        command.categories.includes(selectedCategory.value)
-      );
+      const categorizedCommands = store.commands.filter((command) => {
+        if (selectedCategory.value === categories.ALL) {
+          return command.categories.some((element) =>
+            preferences.categoriesInAllTab.includes(element)
+          );
+        }
+        return command.categories.includes(selectedCategory.value);
+      });
 
       const results = go(query.value.toLowerCase(), categorizedCommands, {
         key: "label",
@@ -244,7 +248,7 @@ export default {
 
     return {
       form,
-      categories: allCategories,
+      tabCategories,
       selectedCategory,
       preferences,
       query,
@@ -283,24 +287,25 @@ export default {
     },
     selectNextCategory(evt) {
       evt.preventDefault();
-      const index = this.categories.findIndex(
+      const index = this.tabCategories.findIndex(
         (cat) => cat === this.selectedCategory
       );
-      if (index + 1 === this.categories.length) {
-        this.selectedCategory = this.categories[0];
+      if (index + 1 === this.tabCategories.length) {
+        this.selectedCategory = this.tabCategories[0];
       } else {
-        this.selectedCategory = this.categories[index + 1];
+        this.selectedCategory = this.tabCategories[index + 1];
       }
     },
     selectPreviousCategory(evt) {
       evt.preventDefault();
-      const index = this.categories.findIndex(
+      const index = this.tabCategories.findIndex(
         (cat) => cat === this.selectedCategory
       );
       if (index === 0) {
-        this.selectedCategory = this.categories[this.categories.length - 1];
+        this.selectedCategory =
+          this.tabCategories[this.tabCategories.length - 1];
       } else {
-        this.selectedCategory = this.categories[index - 1];
+        this.selectedCategory = this.tabCategories[index - 1];
       }
     },
     async search() {

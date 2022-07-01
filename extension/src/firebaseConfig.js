@@ -2,6 +2,7 @@
 import { getApps, initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { signInWithCustomToken, signOut } from "firebase/auth";
+import { categories } from "./content-scripts/commands";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCdNGL1QkKTdQww_q6sUi_ansozZ39QIk0",
@@ -29,7 +30,9 @@ if (import.meta.env.VITE_USE_FIREBASE_EMULATORS) {
 export const store = {
   isLoggedIn: false,
   authUserId: null,
-  currentUser: {},
+  currentUser: {
+    preferences: {},
+  },
 };
 
 auth.onAuthStateChanged(async (authUser) => {
@@ -39,7 +42,22 @@ auth.onAuthStateChanged(async (authUser) => {
   } else {
     store.authUserId = null;
     store.isLoggedIn = false;
-    store.currentUser = {};
+    store.currentUser = {
+      preferences: {
+        debug: false,
+        showAllTab: true,
+        categoriesInAllTab: [
+          categories.PAGE,
+          categories.TABS,
+          categories.BOOKMARKS,
+        ],
+        additionalCategories: [
+          categories.PAGE,
+          categories.TABS,
+          categories.BOOKMARKS,
+        ],
+      },
+    };
   }
 });
 
