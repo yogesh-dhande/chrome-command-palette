@@ -97,11 +97,8 @@
                 <div class="flex justify-between">
                   <div class="overflow-hidden max-w-2xl">
                     <p class="m-0" v-html="highlight(commandResult)"></p>
-                    <p
-                      v-if="commandResult.obj.type === 'link'"
-                      class="text-xs m-0"
-                    >
-                      {{ commandResult.obj.config.url.substring(0, 80) }}
+                    <p v-if="commandResult.obj.config.url" class="text-xs m-0">
+                      {{ commandResult.obj.config.url }}
                     </p>
                   </div>
 
