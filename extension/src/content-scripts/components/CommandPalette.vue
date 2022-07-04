@@ -84,6 +84,7 @@
             <ComboboxOption
               v-for="(commandResult, i) in filteredCommandResults"
               :key="i"
+              :id="commandResult.obj.label"
               :value="commandResult.obj"
               as="template"
             >
@@ -257,6 +258,12 @@ export default {
       activeCommand,
       logoUrl: chrome.runtime.getURL("assets/128x128.png"),
     };
+  },
+  watch: {
+    activeCommand(newValue) {
+      // set the scroll position
+      document.getElementById(newValue.label).scrollIntoView();
+    },
   },
   methods: {
     handleKeys(evt) {
