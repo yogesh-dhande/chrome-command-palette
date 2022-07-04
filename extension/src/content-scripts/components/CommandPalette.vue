@@ -461,15 +461,14 @@ export default {
 }
 
 #options-box {
-  @apply max-h-96
-    scroll-py-2
-    divide-y divide-gray-500 divide-opacity-20
-    overflow-y-auto
-    my-0
-    mx-2
-    truncate
-    p-0
-    list-none;
+  @apply overflow-auto
+          max-h-96
+          scroll-py-2
+          divide-y divide-gray-500 divide-opacity-20
+          my-0
+          mx-2
+          p-0
+          list-none;
 }
 
 #options-box::-webkit-scrollbar {
