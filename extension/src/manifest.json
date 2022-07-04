@@ -1,8 +1,8 @@
 {
-  "name": "Single Dispatch",
+  "name": "Single Dispatch Command Palette",
   "version": "0.3.0",
   "manifest_version": 3,
-  "description": "Command palette for any website. Switch between tabs, open bookmarks or links and click on buttons with your keyboard.",
+  "description": "Command palette for any website. Manage tabs and bookmarks, open links, or trigger button clicks just with your keyboard.",
   "action": {
     "default_title": "Single Dispatch - The Command Palette for Chrome"
   },
@@ -32,7 +32,7 @@
         "default": "Ctrl+K",
         "mac": "Command+K"
       },
-      "description": "Activate Single Dispatch Command Palette"
+      "description": "Launch the Single Dispatch command palette"
     }
   },
   "externally_connectable": {

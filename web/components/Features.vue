@@ -43,10 +43,11 @@
       </FeatureItem>
 
       <FeatureItem>
-        <template #header>Open bookmarks or frequently visited sites </template>
+        <template #header>Manage bookmarks</template>
         <template #description
           >No need to worry about perfectly organizing your bookmarks into
-          folders and subfolders when you can just search for them!</template
+          folders and subfolders when you can just search for them! Simply enter
+          a query to search through all of your bookmarks.</template
         >
         <template #image>
           <img

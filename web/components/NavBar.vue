@@ -109,9 +109,25 @@
         </div>
 
         <div>
-          <!-- <div class="hidden lg:block md:ml-6">
+          <div class="hidden lg:block md:ml-6">
             <div class="flex space-x-4 items-center">
-              <div v-if="!store.loggedIn" class="self-center">
+              <a
+                href="https://chrome.google.com/webstore/detail/single-dispatch/ebphfkpocnckimopiifpfpnnieolonkk"
+                target="_blank"
+                class="
+                  px-4
+                  py-2
+                  text-lg
+                  font-bold
+                  bg-pink-600
+                  hover:bg-pink-700
+                  rounded-md
+                  shadow-md
+                  border-transparent
+                "
+                >Add to Chrome
+              </a>
+              <!-- <div v-if="!store.loggedIn" class="self-center">
                 <nuxt-link
                   to="/login"
                   class="
@@ -160,9 +176,9 @@
                 >
                   <span>Sign Out</span>
                 </button>
-              </div>
+              </div> -->
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
@@ -173,8 +189,24 @@
     Menu open: "block", Menu closed: "hidden"
   -->
     <div class="lg:hidden" :class="{ hidden: !showMobileMenu }">
-      <!-- <div class="px-2 pt-2 pb-3 space-y-1">
-        <div v-if="!store.loggedIn">
+      <div class="px-2 pt-2 pb-3 space-y-1">
+        <a
+          href="https://chrome.google.com/webstore/detail/single-dispatch/ebphfkpocnckimopiifpfpnnieolonkk"
+          target="_blank"
+          class="
+            px-4
+            py-2
+            text-lg
+            font-bold
+            bg-pink-600
+            hover:bg-pink-700
+            rounded-md
+            shadow-md
+            border-transparent
+          "
+          >Add to Chrome
+        </a>
+        <!-- <div v-if="!store.loggedIn">
           <nuxt-link
             to="/login"
             class="
@@ -223,8 +255,8 @@
           >
             <span>Sign Out</span>
           </button>
-        </div>
-      </div> -->
+        </div> -->
+      </div>
     </div>
   </nav>
 </template>
