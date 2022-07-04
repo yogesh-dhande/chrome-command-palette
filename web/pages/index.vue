@@ -5,8 +5,8 @@
         <div class="flex-0 h-3/4" />
         <div class="flex-1 h-1/4 w-full bg-gray-100" />
       </div>
-      <div class="pt-10 md:pt-20 relative z-10">
-        <div class="text-center px-4 sm:px-8 max-w-7xl mx-auto">
+      <div class="pt-10 md:pt-20 relative z-10 max-w-7xl mx-auto">
+        <div class="text-center px-2 sm:px-8 max-w-5xl mx-auto">
           <h1
             class="
               max-w-2xl
@@ -33,27 +33,29 @@
               Command Palette</span
             ><span class="block">for any website</span>
           </h1>
-          <div class="md:mt-5">
+          <div class="mt-5 sm:mt-10">
             <p
               class="
-                text-2xl
+                text-xl
                 md:text-4xl
-                leading-8
+                leading-loose
+                font-thin
                 text-cyan-50
                 mb-8
                 aos-init aos-animate
               "
               data-aos="zoom-y-out"
               data-aos-delay="150"
-            ></p>
+            >
+              A chrome extension for enhanced keyboard productivity.
+            </p>
           </div>
-
-          <img
-            class="glow mt-8 sm:mt-16 rounded-lg"
-            src="@/assets/img/screenshot.png"
-            alt=""
-          />
         </div>
+        <img
+          class="glow mt-8 sm:mt-16 rounded-lg"
+          src="@/assets/img/screenshot.png"
+          alt=""
+        />
       </div>
     </div>
     <Features />

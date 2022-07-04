@@ -112,6 +112,22 @@
           <div class="hidden lg:block md:ml-6">
             <div class="flex space-x-4 items-center">
               <a
+                href="https://blog.singledispatch.com"
+                target="_blank"
+                class="
+                  px-4
+                  py-2
+                  text-lg
+                  font-bold
+                  text-cyan-50
+                  hover:text-cyan-300
+                  rounded-md
+                  shadow-md
+                  border-transparent
+                "
+                >Blog
+              </a>
+              <a
                 href="https://chrome.google.com/webstore/detail/single-dispatch/ebphfkpocnckimopiifpfpnnieolonkk"
                 target="_blank"
                 class="
@@ -191,9 +207,27 @@
     <div class="lg:hidden" :class="{ hidden: !showMobileMenu }">
       <div class="px-2 pt-2 pb-3 space-y-1">
         <a
+          href="https://blog.singledispatch.com"
+          target="_blank"
+          class="
+            block
+            px-4
+            py-2
+            text-lg
+            font-bold
+            text-cyan-50
+            hover:text-cyan-300
+            rounded-md
+            shadow-md
+            border-transparent
+          "
+          >Blog
+        </a>
+        <a
           href="https://chrome.google.com/webstore/detail/single-dispatch/ebphfkpocnckimopiifpfpnnieolonkk"
           target="_blank"
           class="
+            block
             px-4
             py-2
             text-lg
