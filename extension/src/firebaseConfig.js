@@ -31,7 +31,20 @@ export const store = {
   isLoggedIn: false,
   authUserId: null,
   currentUser: {
-    preferences: {},
+    preferences: {
+      debug: false,
+      showAllTab: true,
+      categoriesInAllTab: [
+        categories.PAGE,
+        categories.TABS,
+        categories.BOOKMARKS,
+      ],
+      additionalCategories: [
+        categories.PAGE,
+        categories.TABS,
+        categories.BOOKMARKS,
+      ],
+    },
   },
 };
 
@@ -42,22 +55,6 @@ auth.onAuthStateChanged(async (authUser) => {
   } else {
     store.authUserId = null;
     store.isLoggedIn = false;
-    store.currentUser = {
-      preferences: {
-        debug: false,
-        showAllTab: true,
-        categoriesInAllTab: [
-          categories.PAGE,
-          categories.TABS,
-          categories.BOOKMARKS,
-        ],
-        additionalCategories: [
-          categories.PAGE,
-          categories.TABS,
-          categories.BOOKMARKS,
-        ],
-      },
-    };
   }
 });
 

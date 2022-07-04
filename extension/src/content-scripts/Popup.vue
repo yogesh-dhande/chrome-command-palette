@@ -2,7 +2,17 @@
   <TransitionRoot :show="visible" as="template" @after-leave="query = ''">
     <Dialog
       as="div"
-      class="fixed inset-0 z-[100] overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
+      class="
+        font-sans
+        fixed
+        inset-0
+        z-[100]
+        overflow-y-auto
+        p-4
+        sm:p-6
+        md:p-20
+        mt-24
+      "
       :class="{ 'z-0': !visible }"
       @close="visible = false"
     >

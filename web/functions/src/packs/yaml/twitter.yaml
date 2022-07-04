@@ -7,7 +7,7 @@ twitter.com:
         selector: '[data-testid="tweetText"]'
         template: "{innerText}"
       trigger:
-        type:
+        type: click
       options:
         - type: element
           element:
@@ -26,9 +26,9 @@ twitter.com:
         - type: element
           element:
             label:
-              template: Retweet
+              template: Like
             trigger:
-              selector: '[data-testid="retweet"]'
+              selector: '[data-testid="like"]'
               type: click
         - type: element
           element:

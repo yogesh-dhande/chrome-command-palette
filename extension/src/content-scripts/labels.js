@@ -18,7 +18,7 @@ export function renderTemplateString(templateString, el) {
       });
     }
   }
-  return templateString.substring(0, 80);
+  return templateString; //.substring(0, 80);
 }
 
 export function getLabelForInput(el) {

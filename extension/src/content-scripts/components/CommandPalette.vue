@@ -95,14 +95,14 @@
                 @click="triggerActiveCommand"
               >
                 <div class="flex justify-between">
-                  <div>
-                    <div class="my-0" v-html="highlight(commandResult)"></div>
-                    <div
+                  <div class="overflow-hidden max-w-2xl">
+                    <p class="m-0" v-html="highlight(commandResult)"></p>
+                    <p
                       v-if="commandResult.obj.type === 'link'"
                       class="text-xs m-0"
                     >
                       {{ commandResult.obj.config.url.substring(0, 80) }}
-                    </div>
+                    </p>
                   </div>
 
                   <component
