@@ -261,8 +261,12 @@ export default {
   },
   watch: {
     activeCommand(newValue) {
-      // set the scroll position
-      document.getElementById(newValue.label).scrollIntoView();
+      // set the scroll position to always keep active command in view
+      if (this.activeCommandIndex === 0) {
+        document.getElementById("options-box").scrollTop = 0;
+      } else {
+        document.getElementById(newValue.label)?.scrollIntoView();
+      }
     },
   },
   methods: {
