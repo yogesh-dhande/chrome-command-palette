@@ -30,10 +30,17 @@ export function triggerElementCommand(command) {
 
   if (type === "click") {
     el.click();
+    el.scrollIntoView();
   } else if (type === "simulatedClick") {
-    setTimeout(() => simulateMouseClick(el), 200);
+    setTimeout(() => {
+      simulateMouseClick(el);
+      el.scrollIntoView();
+    }, 200);
   } else if (type === "focus") {
-    setTimeout(() => el.focus(), 200);
+    setTimeout(() => {
+      el.focus();
+      el.scrollIntoView();
+    }, 200);
   }
 }
 
