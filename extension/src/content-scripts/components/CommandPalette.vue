@@ -8,25 +8,34 @@
       ></CommandForm>
     </div>
     <Combobox v-else as="div">
-      <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
-        <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
-        <div v-for="category in tabCategories" :key="category">
-          <input
-            type="radio"
-            :id="`category-${category}`"
-            :value="category"
-            v-model="selectedCategory"
-            class="hidden"
-          />
-          <label
-            :for="`category-${category}`"
-            :class="[
-              'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
-              selectedCategory === category && 'bg-gray-700 text-cyan-300',
-            ]"
-            >{{ category }}</label
-          >
+      <div class="flex text-xs mt-1 items-center px-6 py-6 justify-between">
+        <div class="flex items-center space-x-2">
+          <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
+          <div v-for="category in tabCategories" :key="category">
+            <input
+              type="radio"
+              :id="`category-${category}`"
+              :value="category"
+              v-model="selectedCategory"
+              class="hidden"
+            />
+            <label
+              :for="`category-${category}`"
+              :class="[
+                'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
+                selectedCategory === category && 'bg-gray-700 text-cyan-300',
+              ]"
+              >{{ category }}</label
+            >
+          </div>
         </div>
+        <a
+          href="https://blog.singledispatch.com/feedback"
+          target="_blank"
+          class="text-cyan-300 underline"
+          tabindex="-1"
+          >Send feedback</a
+        >
       </div>
       <div class="relative">
         <SearchIcon

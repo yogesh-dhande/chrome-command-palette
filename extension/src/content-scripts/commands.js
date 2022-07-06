@@ -96,6 +96,8 @@ export function parseDomForCommands(data) {
   data.commandTemplates.forEach((template, index) => {
     const type = template.type;
     const config = template[template.type];
+
+    // higher order commands are shown first
     config.order = config.order || index + 1;
 
     if (type === "element") {
@@ -159,7 +161,6 @@ export function parseDomForCommands(data) {
       : 1;
   });
 
-  // TODO: not every command has a config anymore
   return Array.from(commandsMap.values())
     .filter((command) => !command.config?.disabled)
     .filter((command) => countsByLabel[command.label] == 1)
