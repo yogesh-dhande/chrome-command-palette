@@ -30,6 +30,10 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
     ? scopeElement.querySelector(elementConfig.trigger.selector)
     : scopeElement;
 
+  if (elementConfig.scope.selector === "button") {
+    console.log(label);
+  }
+
   if (
     label &&
     label !== "#" &&
