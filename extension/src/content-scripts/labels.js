@@ -3,7 +3,9 @@ const paramsPattern = /[^{\}]+(?=})/g;
 const cache = {};
 
 export function renderTemplateString(templateString, el) {
-  if (templateString === "input") {
+  if (!el) {
+    return;
+  } else if (templateString === "input") {
     return getLabelForInput(el);
   } else if (templateString === "button") {
     return getLabelForButton(el);
@@ -18,7 +20,7 @@ export function renderTemplateString(templateString, el) {
       });
     }
   }
-  return templateString; //.substring(0, 80);
+  return templateString.substring(0, 120);
 }
 
 export function getLabelForInput(el) {

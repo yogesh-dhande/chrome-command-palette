@@ -2,7 +2,17 @@
   <TransitionRoot :show="visible" as="template" @after-leave="query = ''">
     <Dialog
       as="div"
-      id="single-dispatch-dialog-root"
+      class="
+        font-sans
+        fixed
+        inset-0
+        z-[100]
+        overflow-y-auto
+        p-4
+        sm:p-6
+        md:p-20
+        mt-24
+      "
       :class="{ 'z-0': !visible }"
       @close="visible = false"
     >
@@ -30,7 +40,20 @@
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
-          <DialogPanel id="single-dispatch-dialog-panel">
+          <DialogPanel
+            class="
+              mx-auto
+              text-gray-100
+              max-w-2xl
+              transform
+              divide-y divide-gray-500 divide-opacity-20
+              overflow-hidden
+              rounded-xl
+              bg-gray-900
+              shadow-2xl
+              transition-all
+            "
+          >
             <!-- <Login v-if="!store.isLoggedIn" @close="visible = false" /> -->
             <CommandPalette @close="visible = false" />
           </DialogPanel>
@@ -76,27 +99,4 @@ export default {
 </script>
 
 <style scoped>
-#single-dispatch-dialog-root {
-  @apply font-sans
-        fixed
-        inset-0
-        z-[100]
-        overflow-y-auto
-        p-4
-        sm:p-6
-        md:p-20
-        mt-24;
-}
-
-#single-dispatch-dialog-panel {
-  @apply mx-auto text-gray-100
-            max-w-2xl
-            transform
-            divide-y divide-gray-500 divide-opacity-20
-            overflow-hidden
-            rounded-xl
-            bg-gray-900
-            shadow-2xl
-            transition-all;
-}
 </style>

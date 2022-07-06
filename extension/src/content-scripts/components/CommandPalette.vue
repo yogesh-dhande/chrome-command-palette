@@ -105,10 +105,10 @@
                 @click="triggerActiveCommand"
               >
                 <div class="flex justify-between">
-                  <div class="overflow-hidden max-w-2xl">
+                  <div class="overflow-hidden max-w-2xl whitespace-nowrap">
                     <p class="m-0" v-html="highlight(commandResult)"></p>
                     <p v-if="commandResult.obj.config.url" class="text-xs m-0">
-                      {{ commandResult.obj.config.url }}
+                      {{ commandResult.obj.config.url.substring(0, 120) }}
                     </p>
                   </div>
 

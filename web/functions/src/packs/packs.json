@@ -405,7 +405,7 @@
           "template": "{innerText}"
         },
         "trigger": {
-          "type": null
+          "type": "click"
         },
         "options": [
           {
@@ -436,10 +436,10 @@
             "type": "element",
             "element": {
               "label": {
-                "template": "Retweet"
+                "template": "Like"
               },
               "trigger": {
-                "selector": "[data-testid=\"retweet\"]",
+                "selector": "[data-testid=\"like\"]",
                 "type": "click"
               }
             }
