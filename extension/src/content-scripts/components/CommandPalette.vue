@@ -106,8 +106,14 @@
               >
                 <div class="flex justify-between">
                   <div class="overflow-hidden max-w-2xl whitespace-nowrap">
-                    <p class="m-0" v-html="highlight(commandResult)"></p>
-                    <p v-if="commandResult.obj.config.url" class="text-xs m-0">
+                    <p
+                      class="m-0 text-gray-200 text-sm"
+                      v-html="highlight(commandResult)"
+                    ></p>
+                    <p
+                      v-if="commandResult.obj.config.url"
+                      class="text-xs m-0 text-gray-200"
+                    >
                       {{ commandResult.obj.config.url.substring(0, 120) }}
                     </p>
                   </div>
@@ -116,7 +122,9 @@
                     :is="getIconNameForCommand(commandResult.obj)"
                     :class="[
                       'h-4 w-4 inline',
-                      activeCommandIndex === i ? 'text-cyan-300' : 'text-white',
+                      activeCommandIndex === i
+                        ? 'text-cyan-300'
+                        : 'text-gray-200',
                     ]"
                     aria-hidden="true"
                   />
