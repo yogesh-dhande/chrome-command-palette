@@ -1,4 +1,5 @@
 module.exports = {
+  prefix: "sd-",
   corePlugins: {
     preflight: false,
   }, // avoids affecting existing page styling

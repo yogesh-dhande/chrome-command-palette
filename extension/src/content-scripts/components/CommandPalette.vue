@@ -8,22 +8,37 @@
       ></CommandForm>
     </div>
     <Combobox v-else as="div">
-      <div class="flex text-xs mt-1 items-center px-6 py-6 justify-between">
-        <div class="flex items-center space-x-2">
-          <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
+      <div
+        class="
+          sd-flex
+          sd-text-xs
+          sd-mt-1
+          sd-items-center
+          sd-px-6
+          sd-py-6
+          sd-justify-between
+        "
+      >
+        <div class="sd-flex sd-items-center sd-space-x-2">
+          <img
+            :src="logoUrl"
+            alt="logo"
+            class="sd-w-12 sd-h-12 sd-inline sd-mx-2"
+          />
           <div v-for="category in tabCategories" :key="category">
             <input
               type="radio"
               :id="`category-${category}`"
               :value="category"
               v-model="selectedCategory"
-              class="hidden"
+              class="sd-hidden"
             />
             <label
               :for="`category-${category}`"
               :class="[
-                'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
-                selectedCategory === category && 'bg-gray-700 text-cyan-300',
+                'sd-px-2 sd-py-1 hover:sd-bg-gray-600 sd-rounded-md sd-text-white sd-text-sm',
+                selectedCategory === category &&
+                  'sd-bg-gray-700 sd-text-cyan-300',
               ]"
               >{{ category }}</label
             >
@@ -32,54 +47,42 @@
         <a
           href="https://blog.singledispatch.com/feedback"
           target="_blank"
-          class="text-cyan-300 underline"
+          class="sd-text-cyan-300 sd-underline"
           tabindex="-1"
           >Send feedback</a
         >
       </div>
-      <div class="relative">
-        <SearchIcon
-          class="
-            pointer-events-none
-            absolute
-            top-3.5
-            left-4
-            h-5
-            w-5
-            text-gray-500
-          "
-          aria-hidden="true"
-        />
-        <input
-          id="search"
-          placeholder="Search..."
-          @input="query = $event.target.value"
-          autocomplete="off"
-          @keydown="handleKeys"
-          @keydown.right="selectNextCategory"
-          @keydown.left="selectPreviousCategory"
-          @keydown.enter="triggerActiveCommand"
-          @keydown.esc="$emit('close')"
-          @keydown.down="selectNextActiveCommand"
-          @keydown.up="selectPreviousActiveCommand"
-        />
-      </div>
-      <div class="mx-6">
+      <input
+        id="search"
+        placeholder="Search..."
+        @input="query = $event.target.value"
+        autocomplete="off"
+        @keydown="handleKeys"
+        @keydown.right="selectNextCategory"
+        @keydown.left="selectPreviousCategory"
+        @keydown.enter="triggerActiveCommand"
+        @keydown.esc="$emit('close')"
+        @keydown.down="selectNextActiveCommand"
+        @keydown.up="selectPreviousActiveCommand"
+      />
+      <div class="sd-mx-6">
         <button
           v-if="query"
           tabindex="-1"
           @click="search"
           class="
-            bg-gray-900
-            border-none
-            text-gray-100 text-xs
-            select-none
-            rounded-md
-            px-2
-            py-1
+            sd-bg-gray-900
+            sd-border-none
+            sd-text-gray-100
+            sd-text-xs
+            sd-select-none
+            sd-rounded-md
+            sd-px-2
+            sd-py-1
           "
         >
-          <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New Tab
+          <span class="sd-border-r sd-pr-1 sd-mr-1">ctrl+alt+s</span>Search in
+          New Tab
         </button>
       </div>
 
@@ -88,8 +91,8 @@
         v-if="query === '' || filteredCommandResults.length > 0"
         static
       >
-        <li class="p-2">
-          <ul class="text-sm text-gray-200 m-0 p-0 list-none">
+        <li class="sd-p-2">
+          <ul class="sd-text-sm sd-text-gray-200 sd-m-0 sd-p-0 sd-list-none">
             <ComboboxOption
               v-for="(commandResult, i) in filteredCommandResults"
               :key="i"
@@ -99,20 +102,22 @@
             >
               <li
                 :class="[
-                  'flex flex-col cursor-default select-none rounded-md px-3 py-2',
-                  activeCommandIndex === i && 'bg-gray-700 text-white',
+                  'sd-flex sd-flex-col sd-cursor-default sd-select-none sd-rounded-md sd-px-3 sd-py-2',
+                  activeCommandIndex === i && 'sd-bg-gray-700 sd-text-white',
                 ]"
                 @click="triggerActiveCommand"
               >
-                <div class="flex justify-between">
-                  <div class="overflow-hidden max-w-2xl whitespace-nowrap">
+                <div class="sd-flex sd-justify-between">
+                  <div
+                    class="sd-overflow-hidden sd-max-w-2xl sd-whitespace-nowrap"
+                  >
                     <p
-                      class="m-0 text-gray-200 text-sm"
+                      class="sd-m-0 sd-text-gray-200 sd-text-sm"
                       v-html="highlight(commandResult)"
                     ></p>
                     <p
                       v-if="commandResult.obj.config.url"
-                      class="text-xs m-0 text-gray-200"
+                      class="sd-text-xs sd-m-0 sd-text-gray-200"
                     >
                       {{ commandResult.obj.config.url.substring(0, 120) }}
                     </p>
@@ -121,10 +126,10 @@
                   <component
                     :is="getIconNameForCommand(commandResult.obj)"
                     :class="[
-                      'h-4 w-4 inline',
+                      'sd-h-4 sd-w-4 sd-inline',
                       activeCommandIndex === i
-                        ? 'text-cyan-300'
-                        : 'text-gray-200',
+                        ? 'sd-text-cyan-300'
+                        : 'sd-text-gray-200',
                     ]"
                     aria-hidden="true"
                   />
@@ -132,26 +137,29 @@
 
                 <div
                   v-if="activeCommandIndex === i"
-                  class="flex flex-row flex-wrap text-sm"
+                  class="sd-flex sd-flex-row sd-flex-wrap sd-text-sm"
                 >
                   <div
                     v-for="(option, i) in getOptions(commandResult.obj)"
                     :key="option.label"
                     class="
-                      text-xs text-center
-                      rounded-md
-                      px-2
-                      py-1
-                      bg-gray-800
-                      hover:bg-gray-700 hover:text-cyan-300
-                      border border-gray-100
-                      hover:border-cyan-300
-                      m-1
+                      sd-text-xs
+                      sd-text-center
+                      sd-rounded-md
+                      sd-px-2
+                      sd-py-1
+                      sd-bg-gray-800
+                      hover:sd-bg-gray-700 hover:sd-text-cyan-300
+                      sd-border sd-border-gray-100
+                      hover:sd-border-cyan-300
+                      sd-m-1
                     "
                     @click="() => onSelect(option)"
                   >
-                    <span class="border-r pr-1"> ctrl+alt+{{ i + 1 }} </span>
-                    <span class="pl-1">{{ option.label }}</span>
+                    <span class="sd-border-r sd-pr-1">
+                      ctrl+alt+{{ i + 1 }}
+                    </span>
+                    <span class="sd-pl-1">{{ option.label }}</span>
                   </div>
                 </div>
                 <pre v-if="activeCommandIndex === i && preferences.debug">{{
@@ -165,9 +173,9 @@
 
       <div
         v-if="query !== '' && filteredCommandResults.length === 0"
-        class="py-14 px-6 text-center sm:px-14"
+        class="sd-py-14 sd-px-6 sd-text-center sm:sd-px-14"
       >
-        <div class="mt-4 text-sm text-gray-200">
+        <div class="sd-mt-4 sd-text-sm sd-text-gray-200">
           We couldn't find any commands with that term. Please try again.
         </div>
       </div>
@@ -408,7 +416,7 @@ export default {
       if (this.query) {
         return highlight(
           commandResult,
-          '<span class="text-cyan-300 font-bold">',
+          '<span class="sd-text-cyan-300 sd-font-bold">',
           "</span>"
         );
       }
@@ -468,35 +476,34 @@ export default {
 
 #search {
   font-size: 16px;
-  @apply transform
-    divide-y divide-gray-500 divide-opacity-20
-    overflow-hidden
-    rounded-xl
-    shadow-2xl
-    transition-all
-    h-12
-    w-full
-    border-0
-    bg-transparent
-    m-0 py-0
-    pl-11
-    pr-4
-    text-white
-    placeholder-gray-500
-    focus:ring-0
-    focus:outline-none
-    sm:text-sm;
+  @apply sd-transform
+    sd-divide-y sd-divide-gray-500 sd-divide-opacity-20
+    sd-overflow-hidden
+    sd-rounded-xl
+    sd-shadow-2xl
+    sd-transition-all
+    sd-h-12
+    sd-w-full
+    sd-border-0
+    sd-bg-transparent
+    sd-m-0 sd-py-0
+    sd-px-8
+    sd-text-white
+    sd-placeholder-gray-500
+    focus:sd-ring-0
+    focus:sd-outline-none
+    sm:sd-text-sm;
 }
 
 #options-box {
-  @apply overflow-auto
-          max-h-96
-          scroll-py-2
-          divide-y divide-gray-500 divide-opacity-20
-          my-0
-          mx-2
-          p-0
-          list-none;
+  @apply sd-overflow-auto
+          sd-max-h-96
+          sd-scroll-py-2
+          sd-divide-y sd-divide-gray-500 sd-divide-opacity-20
+          sd-my-0
+          sd-mx-2
+          sd-p-0
+          sd-list-none;
 }
 
 #options-box::-webkit-scrollbar {

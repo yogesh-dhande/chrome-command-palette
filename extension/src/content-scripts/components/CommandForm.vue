@@ -1,13 +1,13 @@
 <template>
-  <div class="px-6 py-8">
-    <h2 class="text-lg mx-2">{{ title }}</h2>
+  <div class="sd-px-6 sd-py-8">
+    <h2 class="sd-text-lg sd-mx-2">{{ title }}</h2>
     <div
       id="command-form"
       v-for="field in formFields"
       :key="field.name"
-      class="mt-3 text-sm"
+      class="sd-mt-3 sd-text-sm"
     >
-      <label :for="field.name" class="text-gray-200 mx-2">{{
+      <label :for="field.name" class="sd-text-gray-200 sd-mx-2">{{
         field.name
       }}</label>
       <input
@@ -16,20 +16,19 @@
         v-model="field.value"
         @keydown.enter="handleInput"
         class="
-          transform
-          bg-gray-800
-          shadow-2xl
-          transition-all
-          w-full
-          border-0
-          m-0
-          py-2
-          px-3
+          sd-transform
+          sd-bg-gray-800
+          sd-shadow-2xl
+          sd-transition-all
+          sd-w-full
+          sd-border-0
+          sd-m-0
+          sd-py-2
+          sd-px-3
           rounded
-          text-gray-200
-          placeholder-gray-500
-          focus:ring-0 focus:outline-none
-          sm:text-sm;
+          sd-text-gray-200 sd-placeholder-gray-500
+          focus:sd-ring-0 focus:sd-outline-none
+          sm:sd-text-sm;
         "
       />
     </div>
