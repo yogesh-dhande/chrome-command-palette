@@ -52,7 +52,7 @@
           </div>
         </div>
         <video controls autoplay muted class="glow rounded-lg">
-          <source src="@/assets/Single Dispatch demo.mp4" type="video/mp4" />
+          <source src="@/assets/demo.mp4" type="video/mp4" />
         </video>
       </div>
     </div>
