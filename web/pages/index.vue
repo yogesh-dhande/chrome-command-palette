@@ -51,11 +51,9 @@
             </p>
           </div>
         </div>
-        <img
-          class="glow mt-8 sm:mt-16 rounded-lg"
-          src="@/assets/img/screenshot.png"
-          alt=""
-        />
+        <video controls autoplay muted class="glow rounded-lg">
+          <source src="@/assets/Single Dispatch demo.mp4" type="video/mp4" />
+        </video>
       </div>
     </div>
     <Features />
