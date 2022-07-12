@@ -56,7 +56,7 @@ export function getIconNameForCommand(command) {
     } else if (type === "focus") {
       return "AnnotationIcon";
     }
-  } else if (command.type === "chrome") {
+  } else {
     return "GlobeAltIcon";
   }
 }

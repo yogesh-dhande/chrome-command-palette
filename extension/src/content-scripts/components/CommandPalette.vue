@@ -1,45 +1,26 @@
 <template>
   <div>
     <div v-if="form">
-      <CommandForm
-        @submit="handleFormSubmit"
-        :form="form"
-        :title="activeCommand.label"
-      ></CommandForm>
+      <CommandForm @submit="handleFormSubmit" :form="form" :title="activeCommand.label"></CommandForm>
     </div>
     <Combobox v-else as="div">
       <div class="flex text-xs mt-1 items-center px-6 py-6 justify-between">
         <div class="flex items-center space-x-2">
           <img :src="logoUrl" alt="logo" class="w-12 h-12 inline mx-2" />
           <div v-for="category in tabCategories" :key="category">
-            <input
-              type="radio"
-              :id="`category-${category}`"
-              :value="category"
-              v-model="selectedCategory"
-              class="hidden"
-            />
-            <label
-              :for="`category-${category}`"
-              :class="[
-                'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
-                selectedCategory === category && 'bg-gray-700 text-cyan-300',
-              ]"
-              >{{ category }}</label
-            >
+            <input type="radio" :id="`category-${category}`" :value="category" v-model="selectedCategory"
+              class="hidden" />
+            <label :for="`category-${category}`" :class="[
+              'px-2 py-1 hover:bg-gray-600 rounded-md text-white text-sm',
+              selectedCategory === category && 'bg-gray-700 text-cyan-300',
+            ]">{{ category }}</label>
           </div>
         </div>
-        <a
-          href="https://blog.singledispatch.com/feedback"
-          target="_blank"
-          class="text-cyan-300 underline"
-          tabindex="-1"
-          >Send feedback</a
-        >
+        <a href="https://blog.singledispatch.com/feedback" target="_blank" class="text-cyan-300 underline"
+          tabindex="-1">Send feedback</a>
       </div>
       <div class="relative">
-        <SearchIcon
-          class="
+        <SearchIcon class="
             pointer-events-none
             absolute
             top-3.5
@@ -47,29 +28,14 @@
             h-5
             w-5
             text-gray-500
-          "
-          aria-hidden="true"
-        />
-        <input
-          id="search"
-          placeholder="Search..."
-          @input="query = $event.target.value"
-          autocomplete="off"
-          @keydown="handleKeys"
-          @keydown.right="selectNextCategory"
-          @keydown.left="selectPreviousCategory"
-          @keydown.enter="triggerActiveCommand"
-          @keydown.esc="$emit('close')"
-          @keydown.down="selectNextActiveCommand"
-          @keydown.up="selectPreviousActiveCommand"
-        />
+          " aria-hidden="true" />
+        <input id="search" placeholder="Search..." @input="query = $event.target.value" autocomplete="off"
+          @keydown="handleKeys" @keydown.right="selectNextCategory" @keydown.left="selectPreviousCategory"
+          @keydown.enter="triggerActiveCommand" @keydown.esc="$emit('close')" @keydown.down="selectNextActiveCommand"
+          @keydown.up="selectPreviousActiveCommand" />
       </div>
       <div class="mx-6">
-        <button
-          v-if="query"
-          tabindex="-1"
-          @click="search"
-          class="
+        <button v-if="query" tabindex="-1" @click="search" class="
             bg-gray-900
             border-none
             text-gray-100 text-xs
@@ -77,67 +43,41 @@
             rounded-md
             px-2
             py-1
-          "
-        >
+          ">
           <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New Tab
         </button>
       </div>
 
-      <ComboboxOptions
-        id="options-box"
-        v-if="query === '' || filteredCommandResults.length > 0"
-        static
-      >
+      <ComboboxOptions id="options-box" v-if="query === '' || filteredCommandResults.length > 0" static>
         <li class="p-2">
           <ul class="text-sm text-gray-200 m-0 p-0 list-none">
-            <ComboboxOption
-              v-for="(commandResult, i) in filteredCommandResults"
-              :key="i"
-              :id="commandResult.obj.label"
-              :value="commandResult.obj"
-              as="template"
-            >
-              <li
-                :class="[
-                  'flex flex-col cursor-default select-none rounded-md px-3 py-2',
-                  activeCommandIndex === i && 'bg-gray-700 text-white',
-                ]"
-                @click="triggerActiveCommand"
-              >
-                <div class="flex justify-between">
+            <ComboboxOption v-for="(commandResult, i) in filteredCommandResults" :key="i" :id="commandResult.obj.label"
+              :value="commandResult.obj" as="template">
+              <li :class="[
+                'flex flex-col cursor-default select-none rounded-md px-3 py-2',
+                activeCommandIndex === i && 'bg-gray-700 text-white',
+              ]" @click="triggerActiveCommand">
+                <div class="flex space-x-2 items-center">
+                  <div :class="[
+                    'h-6 w-6 flex-none',
+                    activeCommandIndex === i
+                      ? 'text-cyan-300'
+                      : 'text-gray-200',
+                  ]" aria-hidden="true">
+                    <img v-if="commandResult.obj.config?.favIconUrl" :src="commandResult.obj.config?.favIconUrl" :alt="commandResult.obj.label">
+                    <component v-else :is="getIconNameForCommand(commandResult.obj)" />
+                  </div>
                   <div class="overflow-hidden max-w-2xl whitespace-nowrap">
-                    <p
-                      class="m-0 text-gray-200 text-sm"
-                      v-html="highlight(commandResult)"
-                    ></p>
-                    <p
-                      v-if="commandResult.obj.config.url"
-                      class="text-xs m-0 text-gray-200"
-                    >
+                    <p class="m-0 text-gray-200 text-sm" v-html="highlight(commandResult)"></p>
+                    <p v-if="commandResult.obj.config.url" class="text-xs m-0 text-gray-200">
                       {{ commandResult.obj.config.url.substring(0, 120) }}
                     </p>
                   </div>
 
-                  <component
-                    :is="getIconNameForCommand(commandResult.obj)"
-                    :class="[
-                      'h-4 w-4 inline',
-                      activeCommandIndex === i
-                        ? 'text-cyan-300'
-                        : 'text-gray-200',
-                    ]"
-                    aria-hidden="true"
-                  />
                 </div>
 
-                <div
-                  v-if="activeCommandIndex === i"
-                  class="flex flex-row flex-wrap text-sm"
-                >
-                  <div
-                    v-for="(option, i) in getOptions(commandResult.obj)"
-                    :key="option.label"
-                    class="
+                <div v-if="activeCommandIndex === i" class="flex flex-row flex-wrap text-sm">
+                  <div v-for="(option, i) in getOptions(commandResult.obj)" :key="option.label" class="
                       text-xs text-center
                       rounded-md
                       px-2
@@ -147,15 +87,13 @@
                       border border-gray-100
                       hover:border-cyan-300
                       m-1
-                    "
-                    @click="() => onSelect(option)"
-                  >
+                    " @click="() => onSelect(option)">
                     <span class="border-r pr-1"> ctrl+alt+{{ i + 1 }} </span>
                     <span class="pl-1">{{ option.label }}</span>
                   </div>
                 </div>
                 <pre v-if="activeCommandIndex === i && preferences.debug">{{
-                  JSON.stringify(commandResult.obj.config, undefined, 2)
+                    JSON.stringify(commandResult.obj.config, undefined, 2)
                 }}</pre>
               </li>
             </ComboboxOption>
@@ -163,10 +101,7 @@
         </li>
       </ComboboxOptions>
 
-      <div
-        v-if="query !== '' && filteredCommandResults.length === 0"
-        class="py-14 px-6 text-center sm:px-14"
-      >
+      <div v-if="query !== '' && filteredCommandResults.length === 0" class="py-14 px-6 text-center sm:px-14">
         <div class="mt-4 text-sm text-gray-200">
           We couldn't find any commands with that term. Please try again.
         </div>
@@ -468,35 +403,11 @@ export default {
 
 #search {
   font-size: 16px;
-  @apply transform
-    divide-y divide-gray-500 divide-opacity-20
-    overflow-hidden
-    rounded-xl
-    shadow-2xl
-    transition-all
-    h-12
-    w-full
-    border-0
-    bg-transparent
-    m-0 py-0
-    pl-11
-    pr-4
-    text-white
-    placeholder-gray-500
-    focus:ring-0
-    focus:outline-none
-    sm:text-sm;
+  @apply transform divide-y divide-gray-500 divide-opacity-20 overflow-hidden rounded-xl shadow-2xl transition-all h-12 w-full border-0 bg-transparent m-0 py-0 pl-11 pr-4 text-white placeholder-gray-500 focus:ring-0 focus:outline-none sm:text-sm;
 }
 
 #options-box {
-  @apply overflow-auto
-          max-h-96
-          scroll-py-2
-          divide-y divide-gray-500 divide-opacity-20
-          my-0
-          mx-2
-          p-0
-          list-none;
+  @apply overflow-auto max-h-96 scroll-py-2 divide-y divide-gray-500 divide-opacity-20 my-0 mx-2 p-0 list-none;
 }
 
 #options-box::-webkit-scrollbar {
