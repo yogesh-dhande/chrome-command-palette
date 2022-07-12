@@ -1,19 +1,19 @@
 <template>
-  <div class="p-8 text-center">
+  <div class="sd-p-8 sd-text-center">
     Please
     <a
       :href="`${baseUrl}/login`"
       target="_blank"
       @click="recordTab"
       class="
-        font-bold
-        text-cyan-300
-        visited:text-cyan-300
-        focus:px-2
-        focus:py-1
-        focus:mx-2
-        focus:ring-cyan-100
-        focus:outline-cyan-200
+        sd-font-bold
+        sd-text-cyan-300
+        visited:sd-text-cyan-300
+        focus:sd-px-2
+        focus:sd-py-1
+        focus:sd-mx-2
+        focus:sd-ring-cyan-100
+        focus:sd-outline-cyan-200
       "
       >Log In</a
     >
@@ -23,27 +23,27 @@
       target="_blank"
       @click="recordTab"
       class="
-        font-bold
-        text-teal-300
-        visited:text-teal-300
-        focus:px-2
-        focus:mx-2
-        focus:py-1
-        focus:ring-teal-100
-        focus:outline-teal-200
+        sd-font-bold
+        sd-text-teal-300
+        visited:sd-text-teal-300
+        focus:sd-px-2
+        focus:sd-mx-2
+        focus:sd-py-1
+        focus:sd-ring-teal-100
+        focus:sd-outline-teal-200
       "
       >Sign Up</a
     >
     to use the
     <span
       class="
-        font-bold
+        sd-font-bold
         leading-tight
         tracking-tight
-        bg-clip-text
-        text-transparent
-        bg-gradient-to-r
-        from-cyan-300
+        sd-bg-clisd-p-text
+        sd-text-transparent
+        sd-bg-gradient-to-r
+        frosd-m-cyan-300
         to-teal-300
       "
       >Single Dispatch</span

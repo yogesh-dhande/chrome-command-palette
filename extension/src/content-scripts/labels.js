@@ -32,6 +32,13 @@ export function getLabelForInput(el) {
     if (label_el) {
       label = label_el.innerText;
     }
+  } else if (el.getAttribute("aria-labelledby")) {
+    const label_el = document.getElementById(
+      el.getAttribute("aria-labelledby")
+    );
+    if (label_el) {
+      label = label_el.innerText;
+    }
   } else {
     label = el.placeholder;
   }
@@ -43,6 +50,13 @@ export function getLabelForButton(el) {
     return el.ariaLabel;
   } else if (el.dataset.tooltip) {
     return el.dataset.tooltip;
+  } else if (el.getAttribute("aria-labelledby")) {
+    const label_el = document.getElementById(
+      el.getAttribute("aria-labelledby")
+    );
+    if (label_el) {
+      return label_el.innerText;
+    }
   }
   return el.innerText;
 }

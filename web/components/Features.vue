@@ -95,13 +95,13 @@
         <template #image>
           <img
             class="relative mx-auto rounded-lg glow"
-            src="@/assets/img/gmail.png"
+            src="@/assets/img/github.png"
             alt=""
         /></template>
       </FeatureItem>
       <img
         class="mt-12 relative mx-auto rounded-lg glow"
-        src="@/assets/img/github.png"
+        src="@/assets/img/gmail.png"
         alt=""
       />
     </div>

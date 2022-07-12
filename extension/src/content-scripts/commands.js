@@ -153,16 +153,27 @@ export function parseDomForCommands(data) {
     );
   });
 
-  // remove commands with duplicate labels since they can’t be distinguished in the command palette
-  const countsByLabel = {};
+  // remove commands with duplicate labels + trigger type since
+  // they can’t be distinguished in the command palette even if
+  // they have different trigger elements
+  const countsByUniquenessTag = {};
   Array.from(commandsMap.values()).forEach((command) => {
-    countsByLabel[command.label] = countsByLabel[command.label]
-      ? countsByLabel[command.label] + 1
+    const uniquenessTag = getuniquenessTag(command);
+    countsByUniquenessTag[uniquenessTag] = countsByUniquenessTag[uniquenessTag]
+      ? countsByUniquenessTag[uniquenessTag] + 1
       : 1;
   });
 
   return Array.from(commandsMap.values())
     .filter((command) => !command.config?.disabled)
-    .filter((command) => countsByLabel[command.label] == 1)
+    .filter((command) => countsByUniquenessTag[getuniquenessTag(command)] == 1)
     .sort((a, b) => b.config?.order - a.config?.order);
+}
+
+function getuniquenessTag(command) {
+  let uniquenessTag = command.label + command.type;
+  if (command.type === "element") {
+    uniquenessTag += command.config.trigger.type;
+  }
+  return uniquenessTag;
 }
