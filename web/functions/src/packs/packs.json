@@ -220,6 +220,13 @@
       }
     },
     {
+      "type": "link",
+      "link": {
+        "url": "https://gist.github.com",
+        "label": "New gist"
+      }
+    },
+    {
       "type": "element",
       "element": {
         "scope": "#branch-select-menu summary",

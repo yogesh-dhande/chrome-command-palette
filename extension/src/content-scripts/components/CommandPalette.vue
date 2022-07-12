@@ -64,12 +64,12 @@
                       ? 'text-cyan-300'
                       : 'text-gray-200',
                   ]" aria-hidden="true">
-                    <img v-if="commandResult.obj.config?.favIconUrl" :src="commandResult.obj.config?.favIconUrl" :alt="commandResult.obj.label">
+                    <img v-if="commandResult.obj.config?.favIconUrl" :src="commandResult.obj.config?.favIconUrl" :alt="commandResult.obj.label" class="w-full">
                     <component v-else :is="getIconNameForCommand(commandResult.obj)" />
                   </div>
                   <div class="overflow-hidden max-w-2xl whitespace-nowrap">
-                    <p class="m-0 text-gray-200 text-sm" v-html="highlight(commandResult)"></p>
-                    <p v-if="commandResult.obj.config.url" class="text-xs m-0 text-gray-200">
+                    <p class="m-0 text-gray-200 text-sm text-left" v-html="highlight(commandResult)"></p>
+                    <p v-if="commandResult.obj.config.url" class="m-0 text-gray-200 text-xs text-left">
                       {{ commandResult.obj.config.url.substring(0, 120) }}
                     </p>
                   </div>
@@ -129,8 +129,7 @@ import {
 import CommandForm from "./CommandForm.vue";
 
 import {
-  openUrl,
-  triggerElementCommand,
+  triggerCommand,
   getIconNameForCommand,
 } from "@/content-scripts/triggers";
 import { getCommandFromScope, categories } from "@/content-scripts/commands";
@@ -300,7 +299,7 @@ export default {
       }
       if (!this.form) {
         this.$emit("close");
-        this.triggerCommand(command);
+        triggerCommand(command);
       }
       // reset category
       this.selectedCategory = categories[0];
@@ -322,20 +321,9 @@ export default {
         this.onSelect(this.filteredCommandResults[n - 1].obj);
       }
     },
-    triggerCommand(command) {
-      if (command.type === "element") {
-        triggerElementCommand(command);
-      } else if (command.type === "link") {
-        openUrl(command);
-      } else if (command.type === "chrome") {
-        chrome.runtime.sendMessage({ type: "execute_chrome_command", command });
-      } else if (command.type === "callback") {
-        command.callback();
-      }
-    },
     async handleFormSubmit(formData) {
       this.activeCommand.config.form = formData;
-      this.triggerCommand(this.activeCommand);
+      triggerCommand(this.activeCommand);
       this.$emit("close");
       this.form = null;
     },

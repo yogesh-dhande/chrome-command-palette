@@ -3,6 +3,7 @@ import Popup from "./Popup.vue";
 import { parseDomForCommands } from "./commands";
 import { downloadCommands } from "./utils";
 import { store } from "./store";
+import { triggerCommand } from "./triggers";
 
 let downloaded = false;
 
@@ -16,7 +17,7 @@ if (!document.getElementById(ROOT_ELEMENT_ID)) {
   vm = createApp(Popup, {}).mount(container);
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.toggleVisible) {
     vm.visible = !vm.visible;
     if (vm.visible) {
@@ -27,6 +28,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         downloaded = true;
         // downloadCommands(window.location.href);
       }
+    }
+  } else if (message.type === "run_command") {
+    let command = message.command;
+    let interval = command.interval || 200;
+    let timeout = command.timeout || 10000;
+    let elapsed = 0;
+
+    if (command.waitUntilSelector) {
+      console.log("triggering if");
+      const intervalId = setInterval(async function() {
+        if (document.querySelector(command.waitUntilSelector)) {
+          triggerCommand(command);
+          clearInterval(intervalId);
+        } else if (elapsed > timeout) {
+          clearInterval(intervalId);
+        }
+        elapsed += interval;
+      }, interval);
+    } else {
+      await triggerCommand(command);
     }
   }
   sendResponse(null);
