@@ -22,21 +22,14 @@
             class="sd-w-12 sd-h-12 sd-inline sd-mx-2"
           />
           <div v-for="category in tabCategories" :key="category">
-            <input
-              type="radio"
-              :id="`category-${category}`"
-              :value="category"
-              v-model="selectedCategory"
-              class="sd-hidden"
-            />
-            <label
-              :for="`category-${category}`"
+            <div
               :class="[
-                'sd-px-2 sd-py-1 hover:sd-bg-gray-600 sd-rounded-md sd-text-white sd-text-sm',
+                'sd-cursor-default sd-px-2 sd-py-1 hover:sd-bg-gray-600 sd-rounded-md sd-text-white sd-text-sm',
                 selectedCategory === category &&
                   'sd-bg-gray-700 sd-text-cyan-300',
               ]"
-              >{{ category }}</label
+              @click="() => selectedCategory = category"
+              >{{ category }}</div
             >
           </div>
         </div>
@@ -103,32 +96,30 @@
                 ]"
                 @click="triggerActiveCommand"
               >
-                <div class="sd-flex sd-justify-between">
+                <div class="sd-flex sd-items-center sd-space-x-2">
+                                    <div :class="[
+                    'sd-h-6 sd-w-6 sd-flex-none',
+                    activeCommandIndex === i
+                      ? 'sd-text-cyan-300'
+                      : 'sd-text-gray-200',
+                  ]" aria-hidden="true">
+                    <img v-if="commandResult.obj.config?.favIconUrl" :src="commandResult.obj.config?.favIconUrl" :alt="commandResult.obj.label" class="sd-w-full">
+                    <component v-else :is="getIconNameForCommand(commandResult.obj)" />
+                  </div>
                   <div
                     class="sd-overflow-hidden sd-max-w-2xl sd-whitespace-nowrap"
                   >
                     <p
-                      class="sd-m-0 sd-text-gray-200 sd-text-sm"
+                      class="sd-m-0 sd-text-gray-200 sd-text-sm sd-text-left"
                       v-html="highlight(commandResult)"
                     ></p>
                     <p
                       v-if="commandResult.obj.config.url"
-                      class="sd-text-xs sd-m-0 sd-text-gray-200"
+                      class="sd-m-0 sd-text-gray-200 sd-text-xs sd-text-left"
                     >
                       {{ commandResult.obj.config.url.substring(0, 120) }}
                     </p>
                   </div>
-
-                  <component
-                    :is="getIconNameForCommand(commandResult.obj)"
-                    :class="[
-                      'sd-h-4 sd-w-4 sd-inline',
-                      activeCommandIndex === i
-                        ? 'sd-text-cyan-300'
-                        : 'sd-text-gray-200',
-                    ]"
-                    aria-hidden="true"
-                  />
                 </div>
 
                 <div
