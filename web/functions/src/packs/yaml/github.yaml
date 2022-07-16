@@ -37,8 +37,12 @@ github.com:
       label: "Issues: Mentioned"
   - type: link
     link:
+      url: https://github.com/new
+      label: "Create a new repo"
+  - type: link
+    link:
       url: https://gist.github.com
-      label: "New gist"
+      label: "Create a new gist"
   - type: element
     element:
       scope: "#branch-select-menu summary"
@@ -67,3 +71,19 @@ github.com:
             trigger:
               selector: "#branch-select-menu .SelectMenu-tab:nth-child(2)"
               type: click
+  - type: element
+    element:
+      scope:
+        selector: get-repo summary[data-hydro-click]
+      label:
+        template: Clone the repo
+      trigger:
+        type: click
+      next:
+        type: element
+        element:
+          label:
+            template: Copy URL
+          trigger:
+            selector: clipboard-copy[value*='http']
+            type: click

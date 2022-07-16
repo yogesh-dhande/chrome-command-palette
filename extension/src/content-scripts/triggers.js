@@ -62,7 +62,6 @@ export function getIconNameForCommand(command) {
 }
 
 export async function triggerCommand(command) {
-  console.log(command);
   if (command.type === "element") {
     triggerElementCommand(command);
   } else if (command.type === "link") {
@@ -75,7 +74,10 @@ export async function triggerCommand(command) {
   } else if (command.type === "callback") {
     command.callback();
   }
-  if (command.next) {
-    chrome.runtime.sendMessage({ type: "next_command", command: command.next });
+  if (command.config.next) {
+    chrome.runtime.sendMessage({
+      type: "next_command",
+      command: command.config.next,
+    });
   }
 }

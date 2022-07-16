@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import Popup from "./Popup.vue";
-import { parseDomForCommands } from "./commands";
+import { getCommandFromScope, parseDomForCommands } from "./commands";
 import { downloadCommands } from "./utils";
 import { store } from "./store";
 import { triggerCommand } from "./triggers";
@@ -30,25 +30,25 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       }
     }
   } else if (message.type === "run_command") {
+    // Assume it is an element command
     let command = message.command;
     let interval = command.interval || 200;
     let timeout = command.timeout || 10000;
     let elapsed = 0;
+    const type = command.type;
+    const config = command[type];
 
-    if (command.waitUntilSelector) {
-      console.log("triggering if");
-      const intervalId = setInterval(async function() {
-        if (document.querySelector(command.waitUntilSelector)) {
-          triggerCommand(command);
-          clearInterval(intervalId);
-        } else if (elapsed > timeout) {
-          clearInterval(intervalId);
-        }
-        elapsed += interval;
-      }, interval);
-    } else {
-      await triggerCommand(command);
-    }
+    const waitUntilSelector = config.trigger.selector;
+    const intervalId = setInterval(async function() {
+      if (document.querySelector(waitUntilSelector)) {
+        command = getCommandFromScope(document.body, type, config);
+        triggerCommand(command);
+        clearInterval(intervalId);
+      } else if (elapsed > timeout) {
+        clearInterval(intervalId);
+      }
+      elapsed += interval;
+    }, interval);
   }
   sendResponse(null);
 });
