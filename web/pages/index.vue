@@ -47,7 +47,8 @@
               data-aos="zoom-y-out"
               data-aos-delay="150"
             >
-              A chrome extension for enhanced keyboard productivity.
+              Get a VS Code-style command palette on any web page with the
+              Single Dispatch Chrome extension.
             </p>
           </div>
         </div>
