@@ -1,11 +1,7 @@
 <template>
   <div>
     <div v-if="form">
-      <CommandForm
-        @submit="handleFormSubmit"
-        :form="form"
-        :title="activeCommand.label"
-      ></CommandForm>
+      <CommandForm @submit="handleFormSubmit" :form="form" :title="activeCommand.label"></CommandForm>
     </div>
     <Combobox v-else as="div">
       <div
@@ -26,21 +22,14 @@
             class="sd-w-12 sd-h-12 sd-inline sd-mx-2"
           />
           <div v-for="category in tabCategories" :key="category">
-            <input
-              type="radio"
-              :id="`category-${category}`"
-              :value="category"
-              v-model="selectedCategory"
-              class="sd-hidden"
-            />
-            <label
-              :for="`category-${category}`"
+            <div
               :class="[
-                'sd-px-2 sd-py-1 hover:sd-bg-gray-600 sd-rounded-md sd-text-white sd-text-sm',
+                'sd-cursor-default sd-px-2 sd-py-1 hover:sd-bg-gray-600 sd-rounded-md sd-text-white sd-text-sm',
                 selectedCategory === category &&
                   'sd-bg-gray-700 sd-text-cyan-300',
               ]"
-              >{{ category }}</label
+              @click="() => selectedCategory = category"
+              >{{ category }}</div
             >
           </div>
         </div>
@@ -107,32 +96,30 @@
                 ]"
                 @click="triggerActiveCommand"
               >
-                <div class="sd-flex sd-justify-between">
+                <div class="sd-flex sd-items-center sd-space-x-2">
+                                    <div :class="[
+                    'sd-h-6 sd-w-6 sd-flex-none',
+                    activeCommandIndex === i
+                      ? 'sd-text-cyan-300'
+                      : 'sd-text-gray-200',
+                  ]" aria-hidden="true">
+                    <img v-if="commandResult.obj.config?.favIconUrl" :src="commandResult.obj.config?.favIconUrl" :alt="commandResult.obj.label" class="sd-w-full">
+                    <component v-else :is="getIconNameForCommand(commandResult.obj)" />
+                  </div>
                   <div
                     class="sd-overflow-hidden sd-max-w-2xl sd-whitespace-nowrap"
                   >
                     <p
-                      class="sd-m-0 sd-text-gray-200 sd-text-sm"
+                      class="sd-m-0 sd-text-gray-200 sd-text-sm sd-text-left"
                       v-html="highlight(commandResult)"
                     ></p>
                     <p
                       v-if="commandResult.obj.config.url"
-                      class="sd-text-xs sd-m-0 sd-text-gray-200"
+                      class="sd-m-0 sd-text-gray-200 sd-text-xs sd-text-left"
                     >
                       {{ commandResult.obj.config.url.substring(0, 120) }}
                     </p>
                   </div>
-
-                  <component
-                    :is="getIconNameForCommand(commandResult.obj)"
-                    :class="[
-                      'sd-h-4 sd-w-4 sd-inline',
-                      activeCommandIndex === i
-                        ? 'sd-text-cyan-300'
-                        : 'sd-text-gray-200',
-                    ]"
-                    aria-hidden="true"
-                  />
                 </div>
 
                 <div
@@ -163,7 +150,7 @@
                   </div>
                 </div>
                 <pre v-if="activeCommandIndex === i && preferences.debug">{{
-                  JSON.stringify(commandResult.obj.config, undefined, 2)
+                    JSON.stringify(commandResult.obj.config, undefined, 2)
                 }}</pre>
               </li>
             </ComboboxOption>
@@ -202,8 +189,7 @@ import {
 import CommandForm from "./CommandForm.vue";
 
 import {
-  openUrl,
-  triggerElementCommand,
+  triggerCommand,
   getIconNameForCommand,
 } from "@/content-scripts/triggers";
 import { getCommandFromScope, categories } from "@/content-scripts/commands";
@@ -373,7 +359,7 @@ export default {
       }
       if (!this.form) {
         this.$emit("close");
-        this.triggerCommand(command);
+        triggerCommand(command);
       }
       // reset category
       this.selectedCategory = categories[0];
@@ -395,20 +381,9 @@ export default {
         this.onSelect(this.filteredCommandResults[n - 1].obj);
       }
     },
-    triggerCommand(command) {
-      if (command.type === "element") {
-        triggerElementCommand(command);
-      } else if (command.type === "link") {
-        openUrl(command);
-      } else if (command.type === "chrome") {
-        chrome.runtime.sendMessage({ type: "execute_chrome_command", command });
-      } else if (command.type === "callback") {
-        command.callback();
-      }
-    },
     async handleFormSubmit(formData) {
       this.activeCommand.config.form = formData;
-      this.triggerCommand(this.activeCommand);
+      triggerCommand(this.activeCommand);
       this.$emit("close");
       this.form = null;
     },

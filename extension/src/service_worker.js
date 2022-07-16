@@ -39,12 +39,20 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 
 chrome.runtime.setUninstallURL("https://blog.singledispatch.com/uninstalled");
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  let tab = sender.tab;
   switch (message.type) {
     case "execute_chrome_command":
-      chromeCommands[message.command.config.name].execute(
+      await chromeCommands[message.command.config.name].execute(
         message.command.config
       );
+      break;
+    case "next_command":
+      tab = await getCurrentTab();
+      await chrome.tabs.sendMessage(tab.id, {
+        type: "run_command",
+        command: message.command,
+      });
       break;
     case "search":
       chrome.search.query({
@@ -53,7 +61,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
       break;
     case "RECORD_TAB":
-      const tab = sender.tab;
       recordedTabConfig = {
         id: tab.id,
         windowId: tab.windowId,

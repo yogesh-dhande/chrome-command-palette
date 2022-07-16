@@ -56,7 +56,28 @@ export function getIconNameForCommand(command) {
     } else if (type === "focus") {
       return "AnnotationIcon";
     }
-  } else if (command.type === "chrome") {
+  } else {
     return "GlobeAltIcon";
+  }
+}
+
+export async function triggerCommand(command) {
+  if (command.type === "element") {
+    triggerElementCommand(command);
+  } else if (command.type === "link") {
+    openUrl(command);
+  } else if (command.type === "chrome") {
+    await chrome.runtime.sendMessage({
+      type: "execute_chrome_command",
+      command,
+    });
+  } else if (command.type === "callback") {
+    command.callback();
+  }
+  if (command.config.next) {
+    chrome.runtime.sendMessage({
+      type: "next_command",
+      command: command.config.next,
+    });
   }
 }

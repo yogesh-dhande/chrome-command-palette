@@ -17,7 +17,7 @@ export const categories = {
 
 export function getCommandFromScope(scopeElement, type, elementConfig) {
   let command;
-  const labelElement = elementConfig.label.selector
+  const labelElement = elementConfig.label?.selector
     ? scopeElement.querySelector(elementConfig.label.selector)
     : scopeElement;
 
@@ -163,11 +163,12 @@ export function parseDomForCommands(data) {
       ? countsByUniquenessTag[uniquenessTag] + 1
       : 1;
   });
-
-  return Array.from(commandsMap.values())
+  const commands = Array.from(commandsMap.values())
     .filter((command) => !command.config?.disabled)
     .filter((command) => countsByUniquenessTag[getuniquenessTag(command)] == 1)
     .sort((a, b) => b.config?.order - a.config?.order);
+
+  return commands;
 }
 
 function getuniquenessTag(command) {
