@@ -191,11 +191,11 @@ import CommandForm from "./CommandForm.vue";
 import {
   triggerCommand,
   getIconNameForCommand,
-} from "@/content-scripts/triggers";
-import { getCommandFromScope, categories } from "@/content-scripts/commands";
+} from "../triggers";
+import { getCommandFromScope, categories } from "../commands";
 import { go, highlight } from "fuzzysort";
 
-import { store } from "@/content-scripts/store";
+import { store } from "../store";
 
 export default {
   components: {
@@ -267,7 +267,7 @@ export default {
       highlight,
       activeCommandIndex,
       activeCommand,
-      logoUrl: chrome.runtime.getURL("assets/128x128.png"),
+      logoUrl: chrome.runtime.getURL("src/assets/128x128.png"),
     };
   },
   watch: {

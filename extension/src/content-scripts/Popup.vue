@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import "@/styles/main.css";
+import "../styles/main.css";
 import { ref } from "vue";
 
 import {
@@ -86,7 +86,7 @@ import {
 import Login from "./components/Login.vue";
 import CommandPalette from "./components/CommandPalette.vue";
 
-import { store } from "@/content-scripts/store";
+import { store } from "./store";
 
 export default {
   components: {

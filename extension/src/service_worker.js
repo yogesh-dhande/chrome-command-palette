@@ -18,14 +18,14 @@ chrome.runtime.onMessageExternal.addListener(
   }
 );
 
-chrome.action.onClicked.addListener(activateExtension);
-
 chrome.commands.onCommand.addListener(async (command) => {
-  if (command === "activate_extension") {
-    const tab = await getCurrentTab();
-    await activateExtension(tab);
-    return true;
-  }
+  console.log(chrome.action);
+  await chrome.action.openPopup();
+  // if (command === "activate_extension") {
+  //   const tab = await getCurrentTab();
+  //   await activateExtension(tab);
+  //   return true;
+  // }
   return true;
 });
 
