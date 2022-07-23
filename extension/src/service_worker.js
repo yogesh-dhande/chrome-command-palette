@@ -32,12 +32,12 @@ chrome.commands.onCommand.addListener(async (command) => {
 chrome.runtime.onInstalled.addListener(({ reason }) => {
   if (reason === chrome.runtime.OnInstalledReason.INSTALL) {
     chrome.tabs.create({
-      url: "https://blog.singledispatch.com/welcome",
+      url: "https://www.singledispatch.com/welcome",
     });
   }
 });
 
-chrome.runtime.setUninstallURL("https://blog.singledispatch.com/uninstalled");
+chrome.runtime.setUninstallURL("https://www.singledispatch.com/uninstalled");
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   let tab = sender.tab;
