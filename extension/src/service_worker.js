@@ -18,14 +18,27 @@ chrome.runtime.onMessageExternal.addListener(
   }
 );
 
+chrome.action.onClicked.addListener(async (tab) => {
+  // TODO this does not work yet. This event listener is not fired if default_popup is set
+  console.log(tab);
+  const url = new URL(tab.url);
+  console.log(url);
+  // if a chrome internal url
+  if (url.protocol === "chrome") {
+    await chrome.action.setPopup({ popup: "src/popup/index.html" });
+  } else {
+    await chrome.action.setPopup({ popup: "" });
+    await activateExtension(tab);
+  }
+});
+
 chrome.commands.onCommand.addListener(async (command) => {
-  console.log(chrome.action);
-  await chrome.action.openPopup();
-  // if (command === "activate_extension") {
-  //   const tab = await getCurrentTab();
-  //   await activateExtension(tab);
-  //   return true;
-  // }
+  console.log(command);
+  if (command === "activate_extension") {
+    const tab = await getCurrentTab();
+    await activateExtension(tab);
+    return true;
+  }
   return true;
 });
 
