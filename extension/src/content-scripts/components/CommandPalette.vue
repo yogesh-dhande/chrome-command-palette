@@ -34,9 +34,9 @@
           </div>
         </div>
         <a
-          href="https://blog.singledispatch.com/feedback"
+          href="https://www.singledispatch.com/feedback"
           target="_blank"
-          class="sd-text-cyan-300 sd-underline"
+          class="sd-text-cyan-300 sd-underline visited:sd-text-cyan-300"
           tabindex="-1"
           >Send feedback</a
         >
