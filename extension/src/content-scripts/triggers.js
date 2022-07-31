@@ -8,7 +8,7 @@ function simulateMouseClick(targetNode) {
     return targetNode.dispatchEvent(clickEvent);
   }
 
-  ["mouseover", "mousedown", "mouseup"].forEach(function(eventType) {
+  ["mouseover", "mousedown", "mouseup"].forEach(function (eventType) {
     const r = triggerMouseEvent(targetNode, eventType);
   });
 }
@@ -36,6 +36,9 @@ export function triggerElementCommand(command) {
       simulateMouseClick(el);
       el.scrollIntoView({ block: "center", inline: "center" });
     }, 200);
+  } else if (type === "dblclick") {
+    var doubleClickEvent = new Event("dblclick");
+    el.dispatchEvent(doubleClickEvent);
   } else if (type === "focus") {
     setTimeout(() => {
       el.focus();
