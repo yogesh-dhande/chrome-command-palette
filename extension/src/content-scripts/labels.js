@@ -3,7 +3,9 @@ const paramsPattern = /[^{\}]+(?=})/g;
 const cache = {};
 
 export function renderTemplateString(templateString, el) {
-  if (templateString === "input") {
+  if (!el) {
+    return;
+  } else if (templateString === "input") {
     return getLabelForInput(el);
   } else if (templateString === "button") {
     return getLabelForButton(el);
@@ -18,7 +20,7 @@ export function renderTemplateString(templateString, el) {
       });
     }
   }
-  return templateString.substring(0, 80);
+  return templateString.substring(0, 120);
 }
 
 export function getLabelForInput(el) {
@@ -27,6 +29,13 @@ export function getLabelForInput(el) {
     label = el.ariaLabel;
   } else if (el.id) {
     const label_el = document.querySelector(`[for="${el.id}"]`);
+    if (label_el) {
+      label = label_el.innerText;
+    }
+  } else if (el.getAttribute("aria-labelledby")) {
+    const label_el = document.getElementById(
+      el.getAttribute("aria-labelledby")
+    );
     if (label_el) {
       label = label_el.innerText;
     }
@@ -41,6 +50,13 @@ export function getLabelForButton(el) {
     return el.ariaLabel;
   } else if (el.dataset.tooltip) {
     return el.dataset.tooltip;
+  } else if (el.getAttribute("aria-labelledby")) {
+    const label_el = document.getElementById(
+      el.getAttribute("aria-labelledby")
+    );
+    if (label_el) {
+      return label_el.innerText;
+    }
   }
   return el.innerText;
 }

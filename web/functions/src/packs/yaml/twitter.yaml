@@ -1,0 +1,39 @@
+twitter.com:
+  - type: element
+    element:
+      scope:
+        selector: article
+      label:
+        selector: '[data-testid="tweetText"]'
+        template: "{innerText}"
+      trigger:
+        type: click
+      options:
+        - type: element
+          element:
+            label:
+              template: Reply
+            trigger:
+              selector: '[data-testid="reply"]'
+              type: click
+        - type: element
+          element:
+            label:
+              template: Retweet
+            trigger:
+              selector: '[data-testid="retweet"]'
+              type: click
+        - type: element
+          element:
+            label:
+              template: Like
+            trigger:
+              selector: '[data-testid="like"]'
+              type: click
+        - type: element
+          element:
+            label:
+              template: Share
+            trigger:
+              selector: '[aria-label="Share Tweet"]'
+              type: click

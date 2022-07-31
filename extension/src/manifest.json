@@ -1,10 +1,10 @@
 {
-  "name": "Single Dispatch",
-  "version": "1.0.0",
+  "name": "Single Dispatch Command Palette",
+  "version": "0.4.0",
   "manifest_version": 3,
-  "description": "Get a command palette on every website. Navigate through any web page, tabs, or bookmarks with your keyboard.",
+  "description": "Command palette for any website. Manage tabs and bookmarks, open links, or trigger button clicks just with your keyboard.",
   "action": {
-    "default_title": "Single Dispatch Command Palette"
+    "default_title": "Single Dispatch - The Command Palette for Chrome"
   },
   "icons": {
     "16": "/assets/16x16.png",
@@ -14,6 +14,12 @@
   "background": {
     "service_worker": "service_worker.js"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/128x128.png"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -26,7 +32,7 @@
         "default": "Ctrl+K",
         "mac": "Command+K"
       },
-      "description": "Activate Single Dispatch Command Palette"
+      "description": "Launch the command palette"
     }
   },
   "externally_connectable": {
@@ -37,5 +43,5 @@
       "https://www.singledispatch.com/*"
     ]
   },
-  "permissions": ["tabs", "bookmarks", "search", "topSites"]
+  "permissions": ["tabs", "search"]
 }

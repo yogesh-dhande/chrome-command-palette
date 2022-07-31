@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <div class="max-w-7xl mx-auto px-2 py-1 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-2 py-4 sm:px-6 lg:px-8">
       <div
         class="relative flex whitespace-nowrap items-center justify-start h-12"
       >
@@ -101,9 +101,9 @@
                 ><img
                   src="/favicon.ico"
                   alt="logo"
-                  class="w-6 h-6 inline mx-2"
-                />Single Dispatch</span
-              >
+                  class="w-8 h-8 sm:w-12 sm:h-12 inline mx-2"
+                /><span class="mx-2">Single Dispatch</span>
+              </span>
             </nuxt-link>
           </div>
         </div>
@@ -111,8 +111,39 @@
         <div>
           <div class="hidden lg:block md:ml-6">
             <div class="flex space-x-4 items-center">
-              <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-              <div v-if="!store.loggedIn" class="self-center">
+              <a
+                href="https://blog.singledispatch.com"
+                target="_blank"
+                class="
+                  px-4
+                  py-2
+                  text-lg
+                  font-bold
+                  text-cyan-50
+                  hover:text-cyan-300
+                  rounded-md
+                  shadow-md
+                  border-transparent
+                "
+                >Blog
+              </a>
+              <a
+                href="https://chrome.google.com/webstore/detail/single-dispatch/ebphfkpocnckimopiifpfpnnieolonkk"
+                target="_blank"
+                class="
+                  px-4
+                  py-2
+                  text-lg
+                  font-bold
+                  bg-pink-600
+                  hover:bg-pink-700
+                  rounded-md
+                  shadow-md
+                  border-transparent
+                "
+                >Add to Chrome
+              </a>
+              <!-- <div v-if="!store.loggedIn" class="self-center">
                 <nuxt-link
                   to="/login"
                   class="
@@ -161,7 +192,7 @@
                 >
                   <span>Sign Out</span>
                 </button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -175,8 +206,41 @@
   -->
     <div class="lg:hidden" :class="{ hidden: !showMobileMenu }">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-        <div v-if="!store.loggedIn">
+        <a
+          href="https://blog.singledispatch.com"
+          target="_blank"
+          class="
+            block
+            px-4
+            py-2
+            text-lg
+            font-bold
+            text-cyan-50
+            hover:text-cyan-300
+            rounded-md
+            shadow-md
+            border-transparent
+          "
+          >Blog
+        </a>
+        <a
+          href="https://chrome.google.com/webstore/detail/single-dispatch/ebphfkpocnckimopiifpfpnnieolonkk"
+          target="_blank"
+          class="
+            block
+            px-4
+            py-2
+            text-lg
+            font-bold
+            bg-pink-600
+            hover:bg-pink-700
+            rounded-md
+            shadow-md
+            border-transparent
+          "
+          >Add to Chrome
+        </a>
+        <!-- <div v-if="!store.loggedIn">
           <nuxt-link
             to="/login"
             class="
@@ -225,7 +289,7 @@
           >
             <span>Sign Out</span>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </nav>

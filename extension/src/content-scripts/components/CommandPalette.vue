@@ -1,159 +1,173 @@
 <template>
-  <Combobox as="div">
-    <div class="flex space-x-2 text-xs mt-1 items-center px-6 py-6">
-      <div v-for="category in categories" :key="category">
-        <input
-          type="radio"
-          :id="`category-${category}`"
-          :value="category"
-          v-model="selectedCategory"
-          class="hidden"
-        />
-        <label
-          :for="`category-${category}`"
-          :class="[
-            'px-2 py-1 hover:bg-gray-700 underline rounded-md text-gray-100 text-sm',
-            selectedCategory === category && 'bg-gray-600',
-          ]"
-          >{{ category }}</label
+  <div>
+    <div v-if="form">
+      <CommandForm @submit="handleFormSubmit" :form="form" :title="activeCommand.label"></CommandForm>
+    </div>
+    <Combobox v-else as="div">
+      <div
+        class="
+          sd-flex
+          sd-text-xs
+          sd-mt-1
+          sd-items-center
+          sd-px-6
+          sd-py-6
+          sd-justify-between
+        "
+      >
+        <div class="sd-flex sd-items-center sd-space-x-2">
+          <img
+            :src="logoUrl"
+            alt="logo"
+            class="sd-w-12 sd-h-12 sd-inline sd-mx-2"
+          />
+          <div v-for="category in tabCategories" :key="category">
+            <div
+              :class="[
+                'sd-cursor-default sd-px-2 sd-py-1 hover:sd-bg-gray-600 sd-rounded-md sd-text-white sd-text-sm',
+                selectedCategory === category &&
+                  'sd-bg-gray-700 sd-text-cyan-300',
+              ]"
+              @click="() => selectedCategory = category"
+              >{{ category }}</div
+            >
+          </div>
+        </div>
+        <a
+          href="https://www.singledispatch.com/feedback"
+          target="_blank"
+          class="sd-text-cyan-300 sd-underline visited:sd-text-cyan-300"
+          tabindex="-1"
+          >Send feedback</a
         >
       </div>
-    </div>
-    <div class="relative">
-      <SearchIcon
-        class="
-          pointer-events-none
-          absolute
-          top-3.5
-          left-4
-          h-5
-          w-5
-          text-gray-500
-        "
-        aria-hidden="true"
-      />
-      <ComboboxInput
+      <input
         id="search"
         placeholder="Search..."
-        @change="query = $event.target.value"
+        @input="query = $event.target.value"
         autocomplete="off"
         @keydown="handleKeys"
         @keydown.right="selectNextCategory"
         @keydown.left="selectPreviousCategory"
-        @keydown.enter="selectActiveCommand"
+        @keydown.enter="triggerActiveCommand"
         @keydown.esc="$emit('close')"
+        @keydown.down="selectNextActiveCommand"
+        @keydown.up="selectPreviousActiveCommand"
       />
-    </div>
-    <ComboboxButton class="hidden" ref="combo-btn"></ComboboxButton>
-    <div class="mx-6">
-      <button
-        v-if="query"
-        tabindex="-1"
-        @click="search"
-        class="text-gray-100 text-xs select-none rounded-md px-2 py-1"
-      >
-        <span class="border-r pr-1 mr-1">ctrl+alt+s</span>Search in New Tab
-      </button>
-    </div>
+      <div class="sd-mx-6">
+        <button
+          v-if="query"
+          tabindex="-1"
+          @click="search"
+          class="
+            sd-bg-gray-900
+            sd-border-none
+            sd-text-gray-100
+            sd-text-xs
+            sd-select-none
+            sd-rounded-md
+            sd-px-2
+            sd-py-1
+          "
+        >
+          <span class="sd-border-r sd-pr-1 sd-mr-1">ctrl+alt+s</span>Search in
+          New Tab
+        </button>
+      </div>
 
-    <ComboboxOptions
-      id="options-box"
-      v-if="query === '' || filteredCommandResults.length > 0"
-      static
-      class="
-        max-h-96
-        scroll-py-2
-        divide-y divide-gray-500 divide-opacity-20
-        overflow-y-auto
-        my-0
-        mx-2
-        truncate
-      "
-    >
-      <li class="p-2">
-        <ul class="text-sm text-gray-400 m-0">
-          <ComboboxOption
-            v-for="(commandResult, i) in filteredCommandResults"
-            :key="i"
-            :value="commandResult.obj"
-            as="template"
-            v-slot="{ active }"
-          >
-            <li
-              :class="[
-                'flex flex-col cursor-default select-none rounded-md px-3 py-2',
-                (active || activeCommand == commandResult.obj) &&
-                  'bg-gray-800 text-white',
-              ]"
+      <ComboboxOptions
+        id="options-box"
+        v-if="query === '' || filteredCommandResults.length > 0"
+        static
+      >
+        <li class="sd-p-2">
+          <ul class="sd-text-sm sd-text-gray-200 sd-m-0 sd-p-0 sd-list-none">
+            <ComboboxOption
+              v-for="(commandResult, i) in filteredCommandResults"
+              :key="i"
+              :id="commandResult.obj.label"
+              :value="commandResult.obj"
+              as="template"
             >
-              <div class="flex justify-between">
-                <div>
+              <li
+                :class="[
+                  'sd-flex sd-flex-col sd-cursor-default sd-select-none sd-rounded-md sd-px-3 sd-py-2',
+                  activeCommandIndex === i && 'sd-bg-gray-700 sd-text-white',
+                ]"
+                @click="triggerActiveCommand"
+              >
+                <div class="sd-flex sd-items-center sd-space-x-2">
+                                    <div :class="[
+                    'sd-h-6 sd-w-6 sd-flex-none',
+                    activeCommandIndex === i
+                      ? 'sd-text-cyan-300'
+                      : 'sd-text-gray-200',
+                  ]" aria-hidden="true">
+                    <img v-if="commandResult.obj.config?.favIconUrl" :src="commandResult.obj.config?.favIconUrl" :alt="commandResult.obj.label" class="sd-w-full">
+                    <component v-else :is="getIconNameForCommand(commandResult.obj)" />
+                  </div>
                   <div
-                    class="flex-auto my-0"
-                    v-html="highlight(commandResult)"
-                  ></div>
-                  <div
-                    v-if="commandResult.obj.type === 'link'"
-                    class="text-xs m-0"
+                    class="sd-overflow-hidden sd-max-w-2xl sd-whitespace-nowrap"
                   >
-                    {{ commandResult.obj.config.url.substring(0, 80) }}
+                    <p
+                      class="sd-m-0 sd-text-gray-200 sd-text-sm sd-text-left"
+                      v-html="highlight(commandResult)"
+                    ></p>
+                    <p
+                      v-if="commandResult.obj.config.url"
+                      class="sd-m-0 sd-text-gray-200 sd-text-xs sd-text-left"
+                    >
+                      {{ commandResult.obj.config.url.substring(0, 120) }}
+                    </p>
                   </div>
                 </div>
 
-                <component
-                  :is="getIconNameForCommand(commandResult.obj)"
-                  :class="[
-                    'h-4 w-4 inline',
-                    active || activeCommand == commandResult.obj
-                      ? 'text-cyan-300'
-                      : 'text-cyan-50',
-                  ]"
-                  aria-hidden="true"
-                />
-              </div>
-
-              <div
-                v-if="active || activeCommand == commandResult.obj"
-                class="flex flex-row flex-wrap text-sm"
-              >
                 <div
-                  v-for="(option, i) in getOptions(commandResult.obj)"
-                  :key="option.label"
-                  class="
-                    text-xs text-center
-                    rounded-md
-                    px-2
-                    py-1
-                    bg-gray-700
-                    hover:bg-gray-600
-                    border border-gray-200
-                    m-1
-                  "
-                  @click="() => onSelect(option)"
+                  v-if="activeCommandIndex === i"
+                  class="sd-flex sd-flex-row sd-flex-wrap sd-text-sm"
                 >
-                  <span class="border-r pr-1"> ctrl+alt+{{ i + 1 }} </span>
-                  <span class="pl-1">{{ option.label }}</span>
+                  <div
+                    v-for="(option, i) in getOptions(commandResult.obj)"
+                    :key="option.label"
+                    class="
+                      sd-text-xs
+                      sd-text-center
+                      sd-rounded-md
+                      sd-px-2
+                      sd-py-1
+                      sd-bg-gray-800
+                      hover:sd-bg-gray-700 hover:sd-text-cyan-300
+                      sd-border sd-border-gray-100
+                      hover:sd-border-cyan-300
+                      sd-m-1
+                    "
+                    @click="() => onSelect(option)"
+                  >
+                    <span class="sd-border-r sd-pr-1">
+                      ctrl+alt+{{ i + 1 }}
+                    </span>
+                    <span class="sd-pl-1">{{ option.label }}</span>
+                  </div>
                 </div>
-              </div>
-              <pre v-if="active && preferences.debug">{{
-                JSON.stringify(commandResult.obj.config, undefined, 2)
-              }}</pre>
-            </li>
-          </ComboboxOption>
-        </ul>
-      </li>
-    </ComboboxOptions>
+                <pre v-if="activeCommandIndex === i && preferences.debug">{{
+                    JSON.stringify(commandResult.obj.config, undefined, 2)
+                }}</pre>
+              </li>
+            </ComboboxOption>
+          </ul>
+        </li>
+      </ComboboxOptions>
 
-    <div
-      v-if="query !== '' && filteredCommandResults.length === 0"
-      class="py-14 px-6 text-center sm:px-14"
-    >
-      <FolderIcon class="mx-auto h-6 w-6 text-gray-500" aria-hidden="true" />
-      <div class="mt-4 text-sm text-gray-200">
-        We couldn't find any commands with that term. Please try again.
+      <div
+        v-if="query !== '' && filteredCommandResults.length === 0"
+        class="sd-py-14 sd-px-6 sd-text-center sm:sd-px-14"
+      >
+        <div class="sd-mt-4 sd-text-sm sd-text-gray-200">
+          We couldn't find any commands with that term. Please try again.
+        </div>
       </div>
-    </div>
-  </Combobox>
+    </Combobox>
+  </div>
 </template>
 
 <script>
@@ -172,10 +186,10 @@ import {
   CursorClickIcon,
   GlobeAltIcon,
 } from "@heroicons/vue/outline";
+import CommandForm from "./CommandForm.vue";
 
 import {
-  openUrl,
-  triggerElementCommand,
+  triggerCommand,
   getIconNameForCommand,
 } from "@/content-scripts/triggers";
 import { getCommandFromScope, categories } from "@/content-scripts/commands";
@@ -195,71 +209,55 @@ export default {
     LinkIcon,
     SearchIcon,
     GlobeAltIcon,
+    CommandForm,
   },
-  setup(props) {
+  setup() {
     const recent = ref(store.commands.length > 0 ? store.commands[0] : null);
+    const form = ref(null);
+    const preferences = store.currentUser.preferences;
 
-    const preferences = store.preferences;
-    const allCategories = Object.values(categories);
-    const selectedCategory = ref(categories.ALL);
+    let tabCategories = preferences.additionalCategories;
+    if (preferences.showAllTab) {
+      tabCategories = [categories.ALL].concat(preferences.additionalCategories);
+    }
+    const selectedCategory = ref(tabCategories[0]);
 
     const query = ref("");
-    console.log("setting up");
 
-    const shortcuts = [
-      {
-        key: "/ts",
-        category: categories.TOP_SITES,
-      },
-      {
-        key: "/t",
-        category: categories.TABS,
-      },
-      {
-        key: "/b",
-        category: categories.BOOKMARKS,
-      },
-      {
-        key: "/p",
-        category: categories.PAGE,
-      },
-      {
-        key: "/a",
-        category: categories.ALL,
-      },
-    ];
-
+    const activeCommandIndex = ref(0);
     const activeCommand = ref(
       store.commands.length > 0 ? store.commands[0] : null
     );
 
     const filteredCommandResults = computed(() => {
-      let kw = query.value.toLowerCase();
-      for (let shortcut of shortcuts) {
-        if (kw.startsWith(shortcut.key + " ")) {
-          selectedCategory.value = shortcut.category;
-          kw = kw.substring(shortcut.key.length + 1);
+      const categorizedCommands = store.commands.filter((command) => {
+        if (selectedCategory.value === categories.ALL) {
+          return command.categories.some((element) =>
+            preferences.categoriesInAllTab.includes(element)
+          );
         }
-      }
-      const categorizedCommands = store.commands.filter((command) =>
-        command.categories.includes(selectedCategory.value)
-      );
-      const results = go(kw, categorizedCommands, {
+        return command.categories.includes(selectedCategory.value);
+      });
+
+      const results = go(query.value.toLowerCase(), categorizedCommands, {
         key: "label",
         limit: 10,
         all: true,
       });
-      console.log(results.length);
       if (results.length === 0) {
+        activeCommandIndex.value = null;
         activeCommand.value = null;
       } else {
+        activeCommandIndex.value = 0;
         activeCommand.value = results[0].obj;
       }
+
       return results;
     });
 
     return {
-      categories: allCategories,
+      form,
+      tabCategories,
       selectedCategory,
       preferences,
       query,
@@ -267,16 +265,29 @@ export default {
       filteredCommandResults,
       getIconNameForCommand,
       highlight,
+      activeCommandIndex,
       activeCommand,
+      logoUrl: chrome.runtime.getURL("assets/128x128.png"),
     };
+  },
+  watch: {
+    activeCommand(newValue) {
+      // set the scroll position to always keep active command in view
+      if (!newValue || this.activeCommandIndex === 0) {
+        const optionsBox = document.getElementById("options-box");
+        if (optionsBox) {
+          optionsBox.scrollTop = 0;
+        }
+      } else {
+        document.getElementById(newValue.label)?.scrollIntoView();
+      }
+    },
   },
   methods: {
     handleKeys(evt) {
       // alt tab is the way to tab through categories when an option was selected
       if (evt.code === "Tab" && !evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
         this.selectNextCategory(evt);
-        console.log("handling tab");
-        document.getElementById("search").value = this.query;
       } else if (
         evt.code === "Tab" &&
         !evt.ctrlKey &&
@@ -298,36 +309,62 @@ export default {
     },
     selectNextCategory(evt) {
       evt.preventDefault();
-      const index = this.categories.findIndex(
+      const index = this.tabCategories.findIndex(
         (cat) => cat === this.selectedCategory
       );
-      if (index + 1 === this.categories.length) {
-        this.selectedCategory = this.categories[0];
+      if (index + 1 === this.tabCategories.length) {
+        this.selectedCategory = this.tabCategories[0];
       } else {
-        this.selectedCategory = this.categories[index + 1];
+        this.selectedCategory = this.tabCategories[index + 1];
       }
     },
     selectPreviousCategory(evt) {
       evt.preventDefault();
-      const index = this.categories.findIndex(
+      const index = this.tabCategories.findIndex(
         (cat) => cat === this.selectedCategory
       );
       if (index === 0) {
-        this.selectedCategory = this.categories[this.categories.length - 1];
+        this.selectedCategory =
+          this.tabCategories[this.tabCategories.length - 1];
       } else {
-        this.selectedCategory = this.categories[index - 1];
+        this.selectedCategory = this.tabCategories[index - 1];
       }
     },
     async search() {
       await chrome.runtime.sendMessage({ type: "search", query: this.query });
     },
-    onSelect(command) {
-      this.$emit("close");
-      this.triggerCommand(command);
-      // reset category
-      this.selectedCategory = categories.ALL;
+    selectNextActiveCommand(evt) {
+      evt.preventDefault();
+      if (this.activeCommandIndex + 1 === this.filteredCommandResults.length) {
+        this.activeCommandIndex = 0;
+      } else {
+        this.activeCommandIndex += 1;
+      }
+      this.activeCommand =
+        this.filteredCommandResults[this.activeCommandIndex].obj;
     },
-    selectActiveCommand() {
+    selectPreviousActiveCommand(evt) {
+      evt.preventDefault();
+      if (this.activeCommandIndex === 0) {
+        this.activeCommandIndex = this.filteredCommandResults.length - 1;
+      } else {
+        this.activeCommandIndex -= 1;
+      }
+      this.activeCommand =
+        this.filteredCommandResults[this.activeCommandIndex].obj;
+    },
+    onSelect(command) {
+      if (command.config?.form) {
+        this.form = command.config?.form;
+      }
+      if (!this.form) {
+        this.$emit("close");
+        triggerCommand(command);
+      }
+      // reset category
+      this.selectedCategory = categories[0];
+    },
+    triggerActiveCommand() {
       if (this.activeCommand) {
         this.onSelect(this.activeCommand);
       }
@@ -344,29 +381,23 @@ export default {
         this.onSelect(this.filteredCommandResults[n - 1].obj);
       }
     },
-    triggerCommand(command) {
-      if (command.type === "element") {
-        // Command is to open a specified link
-        triggerElementCommand(command);
-      } else if (command.type === "link") {
-        // Command is to open a specified link
-        openUrl(command);
-      } else if (command.type === "chrome") {
-        chrome.runtime.sendMessage({ type: "execute_chrome_command", command });
-      }
+    async handleFormSubmit(formData) {
+      this.activeCommand.config.form = formData;
+      triggerCommand(this.activeCommand);
+      this.$emit("close");
+      this.form = null;
     },
     highlight(commandResult) {
       if (this.query) {
         return highlight(
           commandResult,
-          '<span class="text-cyan-300 font-bold">',
+          '<span class="sd-text-cyan-300 sd-font-bold">',
           "</span>"
         );
       }
       return commandResult.obj.label;
     },
     getOptions(command) {
-      this.activeCommand = command;
       const options = [];
       if (command.type === "element" && command.config.options?.length > 0) {
         command.config.options
@@ -420,26 +451,36 @@ export default {
 
 #search {
   font-size: 16px;
-  @apply mx-auto
-            max-w-2xl
-            transform
-            divide-y divide-gray-500 divide-opacity-20
-            overflow-hidden
-            rounded-xl
-            bg-gray-900
-            shadow-2xl
-            transition-all
-                h-12
-                w-full
-                border-0
-                bg-transparent
-                pl-11
-                pr-4
-                text-white
-                placeholder-gray-500
-                focus:ring-0
-                sm:text-sm;
+  @apply sd-transform
+    sd-divide-y sd-divide-gray-500 sd-divide-opacity-20
+    sd-overflow-hidden
+    sd-rounded-xl
+    sd-shadow-2xl
+    sd-transition-all
+    sd-h-12
+    sd-w-full
+    sd-border-0
+    sd-bg-transparent
+    sd-m-0 sd-py-0
+    sd-px-8
+    sd-text-white
+    sd-placeholder-gray-500
+    focus:sd-ring-0
+    focus:sd-outline-none
+    sm:sd-text-sm;
 }
+
+#options-box {
+  @apply sd-overflow-auto
+          sd-max-h-96
+          sd-scroll-py-2
+          sd-divide-y sd-divide-gray-500 sd-divide-opacity-20
+          sd-my-0
+          sd-mx-2
+          sd-p-0
+          sd-list-none;
+}
+
 #options-box::-webkit-scrollbar {
   background-color: #374151;
   width: 8px;

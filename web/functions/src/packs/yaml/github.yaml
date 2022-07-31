@@ -1,0 +1,89 @@
+github.com:
+  - type: element
+    element:
+      scope:
+        selector: "[data-hydro-click]"
+      label:
+        template: button
+      trigger:
+        type: click
+  - type: link
+    link:
+      url: /pulls
+      label: "Pull Requests: Created"
+  - type: link
+    link:
+      url: /pulls/assigned
+      label: "Pull Requests: Assigned"
+  - type: link
+    link:
+      url: /pulls/mentioned
+      label: "Pull Requests: Mentioned"
+  - type: link
+    link:
+      url: /pulls/review-requested
+      label: "Pull Requests: Review Requests"
+  - type: link
+    link:
+      url: /issues
+      label: "Issues: Created"
+  - type: link
+    link:
+      url: /issues/assigned
+      label: "Issues: Assigned"
+  - type: link
+    link:
+      url: /issues/mentioned
+      label: "Issues: Mentioned"
+  - type: link
+    link:
+      url: https://github.com/new
+      label: "Create a new repo"
+  - type: link
+    link:
+      url: https://gist.github.com
+      label: "Create a new gist"
+  - type: element
+    element:
+      scope: "#branch-select-menu summary"
+      label:
+        template: Switch branches
+      trigger:
+        type: click
+      sequence:
+        - type: element
+          element:
+            scope: null
+            trigger:
+              selector: "#branch-select-menu .SelectMenu-tab:nth-child(1)"
+              type: click
+  - type: element
+    element:
+      scope: "#branch-select-menu summary"
+      label:
+        template: Switch tags
+      trigger:
+        type: click
+      sequence:
+        - type: element
+          element:
+            scope: null
+            trigger:
+              selector: "#branch-select-menu .SelectMenu-tab:nth-child(2)"
+              type: click
+  - type: element
+    element:
+      scope:
+        selector: get-repo summary[data-hydro-click]
+      label:
+        template: Clone the repo
+      trigger:
+        type: click
+      next:
+        type: element
+        element:
+          label:
+            template: Copy URL
+          trigger:
+            selector: clipboard-copy[value*='http']
+            type: click

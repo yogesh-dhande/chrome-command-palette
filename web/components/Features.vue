@@ -1,10 +1,10 @@
 <template>
   <div class="py-16 bg-gray-100 overflow-hidden lg:py-24">
-    <div class="relative max-w-xl mx-auto px-4 sm:px-8 lg:max-w-7xl">
+    <div class="relative mx-auto px-4 sm:px-8 max-w-7xl">
       <div class="relative" data-aos="zoom-y-out" data-aos-delay="150">
         <h2
           class="
-            text-center text-3xl
+            text-3xl
             leading-8
             font-extrabold
             tracking-tight
@@ -14,198 +14,106 @@
         >
           A delightful way to navigate the web
         </h2>
-        <p class="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
-          Navigate through web pages, chrome tabs, and bookmarks with just your
-          keyboard. Simply open the command palette with a keyboard shortcut and
-          start typing.
+        <p class="mt-4 text-xl text-gray-500">
+          Command palettes are not just for your code editor! Navigate through
+          web pages, tabs or bookmarks with just your keyboard. Simply open the
+          command palette with a keyboard shortcut and start typing.
         </p>
       </div>
 
-      <div
-        class="
-          relative
-          mt-12
-          lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center
-        "
-      >
-        <div class="relative mx-8 sm:mx-12">
-          <h3
-            class="
-              text-2xl
-              font-extrabold
-              text-gray-900
-              tracking-tight
-              sm:text-3xl
-            "
-          >
-            Any link on the webpage is a few keystrokes away!
-          </h3>
-          <p class="mt-3 text-lg text-gray-500">
-            Simply open the command palette and start typing.
+      <FeatureItem>
+        <template #header> Switch between tabs with ease </template>
+        <template #description>
+          <p>
+            Now you can have as many tabs open as you wish without having to
+            worry about how to keep track of them.
           </p>
-        </div>
-
-        <div class="mt-10 relative lg:mt-0" aria-hidden="true">
-          <img
-            class="relative mx-auto rounded-lg glow"
-            src="@/assets/img/screenshot.png"
-            alt=""
-          />
-        </div>
-      </div>
-
-      <div class="relative mt-12 sm:mt-16 lg:mt-24">
-        <div
-          class="
-            lg:grid
-            lg:grid-flow-row-dense
-            lg:grid-cols-2
-            lg:gap-8
-            lg:items-center
-          "
-        >
-          <div class="lg:col-start-2 mx-8 sm:mx-12">
-            <h3
-              class="
-                text-2xl
-                font-extrabold
-                text-gray-900
-                tracking-tight
-                sm:text-3xl
-              "
-            >
-              Switch between tabs
-            </h3>
-
-            <dl class="mt-10 space-y-10">
-              <div>
-                <dd class="mt-2 text-base text-gray-500">
-                  Now you can have as many tabs open as you wish without having
-                  to worry about how to keep track of them.
-                </dd>
-                <dd class="mt-2 text-base text-gray-500">
-                  Have too many windows open and not sure which window you need
-                  to get to? Single Dispatch will search through all open
-                  windows and focus on the tab you want.
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          <div class="mt-10 relative lg:mt-0 lg:col-start-1">
-            <img
-              class="relative mx-auto rounded-lg glow"
-              src="@/assets/img/screenshot.png"
-              alt=""
-            />
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="
-          relative
-          mt-12
-          lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center
-        "
-      >
-        <div class="relative mx-8 sm:mx-12">
-          <h3
-            class="
-              text-2xl
-              font-extrabold
-              text-gray-900
-              tracking-tight
-              sm:text-3xl
-            "
-          >
-            Target input fields or buttons directly.
-          </h3>
-          <p class="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
-            No need to tab through the entire page.
+          <p>
+            Have too many windows open and not sure which window you need to get
+            to? You can search through all open windows and switch to the tab
+            you want.
           </p>
-        </div>
-
-        <div class="mt-10 relative lg:mt-0" aria-hidden="true">
+        </template>
+        <template #image>
           <img
             class="relative mx-auto rounded-lg glow"
-            src="@/assets/img/screenshot.png"
+            src="@/assets/img/tabs.png"
             alt=""
-          />
-        </div>
-      </div>
+        /></template>
+      </FeatureItem>
 
-      <div class="relative mt-12 sm:mt-16 lg:mt-24">
-        <div
-          class="
-            lg:grid
-            lg:grid-flow-row-dense
-            lg:grid-cols-2
-            lg:gap-8
-            lg:items-center
-          "
+      <FeatureItem>
+        <template #header>Manage bookmarks</template>
+        <template #description
+          >No need to worry about perfectly organizing your bookmarks into
+          folders and subfolders when you can just search for them! Simply enter
+          a query to search through all of your bookmarks.</template
         >
-          <div class="lg:col-start-2 mx-8 sm:mx-12">
-            <h3
-              class="
-                text-2xl
-                font-extrabold
-                text-gray-900
-                tracking-tight
-                sm:text-3xl
-              "
-            >
-              Open bookmarks and frequently visited sites
-            </h3>
-          </div>
-
-          <div class="mt-10 relative lg:mt-0 lg:col-start-1">
-            <img
-              class="relative mx-auto rounded-lg glow"
-              src="@/assets/img/screenshot.png"
-              alt=""
-            />
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="
-          relative
-          mt-12
-          lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center
-        "
-      >
-        <div class="relative mx-8 sm:mx-12">
-          <h3
-            class="
-              text-2xl
-              font-extrabold
-              text-gray-900
-              tracking-tight
-              sm:text-3xl
-            "
-          >
-            Quickly triage emails or tickets with shortcuts
-          </h3>
-        </div>
-
-        <div class="mt-10 relative lg:mt-0" aria-hidden="true">
+        <template #image>
           <img
             class="relative mx-auto rounded-lg glow"
-            src="@/assets/img/screenshot.png"
+            src="@/assets/img/bookmarks.png"
             alt=""
-          />
-        </div>
-      </div>
+        /></template>
+      </FeatureItem>
+
+      <FeatureItem>
+        <template #header>
+          Any link on the webpage is a few keystrokes away!
+        </template>
+        <template #description>
+          Simply open the command palette and start typing. Search through docs
+          and get to answers quickly.
+        </template>
+        <template #image>
+          <img
+            class="relative mx-auto rounded-lg glow"
+            src="@/assets/img/docs.png"
+            alt=""
+        /></template>
+      </FeatureItem>
+
+      <FeatureItem>
+        <template #header> Target input fields or buttons directly</template>
+        <template #description>
+          No need to use the mouse or tab through all elements on the page.
+        </template>
+        <template #image>
+          <img
+            class="relative mx-auto rounded-lg glow"
+            src="@/assets/img/inputs.png"
+            alt=""
+        /></template>
+      </FeatureItem>
+
+      <FeatureItem>
+        <template #header> Works with your favorite web apps </template>
+        <template #description
+          >Quickly triage issues on Github or emails on Gmail. Customizations
+          for your favorite apps coming soon!</template
+        >
+        <template #image>
+          <img
+            class="relative mx-auto rounded-lg glow"
+            src="@/assets/img/github.png"
+            alt=""
+        /></template>
+      </FeatureItem>
+      <img
+        class="mt-12 relative mx-auto rounded-lg glow"
+        src="@/assets/img/gmail.png"
+        alt=""
+      />
     </div>
-    <!-- Search through docs and get to answers quickly -->
   </div>
 </template>
 
 
 <style scoped>
-.glow {
+.glow:hover {
   box-shadow: 5px 5px 10px #2f7083;
+}
+.glow {
+  box-shadow: 10px 10px 20px #2f7083;
 }
 </style>

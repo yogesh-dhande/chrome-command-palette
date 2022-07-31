@@ -1,4 +1,4 @@
-import { chromeCommands } from "./packs/chrome";
+import { chromeCommands } from "./chrome";
 import { getCurrentTab, activateExtension } from "./utils";
 import { login } from "./firebaseConfig";
 
@@ -29,29 +29,47 @@ chrome.commands.onCommand.addListener(async (command) => {
   return true;
 });
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-  switch (request.type) {
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    chrome.tabs.create({
+      url: "https://www.singledispatch.com/welcome",
+    });
+  }
+});
+
+chrome.runtime.setUninstallURL("https://www.singledispatch.com/uninstalled");
+
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  let tab = sender.tab;
+  switch (message.type) {
     case "execute_chrome_command":
-      await chromeCommands[request.command.name].execute(
-        request.command.config
+      await chromeCommands[message.command.config.name].execute(
+        message.command.config
       );
-      return true;
+      break;
+    case "next_command":
+      tab = await getCurrentTab();
+      await chrome.tabs.sendMessage(tab.id, {
+        type: "run_command",
+        command: message.command,
+      });
+      break;
     case "search":
-      await chrome.search.query({
-        text: request.query,
+      chrome.search.query({
+        text: message.query,
         disposition: "NEW_TAB",
       });
-      return true;
+      break;
     case "RECORD_TAB":
-      const tab = sender.tab;
       recordedTabConfig = {
         id: tab.id,
         windowId: tab.windowId,
         url: tab.url,
         favIconUrl: tab.favIconUrl,
       };
-      return true;
+      break;
     default:
       break;
   }
+  sendResponse(null);
 });

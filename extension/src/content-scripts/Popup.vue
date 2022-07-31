@@ -2,8 +2,13 @@
   <TransitionRoot :show="visible" as="template" @after-leave="query = ''">
     <Dialog
       as="div"
-      class="fixed inset-0 z-[100] overflow-y-auto p-4 sm:p-6 md:p-20 mt-24"
-      :class="{ 'z-0': !visible }"
+      class="
+        sd-font-sans sd-fixed sd-inset-0 sd-z-[100] sd-overflow-y-auto sd-p-4
+        sm:sd-p-6
+        md:sd-p-20
+        sd-mt-24
+      "
+      :class="{ 'sd-z-0': !visible }"
       @close="visible = false"
     >
       <TransitionChild
@@ -16,11 +21,23 @@
         leave-to="opacity-0"
       >
         <div
-          class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity"
+          class="
+            sd-fixed
+            sd-inset-0
+            sd-bg-gray-500
+            sd-bg-opacity-25
+            sd-transition-opacity
+          "
         />
       </TransitionChild>
 
-      <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+      <div
+        class="
+          sd-fixed sd-inset-0 sd-z-10 sd-overflow-y-auto sd-p-4
+          sm:sd-p-6
+          md:sd-p-20
+        "
+      >
         <TransitionChild
           as="template"
           enter="ease-out duration-75"
@@ -30,9 +47,24 @@
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
-          <DialogPanel class="dialog-root">
-            <Login v-if="!store.isLoggedIn" @close="visible = false" />
-            <CommandPalette v-else @close="visible = false" />
+          <DialogPanel
+            class="
+              sd-mx-auto
+              sd-text-gray-100
+              sd-max-w-2xl
+              sd-transform
+              sd-divide-y
+              sd-divide-gray-500
+              sd-divide-opacity-20
+              sd-overflow-hidden
+              sd-rounded-xl
+              sd-bg-gray-900
+              sd-shadow-2xl
+              sd-transition-all
+            "
+          >
+            <!-- <Login v-if="!store.isLoggedIn" @close="visible = false" /> -->
+            <CommandPalette @close="visible = false" />
           </DialogPanel>
         </TransitionChild>
       </div>
@@ -41,6 +73,7 @@
 </template>
 
 <script>
+import "@/styles/main.css";
 import { ref } from "vue";
 
 import {
@@ -75,15 +108,4 @@ export default {
 </script>
 
 <style scoped>
-.dialog-root {
-  @apply mx-auto text-gray-100
-            max-w-2xl
-            transform
-            divide-y divide-gray-500 divide-opacity-20
-            overflow-hidden
-            rounded-xl
-            bg-gray-900
-            shadow-2xl
-            transition-all;
-}
 </style>

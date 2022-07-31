@@ -1,31 +1,23 @@
 import { renderTemplateString } from "./labels";
 import { validateUrl } from "./validation";
-import packs from "./packs.json";
 
-export function isHidden(el) {
-  const style = window.getComputedStyle(el);
-  return style.display === "none";
+export function isHidden(el, elementConfig) {
+  if (elementConfig.allowHidden) {
+    return false;
+  }
+  return el.offsetParent === null;
 }
 
 export const categories = {
   ALL: "All",
   PAGE: "Page",
-  BOOKMARKS: "Bookmarks",
   TABS: "Tabs",
-  TOP_SITES: "Top Sites",
+  BOOKMARKS: "Bookmarks",
 };
-
-const commandTemplates = [];
-
-Object.keys(packs).forEach((urlpattern) => {
-  if ((urlpattern === "*") | window.location.href.includes(urlpattern)) {
-    commandTemplates.push(...packs[urlpattern]);
-  }
-});
 
 export function getCommandFromScope(scopeElement, type, elementConfig) {
   let command;
-  const labelElement = elementConfig.label.selector
+  const labelElement = elementConfig.label?.selector
     ? scopeElement.querySelector(elementConfig.label.selector)
     : scopeElement;
 
@@ -38,13 +30,19 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
     ? scopeElement.querySelector(elementConfig.trigger.selector)
     : scopeElement;
 
-  if (label && label !== "#" && triggerElement && !isHidden(triggerElement)) {
+  if (
+    label &&
+    label !== "#" &&
+    triggerElement &&
+    !isHidden(triggerElement, elementConfig)
+  ) {
     if (elementConfig.trigger.type === "open") {
       const url = validateUrl(triggerElement.href);
       if (url) {
         command = parseLinkCommand(
           label,
           url,
+          elementConfig.order,
           elementConfig.disabled,
           [categories.ALL, categories.PAGE],
           triggerElement
@@ -71,6 +69,7 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
 function parseLinkCommand(
   label,
   url,
+  order,
   disabled,
   categories,
   triggerElement = null
@@ -84,6 +83,7 @@ function parseLinkCommand(
       url,
       label,
       target: "_self",
+      order,
       disabled,
     },
     triggerElement,
@@ -93,10 +93,12 @@ function parseLinkCommand(
 export function parseDomForCommands(data) {
   const commandsMap = new Map();
   let command;
-
-  commandTemplates.forEach((template) => {
+  data.commandTemplates.forEach((template, index) => {
     const type = template.type;
     const config = template[template.type];
+
+    // higher order commands are shown first
+    config.order = config.order || index + 1;
 
     if (type === "element") {
       // this command is to trigger an event on a DOM element
@@ -112,6 +114,7 @@ export function parseDomForCommands(data) {
       command = parseLinkCommand(
         config.label,
         validateUrl(config.url),
+        config.order,
         config.disabled,
         [categories.ALL, categories.PAGE]
       );
@@ -119,32 +122,59 @@ export function parseDomForCommands(data) {
     }
   });
 
-  data.bookmarks.forEach((bookmark) => {
-    command = parseLinkCommand(bookmark.label, bookmark.url, false, [
-      categories.ALL,
-      categories.BOOKMARKS,
-    ]);
-    commandsMap.set(command.key, command);
+  commandsMap.set("goBack", {
+    type: "callback",
+    label: "Go back",
+    config: {},
+    categories: [categories.ALL, categories.PAGE],
+    callback: () => history.back(),
   });
 
-  data.topSites.forEach((site) => {
-    command = parseLinkCommand(site.label, site.url, false, [
-      categories.ALL,
-      categories.TOP_SITES,
-    ]);
-    commandsMap.set(command.key, command);
+  commandsMap.set("goForward", {
+    type: "callback",
+    label: "Go forward",
+    config: {},
+    categories: [categories.ALL, categories.PAGE],
+    callback: () => history.forward(),
   });
 
-  data.tabs.forEach((tab) => {
-    let command = {
-      key: tab.config.id,
-      categories: [categories.ALL, categories.TABS],
-      ...tab,
-    };
-    commandsMap.set(command.key, command);
+  commandsMap.set("reload", {
+    type: "callback",
+    label: "Reload this page",
+    config: {},
+    categories: [categories.ALL, categories.PAGE],
+    callback: () => location.reload(),
   });
 
-  return Array.from(commandsMap.values()).filter(
-    (command) => !command.config.disabled
-  );
+  data.chromeCommands.forEach((chromeCommand) => {
+    commandsMap.set(
+      `${chromeCommand.label}-${chromeCommand.config.id}`,
+      chromeCommand
+    );
+  });
+
+  // remove commands with duplicate labels + trigger type since
+  // they can’t be distinguished in the command palette even if
+  // they have different trigger elements
+  const countsByUniquenessTag = {};
+  Array.from(commandsMap.values()).forEach((command) => {
+    const uniquenessTag = getuniquenessTag(command);
+    countsByUniquenessTag[uniquenessTag] = countsByUniquenessTag[uniquenessTag]
+      ? countsByUniquenessTag[uniquenessTag] + 1
+      : 1;
+  });
+  const commands = Array.from(commandsMap.values())
+    .filter((command) => !command.config?.disabled)
+    .filter((command) => countsByUniquenessTag[getuniquenessTag(command)] == 1)
+    .sort((a, b) => b.config?.order - a.config?.order);
+
+  return commands;
+}
+
+function getuniquenessTag(command) {
+  let uniquenessTag = command.label + command.type;
+  if (command.type === "element") {
+    uniquenessTag += command.config.trigger.type;
+  }
+  return uniquenessTag;
 }
