@@ -267,7 +267,7 @@
         "trigger": {
           "type": "click"
         },
-        "sequence": [
+        "next": [
           {
             "type": "element",
             "element": {
@@ -313,7 +313,7 @@
       "type": "element",
       "element": {
         "scope": {
-          "selector": ".aeH [role=\"button\"]"
+          "selector": ".aeH [title]"
         },
         "label": {
           "template": "button"

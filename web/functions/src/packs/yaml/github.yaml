@@ -64,7 +64,7 @@ github.com:
         template: Switch tags
       trigger:
         type: click
-      sequence:
+      next:
         - type: element
           element:
             scope: null

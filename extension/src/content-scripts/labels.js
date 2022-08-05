@@ -27,6 +27,8 @@ export function getLabelForInput(el) {
   let label = "";
   if (el.ariaLabel) {
     label = el.ariaLabel;
+  } else if (el.title) {
+    label = el.title;
   } else if (el.id) {
     const label_el = document.querySelector(`[for="${el.id}"]`);
     if (label_el) {
@@ -48,6 +50,8 @@ export function getLabelForInput(el) {
 export function getLabelForButton(el) {
   if (el.ariaLabel) {
     return el.ariaLabel;
+  } else if (el.title) {
+    return el.title;
   } else if (el.dataset.tooltip) {
     return el.dataset.tooltip;
   } else if (el.getAttribute("aria-labelledby")) {

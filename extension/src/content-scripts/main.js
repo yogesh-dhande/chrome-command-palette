@@ -37,13 +37,15 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     let elapsed = 0;
     const type = command.type;
     const config = command[type];
-
     const waitUntilSelector = config.trigger.selector;
+
     const intervalId = setInterval(async function() {
       if (document.querySelector(waitUntilSelector)) {
         command = getCommandFromScope(document.body, type, config);
-        triggerCommand(command);
-        clearInterval(intervalId);
+        if (command) {
+          triggerCommand(command);
+          clearInterval(intervalId);
+        }
       } else if (elapsed > timeout) {
         clearInterval(intervalId);
       }

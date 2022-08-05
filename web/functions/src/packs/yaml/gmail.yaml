@@ -2,7 +2,7 @@ mail.google.com:
   - type: element
     element:
       scope:
-        selector: '.aeH [role="button"]'
+        selector: ".aeH [title]"
       label:
         template: button
       trigger:
