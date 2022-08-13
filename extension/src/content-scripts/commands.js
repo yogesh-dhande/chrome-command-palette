@@ -50,6 +50,7 @@ export function getCommandFromScope(scopeElement, type, elementConfig) {
         return command;
       } else {
         // does not have a valid url but there may be a click handler attached to the element
+        // e.g. div with role=link
         elementConfig.trigger.type = "click";
       }
     }

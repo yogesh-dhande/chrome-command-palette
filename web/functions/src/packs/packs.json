@@ -147,7 +147,7 @@
           "selector": "[role=checkbox]"
         },
         "label": {
-          "template": "{innerText}"
+          "template": "button"
         },
         "trigger": {
           "type": "click"
@@ -267,7 +267,7 @@
         "trigger": {
           "type": "click"
         },
-        "sequence": [
+        "next": [
           {
             "type": "element",
             "element": {
@@ -313,13 +313,57 @@
       "type": "element",
       "element": {
         "scope": {
-          "selector": ".aeH [role=\"button\"]"
+          "selector": ".aeH [title]"
         },
         "label": {
           "template": "button"
         },
         "trigger": {
           "type": "simulatedClick"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": "[role=button]"
+        },
+        "label": {
+          "template": "button"
+        },
+        "trigger": {
+          "type": "simulatedClick"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": ".amn"
+        },
+        "label": {
+          "template": "Reply to email"
+        },
+        "trigger": {
+          "selector": "[role=\"link\"]",
+          "type": "click"
+        }
+      }
+    },
+    {
+      "type": "element",
+      "element": {
+        "scope": {
+          "selector": ".aTN"
+        },
+        "label": {
+          "template": "Add/remove star"
+        },
+        "trigger": {
+          "selector": "[aria-label*=\"tarred\"]",
+          "type": "click"
         }
       }
     },

@@ -84,6 +84,6 @@
       scope:
         selector: "[role=checkbox]"
       label:
-        template: "{innerText}"
+        template: button
       trigger:
         type: click

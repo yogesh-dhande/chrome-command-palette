@@ -11,7 +11,6 @@ async function updatePacks() {
     console.log(error);
   }
 }
-
 updatePacks();
 
 const packsUpdateInterval = setInterval(async () => {

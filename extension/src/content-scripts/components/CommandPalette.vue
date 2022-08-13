@@ -39,9 +39,9 @@
           </div>
         </div>
         <a
-          href="https://blog.singledispatch.com/feedback"
+          href="https://www.singledispatch.com/feedback"
           target="_blank"
-          class="sd-text-cyan-300 sd-underline"
+          class="sd-text-cyan-300 sd-underline visited:sd-text-cyan-300"
           tabindex="-1"
           >Send feedback</a
         >
@@ -114,6 +114,7 @@
                     <img
                       v-if="commandResult.obj.config?.favIconUrl"
                       :src="commandResult.obj.config?.favIconUrl"
+                      :alt="commandResult.obj.label"
                       class="sd-w-full"
                     />
                     <component
@@ -316,6 +317,7 @@ export default {
         this.selectNth(evt);
       } else if (evt.ctrlKey && !evt.shiftKey && evt.altKey) {
         if (evt.code == "KeyS") {
+          evt.preventDefault();
           this.search();
         } else {
           this.selectOption(evt);
@@ -379,7 +381,8 @@ export default {
       // reset category
       this.selectedCategory = categories[0];
     },
-    triggerActiveCommand() {
+    triggerActiveCommand(evt) {
+      evt.preventDefault();
       if (this.activeCommand) {
         this.onSelect(this.activeCommand);
       }
