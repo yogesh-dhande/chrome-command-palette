@@ -1,6 +1,6 @@
 {
-  "name": "Single Dispatch Command Palette",
-  "version": "0.4.2",
+  "name": "Command Palette by Single Dispatch",
+  "version": "0.4.1",
   "manifest_version": 3,
   "description": "Command palette for any website. Manage tabs and bookmarks, open links, or trigger button clicks just with your keyboard.",
   "action": {

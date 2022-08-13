@@ -53,7 +53,7 @@ export function triggerElementCommand(command) {
     el.scrollIntoView({ block: "center", inline: "center" });
   } else if (type === "simulatedClick") {
     setTimeout(() => {
-      simulateMouseClick(triggerElement);
+      simulateMouseClick(el);
       el.scrollIntoView({ block: "center", inline: "center" });
     }, 200);
   } else if (type === "dblclick") {

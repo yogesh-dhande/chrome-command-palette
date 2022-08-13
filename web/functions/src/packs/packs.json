@@ -327,20 +327,6 @@
       "type": "element",
       "element": {
         "scope": {
-          "selector": "[role=button]"
-        },
-        "label": {
-          "template": "button"
-        },
-        "trigger": {
-          "type": "simulatedClick"
-        }
-      }
-    },
-    {
-      "type": "element",
-      "element": {
-        "scope": {
           "selector": ".amn"
         },
         "label": {
