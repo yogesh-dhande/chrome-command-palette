@@ -154,28 +154,27 @@ export function parseDomForCommands(data) {
     );
   });
 
-  // remove commands with duplicate labels + trigger type since
+  // Remove commands with duplicate labels + trigger type since
   // they can’t be distinguished in the command palette even if
-  // they have different trigger elements
-  const countsByUniquenessTag = {};
+  // they have different trigger elements. Keep only one of them.
+  // The current implementation keeps the last one encountered.
+  // commands already have unique trigger elements at this stage
+  function getuniquenessTag(command) {
+    let uniquenessTag = command.label + command.type;
+    if (command.type === "element") {
+      uniquenessTag += command.config.trigger.type;
+    }
+    return uniquenessTag;
+  }
+
+  const commandsByUniuqnessTag = new Map();
   Array.from(commandsMap.values()).forEach((command) => {
     const uniquenessTag = getuniquenessTag(command);
-    countsByUniquenessTag[uniquenessTag] = countsByUniquenessTag[uniquenessTag]
-      ? countsByUniquenessTag[uniquenessTag] + 1
-      : 1;
+    commandsByUniuqnessTag[uniquenessTag] = command;
   });
-  const commands = Array.from(commandsMap.values())
-    .filter((command) => !command.config?.disabled)
-    .filter((command) => countsByUniquenessTag[getuniquenessTag(command)] == 1)
+  const commands = Array.from(commandsByUniuqnessTag.values())
+    .filter((command) => !command.config?.disabled) // exclude disabled commands
     .sort((a, b) => b.config?.order - a.config?.order);
 
   return commands;
-}
-
-function getuniquenessTag(command) {
-  let uniquenessTag = command.label + command.type;
-  if (command.type === "element") {
-    uniquenessTag += command.config.trigger.type;
-  }
-  return uniquenessTag;
 }
