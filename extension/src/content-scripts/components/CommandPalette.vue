@@ -1,7 +1,11 @@
 <template>
   <div>
     <div v-if="form">
-      <CommandForm @submit="handleFormSubmit" :form="form" :title="activeCommand.label"></CommandForm>
+      <CommandForm
+        @submit="handleFormSubmit"
+        :form="form"
+        :title="activeCommand.label"
+      ></CommandForm>
     </div>
     <Combobox v-else as="div">
       <div
@@ -28,9 +32,10 @@
                 selectedCategory === category &&
                   'sd-bg-gray-700 sd-text-cyan-300',
               ]"
-              @click="() => selectedCategory = category"
-              >{{ category }}</div
+              @click="() => (selectedCategory = category)"
             >
+              {{ category }}
+            </div>
           </div>
         </div>
         <a
@@ -97,14 +102,24 @@
                 @click="triggerActiveCommand"
               >
                 <div class="sd-flex sd-items-center sd-space-x-2">
-                                    <div :class="[
-                    'sd-h-6 sd-w-6 sd-flex-none',
-                    activeCommandIndex === i
-                      ? 'sd-text-cyan-300'
-                      : 'sd-text-gray-200',
-                  ]" aria-hidden="true">
-                    <img v-if="commandResult.obj.config?.favIconUrl" :src="commandResult.obj.config?.favIconUrl" :alt="commandResult.obj.label" class="sd-w-full">
-                    <component v-else :is="getIconNameForCommand(commandResult.obj)" />
+                  <div
+                    :class="[
+                      'sd-h-6 sd-w-6 sd-flex-none',
+                      activeCommandIndex === i
+                        ? 'sd-text-cyan-300'
+                        : 'sd-text-gray-200',
+                    ]"
+                    aria-hidden="true"
+                  >
+                    <img
+                      v-if="commandResult.obj.config?.favIconUrl"
+                      :src="commandResult.obj.config?.favIconUrl"
+                      class="sd-w-full"
+                    />
+                    <component
+                      v-else
+                      :is="getIconNameForCommand(commandResult.obj)"
+                    />
                   </div>
                   <div
                     class="sd-overflow-hidden sd-max-w-2xl sd-whitespace-nowrap"
@@ -150,7 +165,7 @@
                   </div>
                 </div>
                 <pre v-if="activeCommandIndex === i && preferences.debug">{{
-                    JSON.stringify(commandResult.obj.config, undefined, 2)
+                  JSON.stringify(commandResult.obj.config, undefined, 2)
                 }}</pre>
               </li>
             </ComboboxOption>
