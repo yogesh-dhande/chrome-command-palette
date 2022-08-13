@@ -1,5 +1,5 @@
 // This trigger is a hack for Gmail buttons that don't have a click event attached
-function simulateMouseClick(command) {
+function simulateMouseClick(triggerElement) {
   function triggerMouseEvent(targetNode, eventType) {
     var clickEvent = new MouseEvent(eventType, {
       view: window,
@@ -10,26 +10,27 @@ function simulateMouseClick(command) {
   }
 
   function triggerClick(el) {
-    ["mouseover", "mousedown", "mouseup"].forEach(function(eventType) {
+    ["mouseover", "mousedown", "mouseup", "mouseout"].forEach(function(
+      eventType
+    ) {
       triggerMouseEvent(el, eventType);
     });
   }
 
-  let triggerElement = command.triggerElement;
   // The following is a hack for Gmail toolbar buttons
   triggerElement.focus();
   triggerClick(triggerElement);
-  // compute trigger element again
-  const elementConfig = command.config;
-  const scopeElement = command.scopeElement;
-  triggerElement = elementConfig.trigger.selector
-    ? scopeElement.querySelector(elementConfig.trigger.selector)
-    : scopeElement;
+  // // compute trigger element again
+  // const elementConfig = command.config;
+  // const scopeElement = command.scopeElement;
+  // triggerElement = elementConfig.trigger.selector
+  //   ? scopeElement.querySelector(elementConfig.trigger.selector)
+  //   : scopeElement;
 
-  // retry is triggerElement still found
-  if (triggerElement) {
-    triggerClick(triggerElement);
-  }
+  // // retry is triggerElement still found
+  // if (triggerElement) {
+  //   triggerClick(triggerElement);
+  // }
 }
 
 export function openUrl(command) {
@@ -52,7 +53,7 @@ export function triggerElementCommand(command) {
     el.scrollIntoView({ block: "center", inline: "center" });
   } else if (type === "simulatedClick") {
     setTimeout(() => {
-      simulateMouseClick(command);
+      simulateMouseClick(triggerElement);
       el.scrollIntoView({ block: "center", inline: "center" });
     }, 200);
   } else if (type === "dblclick") {

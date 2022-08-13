@@ -3,7 +3,7 @@
     <Dialog
       as="div"
       class="
-        sd-font-sans sd-fixed sd-inset-0 sd-z-[100] sd-overflow-y-auto sd-p-4
+        sd-font-sans sd-fixed sd-inset-0 sd-z-[10000] sd-overflow-y-auto sd-p-4
         sm:sd-p-6
         md:sd-p-20
         sd-mt-24

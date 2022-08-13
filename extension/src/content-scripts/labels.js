@@ -48,12 +48,12 @@ export function getLabelForInput(el) {
 }
 
 export function getLabelForButton(el) {
-  if (el.ariaLabel) {
-    return el.ariaLabel;
+  if (el.dataset.tooltip) {
+    return el.dataset.tooltip;
   } else if (el.title) {
     return el.title;
-  } else if (el.dataset.tooltip) {
-    return el.dataset.tooltip;
+  } else if (el.ariaLabel) {
+    return el.ariaLabel;
   } else if (el.getAttribute("aria-labelledby")) {
     const label_el = document.getElementById(
       el.getAttribute("aria-labelledby")

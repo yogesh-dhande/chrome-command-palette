@@ -2,11 +2,29 @@ mail.google.com:
   - type: element
     element:
       scope:
-        selector: ".aeH [title]"
+        selector: ".aeH [title]" # toolbar
       label:
         template: button
       trigger:
         type: simulatedClick
+  - type: element
+    element:
+      scope:
+        selector: .amn
+      label:
+        template: "Reply to email"
+      trigger:
+        selector: '[role="link"]'
+        type: click
+  - type: element
+    element:
+      scope:
+        selector: .aTN
+      label:
+        template: "Add/remove star"
+      trigger:
+        selector: '[aria-label*="tarred"]'
+        type: click
   - type: element
     element:
       scope:
