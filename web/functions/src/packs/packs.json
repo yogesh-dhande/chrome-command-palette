@@ -327,21 +327,6 @@
       "type": "element",
       "element": {
         "scope": {
-          "selector": ".amn"
-        },
-        "label": {
-          "template": "Reply to email"
-        },
-        "trigger": {
-          "selector": "[role=\"link\"]",
-          "type": "click"
-        }
-      }
-    },
-    {
-      "type": "element",
-      "element": {
-        "scope": {
           "selector": ".aTN"
         },
         "label": {

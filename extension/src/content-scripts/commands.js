@@ -170,7 +170,7 @@ export function parseDomForCommands(data) {
   const commandsByUniuqnessTag = new Map();
   Array.from(commandsMap.values()).forEach((command) => {
     const uniquenessTag = getuniquenessTag(command);
-    commandsByUniuqnessTag[uniquenessTag] = command;
+    commandsByUniuqnessTag.set(uniquenessTag, command);
   });
   const commands = Array.from(commandsByUniuqnessTag.values())
     .filter((command) => !command.config?.disabled) // exclude disabled commands
