@@ -50,7 +50,7 @@ github.com:
         template: Switch branches
       trigger:
         type: click
-      sequence:
+      next:
         - type: element
           element:
             scope: null

@@ -10,6 +10,14 @@ mail.google.com:
   - type: element
     element:
       scope:
+        selector: '.aeH [role="button"]' # toolbar after it has been overed on
+      label:
+        template: button
+      trigger:
+        type: simulatedClick
+  - type: element
+    element:
+      scope:
         selector: .aTN
       label:
         template: "Add/remove star"
