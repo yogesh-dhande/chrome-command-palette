@@ -96,7 +96,7 @@ export function parseDomForCommands(data) {
   let command;
   data.commandTemplates.forEach((template, index) => {
     const type = template.type;
-    const config = template[template.type];
+    const config = template.config ?? template[template.type];
 
     // higher order commands are shown first
     config.order = config.order || index + 1;

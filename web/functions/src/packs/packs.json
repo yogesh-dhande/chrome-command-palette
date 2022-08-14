@@ -327,7 +327,7 @@
       "type": "element",
       "element": {
         "scope": {
-          "selector": ".aeH [role=\"button\"]"
+          "selector": ".aeH [act][role=\"button\"]"
         },
         "label": {
           "template": "button"

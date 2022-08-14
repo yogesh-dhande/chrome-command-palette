@@ -10,7 +10,7 @@ mail.google.com:
   - type: element
     element:
       scope:
-        selector: '.aeH [role="button"]' # toolbar after it has been overed on
+        selector: '.aeH [act][role="button"]' # toolbar after it has been overed on
       label:
         template: button
       trigger:
