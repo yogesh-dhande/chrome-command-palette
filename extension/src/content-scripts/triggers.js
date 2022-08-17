@@ -67,23 +67,6 @@ export function triggerElementCommand(command) {
   }
 }
 
-export function getIconNameForCommand(command) {
-  if (command.type === "link") {
-    return "LinkIcon";
-  } else if (command.type === "element") {
-    const type = command.config.trigger.type;
-    if ((type === "click") | (type === "simulatedClick")) {
-      return "CursorClickIcon";
-    } else if (type === "open") {
-      return "LinkIcon";
-    } else if (type === "focus") {
-      return "AnnotationIcon";
-    }
-  } else {
-    return "GlobeAltIcon";
-  }
-}
-
 export async function triggerCommand(command) {
   if (command.type === "element") {
     triggerElementCommand(command);

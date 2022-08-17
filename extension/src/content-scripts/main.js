@@ -1,11 +1,8 @@
 import { createApp } from "vue";
 import Popup from "./Popup.vue";
 import { getCommandFromScope, parseDomForCommands } from "./commands";
-import { downloadCommands } from "./utils";
 import { store } from "./store";
 import { triggerCommand } from "./triggers";
-
-let downloaded = false;
 
 let vm;
 const ROOT_ELEMENT_ID = "single-dispatch-root";
@@ -24,10 +21,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       store.commands = parseDomForCommands(message.data);
       store.currentUser = message.data.store.currentUser;
       store.isLoggedIn = message.data.store.isLoggedIn;
-      if (!downloaded) {
-        downloaded = true;
-        // downloadCommands(window.location.href);
-      }
     }
   } else if (message.type === "run_command") {
     // Assume it is an element command

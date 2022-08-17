@@ -37,6 +37,40 @@
               {{ category }}
             </div>
           </div>
+          <div
+            v-if="preferences.debug"
+            @click="showCommandDetails = !showCommandDetails"
+            :class="[
+              'sd-h-4 sd-w-4 mx-2 sd-flex-none',
+              showCommandDetails
+                ? 'sd-text-cyan-300'
+                : 'sd-text-gray-200 hover:sd-text-gray-400',
+            ]"
+          >
+            <BeakerIcon />
+          </div>
+          <div
+            v-if="preferences.debug"
+            class="
+              sd-h-4 sd-w-4
+              mx-2
+              sd-flex-none sd-text-gray-200
+              hover:sd-text-cyan-300
+            "
+          >
+            <UploadIcon><input type="file" class="sr-only" /></UploadIcon>
+          </div>
+          <div
+            v-if="preferences.debug"
+            class="
+              sd-h-4 sd-w-4
+              mx-2
+              sd-flex-none sd-text-gray-200
+              hover:sd-text-cyan-300
+            "
+          >
+            <DownloadIcon @click="() => downloadCommands(store.commands)" />
+          </div>
         </div>
         <a
           href="https://www.singledispatch.com/feedback"
@@ -119,7 +153,7 @@
                     />
                     <component
                       v-else
-                      :is="getIconNameForCommand(commandResult.obj)"
+                      :is="getIconForCommand(commandResult.obj)"
                     />
                   </div>
                   <div
@@ -127,7 +161,7 @@
                   >
                     <p
                       class="sd-m-0 sd-text-gray-200 sd-text-sm sd-text-left"
-                      v-html="highlight(commandResult)"
+                      v-html="highlightCommandResult(commandResult)"
                     ></p>
                     <p
                       v-if="commandResult.obj.config.url"
@@ -165,9 +199,17 @@
                     <span class="sd-pl-1">{{ option.label }}</span>
                   </div>
                 </div>
-                <pre v-if="activeCommandIndex === i && preferences.debug">{{
-                  JSON.stringify(commandResult.obj.config, undefined, 2)
-                }}</pre>
+                <pre
+                  v-if="
+                    showCommandDetails &&
+                    activeCommandIndex === i &&
+                    preferences.debug
+                  "
+                  class="sd-text-xs"
+                  >{{
+                    JSON.stringify(commandResult.obj.config, undefined, 2)
+                  }}</pre
+                >
               </li>
             </ComboboxOption>
           </ul>
@@ -186,8 +228,8 @@
   </div>
 </template>
 
-<script>
-import { computed, ref } from "vue";
+<script setup>
+import { computed, ref, watch } from "vue";
 import {
   Combobox,
   ComboboxInput,
@@ -198,268 +240,263 @@ import {
 import { SearchIcon } from "@heroicons/vue/solid";
 import {
   LinkIcon,
-  AnnotationIcon,
+  PencilAltIcon,
   CursorClickIcon,
   GlobeAltIcon,
+  BookmarkIcon,
+  UploadIcon,
+  DownloadIcon,
 } from "@heroicons/vue/outline";
-import CommandForm from "./CommandForm.vue";
 
 import {
-  triggerCommand,
-  getIconNameForCommand,
-} from "@/content-scripts/triggers";
+  BookmarkIcon as BookmarkSolidIcon,
+  BeakerIcon,
+} from "@heroicons/vue/solid";
+import CommandForm from "./CommandForm.vue";
+
+import { triggerCommand } from "@/content-scripts/triggers";
 import { getCommandFromScope, categories } from "@/content-scripts/commands";
+import { downloadCommands } from "./../utils";
 import { go, highlight } from "fuzzysort";
 
 import { store } from "@/content-scripts/store";
 
-export default {
-  components: {
-    Combobox,
-    ComboboxInput,
-    ComboboxOptions,
-    ComboboxOption,
-    ComboboxButton,
-    AnnotationIcon,
-    CursorClickIcon,
-    LinkIcon,
-    SearchIcon,
-    GlobeAltIcon,
-    CommandForm,
-  },
-  setup() {
-    const recent = ref(store.commands.length > 0 ? store.commands[0] : null);
-    const form = ref(null);
-    const preferences = store.currentUser.preferences;
+const logoUrl = chrome.runtime.getURL("assets/128x128.png");
 
-    let tabCategories = preferences.additionalCategories;
-    if (preferences.showAllTab) {
-      tabCategories = [categories.ALL].concat(preferences.additionalCategories);
+const emit = defineEmits(["close"]);
+
+const recent = ref(store.commands.length > 0 ? store.commands[0] : null);
+const form = ref(null);
+const preferences = store.currentUser.preferences;
+const showCommandDetails = ref(false);
+
+let tabCategories = preferences.additionalCategories;
+if (preferences.showAllTab) {
+  tabCategories = [categories.ALL].concat(preferences.additionalCategories);
+}
+const selectedCategory = ref(tabCategories[0]);
+
+const query = ref("");
+
+const activeCommandIndex = ref(0);
+const activeCommand = ref(store.commands.length > 0 ? store.commands[0] : null);
+
+const filteredCommandResults = computed(() => {
+  const categorizedCommands = store.commands.filter((command) => {
+    if (selectedCategory.value === categories.ALL) {
+      return command.categories.some((element) =>
+        preferences.categoriesInAllTab.includes(element)
+      );
     }
-    const selectedCategory = ref(tabCategories[0]);
+    return command.categories.includes(selectedCategory.value);
+  });
 
-    const query = ref("");
+  const results = go(query.value.toLowerCase(), categorizedCommands, {
+    key: "label",
+    limit: 10,
+    all: true,
+  });
+  if (results.length === 0) {
+    activeCommandIndex.value = null;
+    activeCommand.value = null;
+  } else {
+    activeCommandIndex.value = 0;
+    activeCommand.value = results[0].obj;
+  }
 
-    const activeCommandIndex = ref(0);
-    const activeCommand = ref(
-      store.commands.length > 0 ? store.commands[0] : null
+  return results;
+});
+
+watch(activeCommand, (newValue) => {
+  // set the scroll position to always keep active command in view
+  if (!newValue || activeCommandIndex.value === 0) {
+    const optionsBox = document.getElementById("options-box");
+    if (optionsBox) {
+      optionsBox.scrollTop = 0;
+    }
+  } else {
+    document.getElementById(newValue.label)?.scrollIntoView();
+  }
+});
+
+function handleKeys(evt) {
+  // alt tab is the way to tab through categories when an option was selected
+  if (evt.code === "Tab" && !evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
+    selectNextCategory(evt);
+  } else if (
+    evt.code === "Tab" &&
+    !evt.ctrlKey &&
+    evt.shiftKey &&
+    !evt.altKey
+  ) {
+    selectPreviousCategory(evt);
+  }
+  // TODO use preferences to match
+  else if (evt.ctrlKey && evt.shiftKey && !evt.altKey) {
+    selectNth(evt);
+  } else if (evt.ctrlKey && !evt.shiftKey && evt.altKey) {
+    if (evt.code == "KeyS") {
+      evt.preventDefault();
+      search();
+    } else {
+      selectOption(evt);
+    }
+  }
+}
+
+function selectNextCategory(evt) {
+  evt.preventDefault();
+  const index = tabCategories.findIndex(
+    (cat) => cat === selectedCategory.value
+  );
+  if (index + 1 === tabCategories.length) {
+    selectedCategory.value = tabCategories[0];
+  } else {
+    selectedCategory.value = tabCategories[index + 1];
+  }
+}
+
+function selectPreviousCategory(evt) {
+  evt.preventDefault();
+  const index = tabCategories.findIndex(
+    (cat) => cat === selectedCategory.value
+  );
+  if (index === 0) {
+    selectedCategory.value = tabCategories[tabCategories.length - 1];
+  } else {
+    selectedCategory.value = tabCategories[index - 1];
+  }
+}
+async function search() {
+  await chrome.runtime.sendMessage({ type: "search", query: query.value });
+}
+function selectNextActiveCommand(evt) {
+  evt.preventDefault();
+  if (activeCommandIndex.value + 1 === filteredCommandResults.value.length) {
+    activeCommandIndex.value = 0;
+  } else {
+    activeCommandIndex.value += 1;
+  }
+  activeCommand.value =
+    filteredCommandResults.value[activeCommandIndex.value].obj;
+}
+function selectPreviousActiveCommand(evt) {
+  evt.preventDefault();
+  if (activeCommandIndex.value === 0) {
+    activeCommandIndex.value = filteredCommandResults.value.length - 1;
+  } else {
+    activeCommandIndex.value -= 1;
+  }
+  activeCommand.value =
+    filteredCommandResults.value[activeCommandIndex.value].obj;
+}
+function onSelect(command) {
+  if (command.config?.form) {
+    form.value = command.config?.form;
+  }
+  if (!form.value) {
+    emit("close");
+    triggerCommand(command);
+  }
+  // reset category
+  selectedCategory.value = categories[0];
+}
+function triggerActiveCommand(evt) {
+  evt.preventDefault();
+  if (activeCommand.value) {
+    onSelect(activeCommand.value);
+  }
+}
+function selectFirst() {
+  if (filteredCommandResults.value.length > 0) {
+    onSelect(filteredCommandResults.value[0].obj);
+  }
+}
+function selectNth(evt) {
+  const n = parseInt(evt.key);
+  if (n && n < filteredCommandResults.value.length + 1) {
+    evt.preventDefault();
+    onSelect(filteredCommandResults.value[n - 1].obj);
+  }
+}
+async function handleFormSubmit(formData) {
+  activeCommand.value.config.form = formData;
+  triggerCommand(activeCommand.value);
+  emit("close");
+  form.value = null;
+}
+function highlightCommandResult(commandResult) {
+  if (query.value) {
+    return highlight(
+      commandResult,
+      '<span class="sd-text-cyan-300 sd-font-bold">',
+      "</span>"
     );
-
-    const filteredCommandResults = computed(() => {
-      const categorizedCommands = store.commands.filter((command) => {
-        if (selectedCategory.value === categories.ALL) {
-          return command.categories.some((element) =>
-            preferences.categoriesInAllTab.includes(element)
-          );
-        }
-        return command.categories.includes(selectedCategory.value);
+  }
+  return commandResult.obj.label;
+}
+function getOptions(command) {
+  const options = [];
+  if (command.type === "element" && command.config.options?.length > 0) {
+    command.config.options
+      .filter((option) => (option.type = "element"))
+      .forEach((option) => {
+        const type = option.type;
+        const scopeElement = command.scopeElement;
+        const config = option[type];
+        const commandOption = getCommandFromScope(scopeElement, type, config);
+        if (commandOption) options.push(commandOption);
       });
 
-      const results = go(query.value.toLowerCase(), categorizedCommands, {
-        key: "label",
-        limit: 10,
-        all: true,
-      });
-      if (results.length === 0) {
-        activeCommandIndex.value = null;
-        activeCommand.value = null;
-      } else {
-        activeCommandIndex.value = 0;
-        activeCommand.value = results[0].obj;
-      }
-
-      return results;
+    // TODO add option to open in new window
+  } else if (command.type === "link") {
+    options.push({
+      type: "link",
+      label: "Open in New Tab",
+      config: {
+        url: command.config.url,
+        label: "Open in New Tab",
+        target: "_blank",
+      },
     });
+  } else if (command.type === "chrome" && command.options) {
+    return command.options;
+  }
+  return options;
+}
+function selectOption(evt) {
+  if (activeCommand.value) {
+    const options = getOptions(activeCommand.value);
+    const n = parseInt(evt.key);
+    if (n && n < options.length + 1) {
+      evt.preventDefault();
+      onSelect(options[n - 1]);
+    }
+  }
+}
 
-    return {
-      form,
-      tabCategories,
-      selectedCategory,
-      preferences,
-      query,
-      recent,
-      filteredCommandResults,
-      getIconNameForCommand,
-      highlight,
-      activeCommandIndex,
-      activeCommand,
-      logoUrl: chrome.runtime.getURL("assets/128x128.png"),
-    };
-  },
-  watch: {
-    activeCommand(newValue) {
-      // set the scroll position to always keep active command in view
-      if (!newValue || this.activeCommandIndex === 0) {
-        const optionsBox = document.getElementById("options-box");
-        if (optionsBox) {
-          optionsBox.scrollTop = 0;
-        }
-      } else {
-        document.getElementById(newValue.label)?.scrollIntoView();
-      }
-    },
-  },
-  methods: {
-    handleKeys(evt) {
-      // alt tab is the way to tab through categories when an option was selected
-      if (evt.code === "Tab" && !evt.ctrlKey && !evt.altKey && !evt.shiftKey) {
-        this.selectNextCategory(evt);
-      } else if (
-        evt.code === "Tab" &&
-        !evt.ctrlKey &&
-        evt.shiftKey &&
-        !evt.altKey
-      ) {
-        this.selectPreviousCategory(evt);
-      }
-      // TODO use preferences to match
-      else if (evt.ctrlKey && evt.shiftKey && !evt.altKey) {
-        this.selectNth(evt);
-      } else if (evt.ctrlKey && !evt.shiftKey && evt.altKey) {
-        if (evt.code == "KeyS") {
-          evt.preventDefault();
-          this.search();
-        } else {
-          this.selectOption(evt);
-        }
-      }
-    },
-    selectNextCategory(evt) {
-      evt.preventDefault();
-      const index = this.tabCategories.findIndex(
-        (cat) => cat === this.selectedCategory
-      );
-      if (index + 1 === this.tabCategories.length) {
-        this.selectedCategory = this.tabCategories[0];
-      } else {
-        this.selectedCategory = this.tabCategories[index + 1];
-      }
-    },
-    selectPreviousCategory(evt) {
-      evt.preventDefault();
-      const index = this.tabCategories.findIndex(
-        (cat) => cat === this.selectedCategory
-      );
-      if (index === 0) {
-        this.selectedCategory =
-          this.tabCategories[this.tabCategories.length - 1];
-      } else {
-        this.selectedCategory = this.tabCategories[index - 1];
-      }
-    },
-    async search() {
-      await chrome.runtime.sendMessage({ type: "search", query: this.query });
-    },
-    selectNextActiveCommand(evt) {
-      evt.preventDefault();
-      if (this.activeCommandIndex + 1 === this.filteredCommandResults.length) {
-        this.activeCommandIndex = 0;
-      } else {
-        this.activeCommandIndex += 1;
-      }
-      this.activeCommand =
-        this.filteredCommandResults[this.activeCommandIndex].obj;
-    },
-    selectPreviousActiveCommand(evt) {
-      evt.preventDefault();
-      if (this.activeCommandIndex === 0) {
-        this.activeCommandIndex = this.filteredCommandResults.length - 1;
-      } else {
-        this.activeCommandIndex -= 1;
-      }
-      this.activeCommand =
-        this.filteredCommandResults[this.activeCommandIndex].obj;
-    },
-    onSelect(command) {
-      if (command.config?.form) {
-        this.form = command.config?.form;
-      }
-      if (!this.form) {
-        this.$emit("close");
-        triggerCommand(command);
-      }
-      // reset category
-      this.selectedCategory = categories[0];
-    },
-    triggerActiveCommand(evt) {
-      evt.preventDefault();
-      if (this.activeCommand) {
-        this.onSelect(this.activeCommand);
-      }
-    },
-    selectFirst() {
-      if (this.filteredCommandResults.length > 0) {
-        this.onSelect(this.filteredCommandResults[0].obj);
-      }
-    },
-    selectNth(evt) {
-      const n = parseInt(evt.key);
-      if (n && n < this.filteredCommandResults.length + 1) {
-        evt.preventDefault();
-        this.onSelect(this.filteredCommandResults[n - 1].obj);
-      }
-    },
-    async handleFormSubmit(formData) {
-      this.activeCommand.config.form = formData;
-      triggerCommand(this.activeCommand);
-      this.$emit("close");
-      this.form = null;
-    },
-    highlight(commandResult) {
-      if (this.query) {
-        return highlight(
-          commandResult,
-          '<span class="sd-text-cyan-300 sd-font-bold">',
-          "</span>"
-        );
-      }
-      return commandResult.obj.label;
-    },
-    getOptions(command) {
-      const options = [];
-      if (command.type === "element" && command.config.options?.length > 0) {
-        command.config.options
-          .filter((option) => (option.type = "element"))
-          .forEach((option) => {
-            const type = option.type;
-            const scopeElement = command.scopeElement;
-            const config = option[type];
-            const commandOption = getCommandFromScope(
-              scopeElement,
-              type,
-              config
-            );
-            if (commandOption) options.push(commandOption);
-          });
-
-        // TODO add option to open in new window
-      } else if (command.type === "link") {
-        options.push({
-          type: "link",
-          label: "Open in New Tab",
-          config: {
-            url: command.config.url,
-            label: "Open in New Tab",
-            target: "_blank",
-          },
-        });
-      } else if (command.type === "chrome" && command.options) {
-        return command.options;
-      }
-      return options;
-    },
-    selectOption(evt) {
-      if (this.activeCommand) {
-        const options = this.getOptions(this.activeCommand);
-        const n = parseInt(evt.key);
-        if (n && n < options.length + 1) {
-          evt.preventDefault();
-          this.onSelect(options[n - 1]);
-        }
-      }
-    },
-  },
-};
+function getIconForCommand(command) {
+  if (command.type === "link") {
+    return LinkIcon;
+  } else if (command.type === "element") {
+    const type = command.config.trigger.type;
+    if ((type === "click") | (type === "simulatedClick")) {
+      return CursorClickIcon;
+    } else if (type === "open") {
+      return LinkIcon;
+    } else if (type === "focus") {
+      return PencilAltIcon;
+    }
+  } else if (command.type === "chrome") {
+    if (command.config.name === "openBookmark") {
+      return BookmarkSolidIcon;
+    }
+    if (command.config.name === "addToBookmarks") {
+      return BookmarkIcon;
+    }
+  }
+  return GlobeAltIcon;
+}
 </script>
 
 <style scoped>

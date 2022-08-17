@@ -1,24 +1,25 @@
 import { parseDomForCommands } from "./commands";
 
-export function downloadCommands(filename) {
-  const commands = parseDomForCommands([]);
-  // TODO need to make commands flat so I can use Object.values here
-  let csvContent = "data:text/csv;charset=utf-8,";
+export function downloadCommands(commands) {
+  const filename = window.location.href
+    .replaceAll("/", "-")
+    .replaceAll(":", "-");
 
-  csvContent +=
-    "scopeSelector,labelSelector,labelTemplate,label,triggerSelector,triggerType,triggerUrl,triggerElement\n";
+  //Convert JSON Array to string.
+  let json = JSON.stringify(commands);
 
-  csvContent += commands
-    .map(
-      (command) =>
-        `${command.scope?.selector},${command.label.selector},${command.label.template},${command.label},${command.trigger.selector},${command.trigger.type},${command.trigger.url},${command.triggerElement?.outerHTML}`
-    )
-    .join("\n");
+  //Convert JSON string to BLOB.
+  json = [json];
+  const blob1 = new Blob(json, {
+    type: "text/plain;charset=utf-8",
+  });
 
-  var encodedUri = encodeURI(csvContent);
-  var link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", filename);
-  document.body.appendChild(link);
-  link.click();
+  const url = window.URL || window.webkitURL;
+  const link = url.createObjectURL(blob1);
+  const a = document.createElement("a");
+  a.download = filename;
+  a.href = link;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }

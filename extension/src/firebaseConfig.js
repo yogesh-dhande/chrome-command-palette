@@ -32,7 +32,7 @@ export const store = {
   authUserId: null,
   currentUser: {
     preferences: {
-      debug: false,
+      debug: import.meta.env.VITE_DEBUG === "true",
       showAllTab: true,
       categoriesInAllTab: [
         categories.PAGE,
