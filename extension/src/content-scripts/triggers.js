@@ -49,16 +49,21 @@ export function triggerElementCommand(command) {
   const el = command.triggerElement;
 
   if (type === "click") {
-    el.click();
-    el.scrollIntoView({ block: "center", inline: "center" });
+    setTimeout(() => {
+      el.click();
+      el.scrollIntoView({ block: "center", inline: "center" });
+    }, 200);
   } else if (type === "simulatedClick") {
     setTimeout(() => {
       simulateMouseClick(el);
       el.scrollIntoView({ block: "center", inline: "center" });
     }, 200);
   } else if (type === "dblclick") {
-    var doubleClickEvent = new Event("dblclick");
-    el.dispatchEvent(doubleClickEvent);
+    setTimeout(() => {
+      var doubleClickEvent = new Event("dblclick");
+      el.dispatchEvent(doubleClickEvent);
+      el.scrollIntoView({ block: "center", inline: "center" });
+    }, 200);
   } else if (type === "focus") {
     setTimeout(() => {
       el.focus();

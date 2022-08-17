@@ -13,10 +13,8 @@
     >
       <TransitionChild
         as="template"
-        enter="ease-out duration-75"
         enter-from="opacity-0"
         enter-to="opacity-100"
-        leave="ease-in duration-75"
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
@@ -40,10 +38,8 @@
       >
         <TransitionChild
           as="template"
-          enter="ease-out duration-75"
           enter-from="opacity-0 scale-95"
           enter-to="opacity-100 scale-100"
-          leave="ease-in duration-75"
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
